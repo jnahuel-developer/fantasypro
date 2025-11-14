@@ -3,15 +3,21 @@
   "packages": [
     {
       "name": "_fe_analyzer_shared",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-85.0.0",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-91.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "_flutterfire_internals",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.59",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "analyzer",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/analyzer-7.7.1",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/analyzer-8.4.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.9"
     },
     {
       "name": "args",
@@ -32,6 +38,24 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "build",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/build-4.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "built_collection",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/built_collection-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "built_value",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/built_value-8.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",
@@ -48,6 +72,30 @@
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/clock-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "cloud_firestore",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/cloud_firestore-5.6.12",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "cloud_firestore_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/cloud_firestore_platform_interface-6.6.12",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "cloud_firestore_web",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/cloud_firestore_web-4.4.12",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "code_builder",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/code_builder-4.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "collection",
@@ -80,16 +128,70 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "dart_style",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/dart_style-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/fake_async-1.3.3",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
+      "name": "ffi",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/ffi-2.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "file",
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/file-7.0.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "firebase_auth",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_auth-5.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_auth_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-7.7.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_auth_web",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_auth_web-5.15.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "firebase_core",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_core-3.15.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-6.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_web",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/firebase_core_web-2.24.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "fixnum",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/fixnum-1.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
     },
     {
       "name": "flutter",
@@ -104,8 +206,50 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "flutter_secure_storage",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_linux",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-1.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_macos",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_web",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_windows",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///home/nahuel/snap/flutter/common/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///home/nahuel/snap/flutter/common/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -120,6 +264,12 @@
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/glob-2.1.3",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "http",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/http-0.13.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "http_multi_server",
@@ -141,9 +291,9 @@
     },
     {
       "name": "js",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/js-0.7.2",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "2.19"
     },
     {
       "name": "leak_tracker",
@@ -189,15 +339,21 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/meta-1.16.0",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/meta-1.17.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.5"
     },
     {
       "name": "mime",
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/mime-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "mockito",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/mockito-5.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "node_preamble",
@@ -216,6 +372,54 @@
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path-1.9.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "path_provider",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider-2.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "path_provider_android",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider_android-2.2.20",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "path_provider_foundation",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "path_provider_linux",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "path_provider_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "path_provider_windows",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/path_provider_windows-2.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "platform",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/platform-3.1.6",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "plugin_platform_interface",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "pool",
@@ -258,6 +462,12 @@
       "rootUri": "file:///home/nahuel/snap/flutter/common/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
+    },
+    {
+      "name": "source_gen",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/source_gen-4.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "source_map_stack_trace",
@@ -303,19 +513,19 @@
     },
     {
       "name": "test",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test-1.26.2",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test-1.26.3",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "test_api",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test_api-0.7.6",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test_api-0.7.7",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "test_core",
-      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test_core-0.6.11",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/test_core-0.6.12",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -368,6 +578,18 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "win32",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/win32-5.15.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "xdg_directories",
+      "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "yaml",
       "rootUri": "file:///home/nahuel/.pub-cache/hosted/pub.dev/yaml-3.1.3",
       "packageUri": "lib/",
@@ -381,8 +603,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.9.2",
+  "generatorVersion": "3.10.0",
   "flutterRoot": "file:///home/nahuel/snap/flutter/common/flutter",
-  "flutterVersion": "3.35.5",
+  "flutterVersion": "3.38.1",
   "pubCache": "file:///home/nahuel/.pub-cache"
 }
