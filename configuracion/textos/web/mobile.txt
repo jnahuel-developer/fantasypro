@@ -1,0 +1,3 @@
+# Archivo de textos para versión Web Mobile
+TEXTO_BIENVENIDA=Bienvenido a FantasyPro (Móvil)
+TEXTO_LOGIN=Iniciar sesión
