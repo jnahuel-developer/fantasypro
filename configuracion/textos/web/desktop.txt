@@ -1,0 +1,3 @@
+# Archivo de textos para versión Web Desktop
+TEXTO_BIENVENIDA=Bienvenido a FantasyPro
+TEXTO_LOGIN=Iniciar sesión
