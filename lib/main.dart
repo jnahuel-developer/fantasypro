@@ -6,6 +6,7 @@
       carga textos desde configuración y dirige el flujo según estado de autenticación.
 */
 
+import 'package:fantasypro/controladores/controlador_router.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -97,26 +98,7 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
                   : obtenerTemaWebMobile(),
 
               // FLUJO DE AUTENTICACIÓN
-              home: StreamBuilder<User?>(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-
-                  // Usuario NO autenticado → mostrar login
-                  if (!snapshot.hasData) {
-                    return const PaginaLoginDesktop();
-                  }
-
-                  // Usuario autenticado → mostrar inicio
-                  return esDesktop
-                      ? PaginaInicioDesktop(textos: textos)
-                      : PaginaInicioMobile(textos: textos);
-                },
-              ),
+              home: ControladorRouter(),
             );
           },
         );
