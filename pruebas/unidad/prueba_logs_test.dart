@@ -4,7 +4,7 @@
 */
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fantasypro/servicios/servicio_log.dart';
+import '../../servicios/utilidades/servicio_log.dart';
 
 void main() {
   test('El servicio de logs se instancia sin errores', () {

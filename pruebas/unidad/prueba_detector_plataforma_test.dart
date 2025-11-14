@@ -4,7 +4,7 @@
 */
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fantasypro/servicios/utilidades/servicio_detector_plataforma.dart';
+import '../../servicios/utilidades/servicio_detector_plataforma.dart';
 
 void main() {
   final detector = ServicioDetectorPlataforma();
