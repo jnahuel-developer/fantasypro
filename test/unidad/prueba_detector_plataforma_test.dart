@@ -3,8 +3,8 @@
   Descripción: Pruebas unitarias del servicio de detección de plataforma.
 */
 
+import 'package:fantasypro/servicios/utilidades/servicio_detector_plataforma.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../servicios/utilidades/servicio_detector_plataforma.dart';
 
 void main() {
   final detector = ServicioDetectorPlataforma();
