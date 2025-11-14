@@ -1,0 +1,14 @@
+{
+  "apiKey": "AIzaSyCnTeKTRthHW-o1Hd0jVpQgCqp6DSMm7Ag",
+  "authDomain": "fantasypro-dev.firebaseapp.com",
+  "projectId": "fantasypro-dev",
+  "storageBucket": "fantasypro-dev.firebasestorage.app",
+  "messagingSenderId": "709444228370",
+  "appId": "1:709444228370:web:884084804306a888b98fcb",
+  "measurementId": "G-WNR70ZZ4BM",
+
+  "usarEmulador": true,
+  "emuladorHost": "localhost",
+  "emuladorAuthPuerto": 9099,
+  "emuladorFirestorePuerto": 8080
+}

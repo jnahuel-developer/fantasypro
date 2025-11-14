@@ -2,11 +2,13 @@
   Archivo: lib/main.dart
   Descripción:
       Punto de entrada principal de la aplicación FantasyPro.
-      Detecta si es Web Desktop o Web Mobile, carga textos desde configuración
-      e inicia la vista correspondiente.
+      Inicializa Firebase, detecta plataforma Web (Desktop/Mobile),
+      carga textos desde configuración y dirige el flujo según estado de autenticación.
 */
 
+import 'package:fantasypro/controladores/controlador_router.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Servicios
 import 'servicios/utilidades/servicio_log.dart';
@@ -20,8 +22,25 @@ import 'temas/tema_web_mobile.dart';
 // Vistas
 import 'vistas/web/desktop/pagina_inicio_desktop.dart';
 import 'vistas/web/mobile/pagina_inicio_mobile.dart';
+import 'vistas/web/desktop/pagina_login_desktop.dart';
 
-void main() {
+// Firebase init
+import 'servicios/firebase/servicio_inicializacion.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final ServicioLog log = ServicioLog();
+  final ServicioInicializacion init = ServicioInicializacion();
+
+  log.informacion("Iniciando carga de Firebase...");
+
+  await init.inicializarDesdeArchivo(
+    'assets/configuracion/entorno/firebase_desarrollo.json',
+  );
+
+  log.informacion("Firebase inicializado correctamente.");
+
   runApp(const AplicacionFantasyPro());
 }
 
@@ -49,8 +68,8 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
     );
 
     final String rutaTexto = esDesktop
-        ? "configuracion/textos/web/desktop.txt"
-        : "configuracion/textos/web/mobile.txt";
+        ? "assets/configuracion/textos/web/desktop.txt"
+        : "assets/configuracion/textos/web/mobile.txt";
 
     textos = await servicioTraducciones.cargarTextos(rutaTexto);
 
@@ -66,7 +85,6 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const MaterialApp(
-                debugShowCheckedModeBanner: false,
                 home: Scaffold(
                   body: Center(child: CircularProgressIndicator()),
                 ),
@@ -78,9 +96,9 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
               theme: esDesktop
                   ? obtenerTemaWebDesktop()
                   : obtenerTemaWebMobile(),
-              home: esDesktop
-                  ? PaginaInicioDesktop(textos: textos)
-                  : PaginaInicioMobile(textos: textos),
+
+              // FLUJO DE AUTENTICACIÓN
+              home: ControladorRouter(),
             );
           },
         );
