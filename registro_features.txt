@@ -2,3 +2,4 @@ Lista de Features del Proyecto FantasyPro
 mod0001 - Estructura general del proyecto
 mod0002 - Preparación del Sprint 1: configuración base del proyecto
 mod0002 - Inicialización Flutter en proyecto base y reparación del entorno
+mod0003 - Inicialización real del main.dart, detección de plataforma y carga base del sistema
