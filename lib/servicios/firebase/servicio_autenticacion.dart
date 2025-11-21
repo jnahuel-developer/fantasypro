@@ -25,6 +25,7 @@ class ServicioAutenticacion {
   ///   - email (String)
   ///   - password (String)
   ///   - nombre (String)
+  ///   - rol (String)
   /// Salida:
   ///   - Future<String?>: UID del usuario creado, o null si falla.
   Future<String?> registrarUsuario(
