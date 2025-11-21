@@ -2,7 +2,6 @@
   Archivo: pagina_inicio_desktop.dart
   Descripción:
     Pantalla de inicio para usuarios finales.
-    Ahora incluye botón de cierre de sesión.
 */
 
 import 'package:flutter/material.dart';
