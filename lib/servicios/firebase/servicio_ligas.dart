@@ -87,6 +87,29 @@ class ServicioLigas {
   }
 
   /*
+    Nombre: obtenerTodasLasLigas
+    Descripción:
+      Devuelve todas las ligas registradas en la colección,
+      tanto activas como archivadas.
+    Entradas:
+      - Ninguna.
+    Salidas:
+      - Lista de instancias Liga.
+  */
+  Future<List<Liga>> obtenerTodasLasLigas() async {
+    try {
+      final consulta = await _db.collection(_coleccion).get();
+
+      return consulta.docs
+          .map((doc) => Liga.desdeMapa(doc.id, doc.data()))
+          .toList();
+    } catch (e) {
+      log.error("Error al obtener todas las ligas: $e");
+      rethrow;
+    }
+  }
+
+  /*
     Nombre: editarLiga
     Descripción:
       Actualiza una liga existente.
