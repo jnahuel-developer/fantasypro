@@ -2,11 +2,12 @@
   Archivo: pagina_panel_admin_desktop.dart
   Descripción:
     Panel principal para administradores.
-    (Placeholder – se completará en mod0005)
+    Desde aquí se accede a la administración de ligas.
 */
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fantasypro/vistas/web/desktop/pagina_ligas_admin_desktop.dart';
 
 class PaginaPanelAdminDesktop extends StatelessWidget {
   const PaginaPanelAdminDesktop({super.key});
@@ -25,7 +26,27 @@ class PaginaPanelAdminDesktop extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(child: Text("Bienvenido al panel de administrador.")),
+      body: Center(
+        child: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                child: const Text("Administrar Ligas"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PaginaLigasAdminDesktop(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
