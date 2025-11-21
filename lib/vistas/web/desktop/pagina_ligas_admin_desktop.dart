@@ -4,6 +4,7 @@
     Administración de ligas para usuarios administradores.
 */
 
+import 'package:fantasypro/vistas/web/desktop/pagina_equipos_admin_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
@@ -95,6 +96,21 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Botón: Administrar equipos
+          IconButton(
+            icon: const Icon(Icons.groups),
+            tooltip: "Administrar equipos",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PaginaEquiposAdminDesktop(liga: liga),
+                ),
+              );
+            },
+          ),
+
+          // Archivar / activar
           IconButton(
             icon: Icon(liga.activa ? Icons.archive : Icons.unarchive),
             onPressed: () async {
@@ -106,6 +122,8 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
               cargar();
             },
           ),
+
+          // Eliminar
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
