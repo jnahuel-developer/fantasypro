@@ -2,15 +2,13 @@
   Archivo: pagina_ligas_admin_desktop.dart
   Descripción:
     Administración de ligas para usuarios administradores.
-    Se agregan:
-      - Ordenamiento alfabético
-      - Indicador visual "Gestión de ligas"
 */
 
 import 'package:fantasypro/vistas/web/desktop/pagina_equipos_admin_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class PaginaLigasAdminDesktop extends StatefulWidget {
   const PaginaLigasAdminDesktop({super.key});
@@ -52,50 +50,50 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   }
 
   Future<void> crearLiga() async {
-    final controladorNombre = TextEditingController();
-    final controladorDescripcion = TextEditingController();
+    final ctrlNombre = TextEditingController();
+    final ctrlDescripcion = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text("Crear nueva liga"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controladorNombre,
-                decoration: const InputDecoration(
-                  labelText: "Nombre de la liga",
-                ),
+      builder: (_) => AlertDialog(
+        title: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_BOTON_CREAR),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: ctrlNombre,
+              decoration: const InputDecoration(
+                labelText: TextosApp.LIGAS_ADMIN_DESKTOP_INPUT_NOMBRE,
               ),
-              TextField(
-                controller: controladorDescripcion,
-                decoration: const InputDecoration(labelText: "Descripción"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancelar"),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                final nombre = controladorNombre.text.trim();
-                final descripcion = controladorDescripcion.text.trim();
-
-                if (nombre.isEmpty) return;
-
-                await controlador.crearLiga(nombre, descripcion);
-                Navigator.pop(context);
-                cargar();
-              },
-              child: const Text("Crear"),
+            TextField(
+              controller: ctrlDescripcion,
+              decoration: const InputDecoration(
+                labelText: TextosApp.LIGAS_ADMIN_DESKTOP_INPUT_DESCRIPCION,
+              ),
             ),
           ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_ACCION_CANCELAR),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final nombre = ctrlNombre.text.trim();
+              final descripcion = ctrlDescripcion.text.trim();
+
+              if (nombre.isEmpty) return;
+
+              await controlador.crearLiga(nombre, descripcion);
+              Navigator.pop(context);
+              cargar();
+            },
+            child: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_ACCION_CREAR),
+          ),
+        ],
+      ),
     );
   }
 
@@ -115,7 +113,7 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
             // Administrar equipos
             IconButton(
               icon: const Icon(Icons.groups),
-              tooltip: "Administrar equipos",
+              tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ADMIN_EQUIPOS,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -129,7 +127,9 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
             // Archivar / Activar
             IconButton(
               icon: Icon(liga.activa ? Icons.archive : Icons.unarchive),
-              tooltip: liga.activa ? "Archivar" : "Activar",
+              tooltip: liga.activa
+                  ? TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ARCHIVAR
+                  : TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 if (liga.activa) {
                   await controlador.archivar(liga.id);
@@ -143,7 +143,7 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
             // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: "Eliminar liga",
+              tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 await controlador.eliminar(liga.id);
                 cargar();
@@ -159,10 +159,10 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Administración de Ligas"),
+        title: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_APPBAR_TITULO),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: "Volver",
+          tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -170,26 +170,32 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de ligas",
+                TextosApp.LIGAS_ADMIN_DESKTOP_APPBAR_INDICADOR,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),
         ],
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: crearLiga,
         child: const Icon(Icons.add),
       ),
+
       body: cargando
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
+                // Columna ACTIVO
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        "Activas (${activas.length})",
+                        TextosApp.LIGAS_ADMIN_DESKTOP_TITULO_ACTIVAS.replaceAll(
+                          "{CANT}",
+                          activas.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -203,11 +209,14 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
                     ],
                   ),
                 ),
+
+                // Columna ARCHIVADO
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        "Archivadas (${archivadas.length})",
+                        TextosApp.LIGAS_ADMIN_DESKTOP_TITULO_ARCHIVADAS
+                            .replaceAll("{CANT}", archivadas.length.toString()),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

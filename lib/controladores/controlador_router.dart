@@ -60,9 +60,7 @@ class ControladorRouter extends StatelessWidget {
             if (rol == "admin") {
               return const PaginaPanelAdminDesktop();
             } else {
-              return PaginaInicioDesktop(
-                textos: const {"TEXTO_BIENVENIDA": "Bienvenido"},
-              );
+              return PaginaInicioDesktop();
             }
           },
         );

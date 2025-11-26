@@ -16,6 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/controladores/controlador_equipos.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class PaginaEquipoEditarDesktop extends StatefulWidget {
   final Equipo equipo;
@@ -59,17 +60,19 @@ class _PaginaEquipoEditarDesktopEstado
     final salir = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Descartar cambios"),
-        content: const Text(
-          "Hay cambios sin guardar. ¿Desea salir igualmente?",
-        ),
+        title: const Text(TextosApp.EQUIPO_EDITAR_DIALOGO_DESCARTAR_TITULO),
+        content: const Text(TextosApp.EQUIPO_EDITAR_DIALOGO_DESCARTAR_MENSAJE),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(
+              TextosApp.EQUIPO_EDITAR_DIALOGO_DESCARTAR_BOTON_CANCELAR,
+            ),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Salir"),
+            child: const Text(
+              TextosApp.EQUIPO_EDITAR_DIALOGO_DESCARTAR_BOTON_SALIR,
+            ),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -92,7 +95,7 @@ class _PaginaEquipoEditarDesktopEstado
     if (nombre.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("El nombre del equipo no puede estar vacío."),
+          content: Text(TextosApp.EQUIPO_EDITAR_VALIDACION_NOMBRE_VACIO),
         ),
       );
       return;
@@ -119,10 +122,10 @@ class _PaginaEquipoEditarDesktopEstado
       onWillPop: confirmarSalida,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Editar equipo"),
+          title: const Text(TextosApp.EQUIPO_EDITAR_TITULO),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            tooltip: "Volver",
+            tooltip: TextosApp.EQUIPO_EDITAR_BOTON_VOLVER,
             onPressed: () async {
               final salir = await confirmarSalida();
               if (salir && mounted) Navigator.pop(context);
@@ -140,7 +143,7 @@ class _PaginaEquipoEditarDesktopEstado
                   TextField(
                     controller: controladorNombre,
                     decoration: const InputDecoration(
-                      labelText: "Nombre del equipo",
+                      labelText: TextosApp.EQUIPO_EDITAR_LABEL_NOMBRE,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -149,7 +152,7 @@ class _PaginaEquipoEditarDesktopEstado
                     controller: controladorDescripcion,
                     maxLines: 3,
                     decoration: const InputDecoration(
-                      labelText: "Descripción",
+                      labelText: TextosApp.EQUIPO_EDITAR_LABEL_DESCRIPCION,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -157,7 +160,7 @@ class _PaginaEquipoEditarDesktopEstado
                   TextField(
                     controller: controladorEscudo,
                     decoration: const InputDecoration(
-                      labelText: "URL del escudo (opcional)",
+                      labelText: TextosApp.EQUIPO_EDITAR_LABEL_ESCUDO,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -171,7 +174,7 @@ class _PaginaEquipoEditarDesktopEstado
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.save),
-                    label: const Text("Guardar cambios"),
+                    label: const Text(TextosApp.EQUIPO_EDITAR_BOTON_GUARDAR),
                   ),
                 ],
               ),

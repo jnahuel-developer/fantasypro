@@ -2,7 +2,6 @@
   Archivo: pagina_equipos_admin_desktop.dart
   Descripción:
     Administración visual mejorada de equipos de una liga.
-    Etapa 5:
       - Botón Volver
       - Botón “Gestionar jugadores (próximamente)”
       - Refuerzo visual de estructura
@@ -13,6 +12,7 @@ import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_equipos.dart';
 import 'package:fantasypro/vistas/web/desktop/pagina_equipo_editar_desktop.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class PaginaEquiposAdminDesktop extends StatefulWidget {
   final Liga liga;
@@ -64,29 +64,36 @@ class _PaginaEquiposAdminDesktopEstado
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text("Crear equipo en ${widget.liga.nombre}"),
+          title: Text(
+            TextosApp.EQUIPOS_ADMIN_CREAR_TITULO.replaceAll(
+              "{LIGA}",
+              widget.liga.nombre,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: controladorNombre,
                 decoration: const InputDecoration(
-                  labelText: "Nombre del equipo",
+                  labelText: TextosApp.EQUIPOS_ADMIN_CREAR_LABEL_NOMBRE,
                 ),
               ),
               TextField(
                 controller: controladorDescripcion,
-                decoration: const InputDecoration(labelText: "Descripción"),
+                decoration: const InputDecoration(
+                  labelText: TextosApp.EQUIPOS_ADMIN_CREAR_LABEL_DESCRIPCION,
+                ),
               ),
             ],
           ),
           actions: [
             TextButton(
-              child: const Text("Cancelar"),
+              child: const Text(TextosApp.EQUIPOS_ADMIN_CREAR_BOTON_CANCELAR),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              child: const Text("Crear"),
+              child: const Text(TextosApp.EQUIPOS_ADMIN_CREAR_BOTON_CREAR),
               onPressed: () async {
                 final nombre = controladorNombre.text.trim();
                 final descripcion = controladorDescripcion.text.trim();
@@ -112,15 +119,15 @@ class _PaginaEquiposAdminDesktopEstado
     final res = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Confirmación"),
+        title: const Text(TextosApp.EQUIPOS_ADMIN_CONFIRMAR_TITULO),
         content: Text(mensaje),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.EQUIPOS_ADMIN_CONFIRMAR_CANCELAR),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Aceptar"),
+            child: const Text(TextosApp.EQUIPOS_ADMIN_CONFIRMAR_ACEPTAR),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -162,17 +169,14 @@ class _PaginaEquiposAdminDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Próximamente: gestionar jugadores
             IconButton(
               icon: const Icon(Icons.person),
-              tooltip: "Gestionar jugadores (próximamente)",
-              onPressed: null, // desactivado
+              tooltip: TextosApp.EQUIPOS_ADMIN_TOOLTIP_GESTION_JUGADORES,
+              onPressed: null,
             ),
-
-            // Editar
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: "Editar equipo",
+              tooltip: TextosApp.EQUIPOS_ADMIN_TOOLTIP_EDITAR,
               onPressed: () async {
                 final resultado = await Navigator.push(
                   context,
@@ -183,16 +187,16 @@ class _PaginaEquiposAdminDesktopEstado
                 if (resultado == true) cargar();
               },
             ),
-
-            // Archivar / Activar
             IconButton(
               icon: Icon(equipo.activo ? Icons.archive : Icons.unarchive),
-              tooltip: equipo.activo ? "Archivar" : "Activar",
+              tooltip: equipo.activo
+                  ? TextosApp.EQUIPOS_ADMIN_TOOLTIP_ARCHIVAR
+                  : TextosApp.EQUIPOS_ADMIN_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 final ok = await confirmar(
                   equipo.activo
-                      ? "¿Desea archivar el equipo?"
-                      : "¿Desea activar el equipo?",
+                      ? TextosApp.EQUIPOS_ADMIN_CONFIRMAR_ARCHIVAR
+                      : TextosApp.EQUIPOS_ADMIN_CONFIRMAR_ACTIVAR,
                 );
                 if (!ok) return;
 
@@ -204,14 +208,12 @@ class _PaginaEquiposAdminDesktopEstado
                 cargar();
               },
             ),
-
-            // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: "Eliminar equipo",
+              tooltip: TextosApp.EQUIPOS_ADMIN_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 final ok = await confirmar(
-                  "¿Está seguro que desea eliminar este equipo?",
+                  TextosApp.EQUIPOS_ADMIN_CONFIRMAR_ELIMINAR,
                 );
                 if (!ok) return;
 
@@ -225,16 +227,19 @@ class _PaginaEquiposAdminDesktopEstado
     );
   }
 
-  // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Equipos – ${widget.liga.nombre}"),
+        title: Text(
+          TextosApp.EQUIPOS_ADMIN_APPBAR_TITULO.replaceAll(
+            "{LIGA}",
+            widget.liga.nombre,
+          ),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: "Volver",
+          tooltip: TextosApp.EQUIPOS_ADMIN_APPBAR_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -242,7 +247,7 @@ class _PaginaEquiposAdminDesktopEstado
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de equipos",
+                TextosApp.EQUIPOS_ADMIN_APPBAR_GESTION_TEXTO,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -257,12 +262,14 @@ class _PaginaEquiposAdminDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Activos
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        "Activos (${activos.length})",
+                        TextosApp.EQUIPOS_ADMIN_COLUMNA_ACTIVOS.replaceAll(
+                          "{CANT}",
+                          activos.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -276,13 +283,14 @@ class _PaginaEquiposAdminDesktopEstado
                     ],
                   ),
                 ),
-
-                // Archivados
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        "Archivados (${archivados.length})",
+                        TextosApp.EQUIPOS_ADMIN_COLUMNA_ARCHIVADOS.replaceAll(
+                          "{CANT}",
+                          archivados.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
