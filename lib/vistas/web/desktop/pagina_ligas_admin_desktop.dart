@@ -2,6 +2,9 @@
   Archivo: pagina_ligas_admin_desktop.dart
   Descripción:
     Administración de ligas para usuarios administradores.
+    Se agregan:
+      - Ordenamiento alfabético
+      - Indicador visual "Gestión de ligas"
 */
 
 import 'package:fantasypro/vistas/web/desktop/pagina_equipos_admin_desktop.dart';
@@ -35,8 +38,15 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
 
     final todas = await controlador.obtenerTodas();
 
-    activas = todas.where((l) => l.activa).toList();
-    archivadas = todas.where((l) => !l.activa).toList();
+    activas = todas.where((l) => l.activa).toList()
+      ..sort(
+        (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
+      );
+
+    archivadas = todas.where((l) => !l.activa).toList()
+      ..sort(
+        (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
+      );
 
     setState(() => cargando = false);
   }
@@ -90,48 +100,57 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   }
 
   Widget itemLiga(Liga liga) {
-    return ListTile(
-      title: Text(liga.nombre),
-      subtitle: Text(liga.temporada),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Botón: Administrar equipos
-          IconButton(
-            icon: const Icon(Icons.groups),
-            tooltip: "Administrar equipos",
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PaginaEquiposAdminDesktop(liga: liga),
-                ),
-              );
-            },
-          ),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      elevation: 2,
+      child: ListTile(
+        title: Text(
+          liga.nombre,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(liga.temporada),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Administrar equipos
+            IconButton(
+              icon: const Icon(Icons.groups),
+              tooltip: "Administrar equipos",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaginaEquiposAdminDesktop(liga: liga),
+                  ),
+                );
+              },
+            ),
 
-          // Archivar / activar
-          IconButton(
-            icon: Icon(liga.activa ? Icons.archive : Icons.unarchive),
-            onPressed: () async {
-              if (liga.activa) {
-                await controlador.archivar(liga.id);
-              } else {
-                await controlador.activar(liga.id);
-              }
-              cargar();
-            },
-          ),
+            // Archivar / Activar
+            IconButton(
+              icon: Icon(liga.activa ? Icons.archive : Icons.unarchive),
+              tooltip: liga.activa ? "Archivar" : "Activar",
+              onPressed: () async {
+                if (liga.activa) {
+                  await controlador.archivar(liga.id);
+                } else {
+                  await controlador.activar(liga.id);
+                }
+                cargar();
+              },
+            ),
 
-          // Eliminar
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              await controlador.eliminar(liga.id);
-              cargar();
-            },
-          ),
-        ],
+            // Eliminar
+            IconButton(
+              icon: const Icon(Icons.delete),
+              tooltip: "Eliminar liga",
+              onPressed: () async {
+                await controlador.eliminar(liga.id);
+                cargar();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -139,7 +158,25 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Administración de Ligas")),
+      appBar: AppBar(
+        title: const Text("Administración de Ligas"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: "Volver",
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Center(
+              child: Text(
+                "Gestión de ligas",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: crearLiga,
         child: const Icon(Icons.add),
@@ -151,16 +188,16 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
                 Expanded(
                   child: Column(
                     children: [
-                      const Text(
-                        "Activas",
-                        style: TextStyle(
+                      Text(
+                        "Activas (${activas.length})",
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
                       Expanded(
                         child: ListView(
-                          children: activas.map((l) => itemLiga(l)).toList(),
+                          children: activas.map(itemLiga).toList(),
                         ),
                       ),
                     ],
@@ -169,16 +206,16 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
                 Expanded(
                   child: Column(
                     children: [
-                      const Text(
-                        "Archivadas",
-                        style: TextStyle(
+                      Text(
+                        "Archivadas (${archivadas.length})",
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
                       Expanded(
                         child: ListView(
-                          children: archivadas.map((l) => itemLiga(l)).toList(),
+                          children: archivadas.map(itemLiga).toList(),
                         ),
                       ),
                     ],

@@ -1,18 +1,11 @@
 /*
   Archivo: pagina_equipos_admin_desktop.dart
   Descripción:
-    Pantalla de administración de equipos pertenecientes a una liga.
-    Permite:
-      - Visualizar equipos activos y archivados.
-      - Crear nuevos equipos.
-      - Editar un equipo existente.
-      - Archivar / activar equipos.
-      - Eliminar equipos de forma permanente.
-  Dependencias:
-    - modelos/liga.dart
-    - modelos/equipo.dart
-    - controladores/controlador_equipos.dart
-    - vistas/web/desktop/pagina_equipo_editar_desktop.dart
+    Administración visual mejorada de equipos de una liga.
+    Etapa 5:
+      - Botón Volver
+      - Botón “Gestionar jugadores (próximamente)”
+      - Refuerzo visual de estructura
 */
 
 import 'package:flutter/material.dart';
@@ -45,28 +38,24 @@ class _PaginaEquiposAdminDesktopEstado
     cargar();
   }
 
-  /*
-    Nombre: cargar
-    Descripción:
-      Recupera todos los equipos pertenecientes a la liga actual.
-      Divide el resultado entre activos y archivados para mostrarlos en columnas separadas.
-  */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
     final todos = await controlador.obtenerPorLiga(widget.liga.id);
 
-    activos = todos.where((e) => e.activo).toList();
-    archivados = todos.where((e) => !e.activo).toList();
+    activos = todos.where((e) => e.activo).toList()
+      ..sort(
+        (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
+      );
+
+    archivados = todos.where((e) => !e.activo).toList()
+      ..sort(
+        (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
+      );
 
     setState(() => cargando = false);
   }
 
-  /*
-    Nombre: crearEquipo
-    Descripción:
-      Abre un diálogo para ingresar nombre y descripción del equipo.
-  */
   Future<void> crearEquipo() async {
     final controladorNombre = TextEditingController();
     final controladorDescripcion = TextEditingController();
@@ -101,7 +90,6 @@ class _PaginaEquiposAdminDesktopEstado
               onPressed: () async {
                 final nombre = controladorNombre.text.trim();
                 final descripcion = controladorDescripcion.text.trim();
-
                 if (nombre.isEmpty) return;
 
                 await controlador.crearEquipo(
@@ -120,68 +108,147 @@ class _PaginaEquiposAdminDesktopEstado
     );
   }
 
-  /*
-    Nombre: itemEquipo
-    Descripción:
-      Construye un ListTile con acciones de administración para cada equipo.
-  */
-  Widget itemEquipo(Equipo equipo) {
-    return ListTile(
-      title: Text(equipo.nombre),
-      subtitle: Text(equipo.descripcion),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Editar
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: "Editar equipo",
-            onPressed: () async {
-              final resultado = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PaginaEquipoEditarDesktop(equipo: equipo),
-                ),
-              );
-
-              if (resultado == true) {
-                cargar();
-              }
-            },
+  Future<bool> confirmar(String mensaje) async {
+    final res = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Confirmación"),
+        content: Text(mensaje),
+        actions: [
+          TextButton(
+            child: const Text("Cancelar"),
+            onPressed: () => Navigator.pop(context, false),
           ),
-
-          // Archivar / activar
-          IconButton(
-            icon: Icon(equipo.activo ? Icons.archive : Icons.unarchive),
-            tooltip: equipo.activo ? "Archivar" : "Activar",
-            onPressed: () async {
-              if (equipo.activo) {
-                await controlador.archivar(equipo.id);
-              } else {
-                await controlador.activar(equipo.id);
-              }
-              cargar();
-            },
-          ),
-
-          // Eliminar
-          IconButton(
-            icon: const Icon(Icons.delete),
-            tooltip: "Eliminar equipo",
-            onPressed: () async {
-              await controlador.eliminar(equipo.id);
-              cargar();
-            },
+          ElevatedButton(
+            child: const Text("Aceptar"),
+            onPressed: () => Navigator.pop(context, true),
           ),
         ],
       ),
     );
+    return res ?? false;
   }
+
+  Widget escudo(Equipo equipo) {
+    final url = equipo.escudoUrl.trim();
+
+    if (url.isEmpty) {
+      return const Icon(Icons.shield, size: 40);
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: Image.network(
+        url,
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 40),
+      ),
+    );
+  }
+
+  Widget itemEquipo(Equipo equipo) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      child: ListTile(
+        leading: escudo(equipo),
+        title: Text(
+          equipo.nombre,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(equipo.descripcion),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Próximamente: gestionar jugadores
+            IconButton(
+              icon: const Icon(Icons.person),
+              tooltip: "Gestionar jugadores (próximamente)",
+              onPressed: null, // desactivado
+            ),
+
+            // Editar
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: "Editar equipo",
+              onPressed: () async {
+                final resultado = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaginaEquipoEditarDesktop(equipo: equipo),
+                  ),
+                );
+                if (resultado == true) cargar();
+              },
+            ),
+
+            // Archivar / Activar
+            IconButton(
+              icon: Icon(equipo.activo ? Icons.archive : Icons.unarchive),
+              tooltip: equipo.activo ? "Archivar" : "Activar",
+              onPressed: () async {
+                final ok = await confirmar(
+                  equipo.activo
+                      ? "¿Desea archivar el equipo?"
+                      : "¿Desea activar el equipo?",
+                );
+                if (!ok) return;
+
+                if (equipo.activo) {
+                  await controlador.archivar(equipo.id);
+                } else {
+                  await controlador.activar(equipo.id);
+                }
+                cargar();
+              },
+            ),
+
+            // Eliminar
+            IconButton(
+              icon: const Icon(Icons.delete),
+              tooltip: "Eliminar equipo",
+              onPressed: () async {
+                final ok = await confirmar(
+                  "¿Está seguro que desea eliminar este equipo?",
+                );
+                if (!ok) return;
+
+                await controlador.eliminar(equipo.id);
+                cargar();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Equipos de la liga: ${widget.liga.nombre}")),
+      appBar: AppBar(
+        title: Text("Equipos – ${widget.liga.nombre}"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: "Volver",
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Center(
+              child: Text(
+                "Gestión de equipos",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: crearEquipo,
         child: const Icon(Icons.add),
@@ -190,15 +257,13 @@ class _PaginaEquiposAdminDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // -------------------------------
-                // Columnas de equipos activos
-                // -------------------------------
+                // Activos
                 Expanded(
                   child: Column(
                     children: [
-                      const Text(
-                        "Activos",
-                        style: TextStyle(
+                      Text(
+                        "Activos (${activos.length})",
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -212,15 +277,13 @@ class _PaginaEquiposAdminDesktopEstado
                   ),
                 ),
 
-                // -------------------------------
-                // Columnas de equipos archivados
-                // -------------------------------
+                // Archivados
                 Expanded(
                   child: Column(
                     children: [
-                      const Text(
-                        "Archivados",
-                        style: TextStyle(
+                      Text(
+                        "Archivados (${archivados.length})",
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),

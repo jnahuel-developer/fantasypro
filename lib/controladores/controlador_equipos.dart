@@ -35,8 +35,10 @@ class ControladorEquipos {
           : descripcion.trim(),
       fechaCreacion: timestamp,
       activo: true,
-      escudoUrl: "pendiente", // ← agregado correctamente
+      escudoUrl: "pendiente",
     );
+
+    log.informacion("Creando equipo en liga $idLiga con nombre $nombre");
 
     return await servicio.crearEquipo(equipo);
   }
@@ -49,18 +51,26 @@ class ControladorEquipos {
   }
 
   Future<void> archivar(String idEquipo) async {
+    log.advertencia("Archivando equipo $idEquipo");
     await servicio.archivarEquipo(idEquipo);
   }
 
   Future<void> activar(String idEquipo) async {
+    log.informacion("Activando equipo $idEquipo");
     await servicio.activarEquipo(idEquipo);
   }
 
   Future<void> eliminar(String idEquipo) async {
+    log.error("Eliminando equipo $idEquipo");
     await servicio.eliminarEquipo(idEquipo);
   }
 
   Future<void> editar(Equipo equipo) async {
+    if (equipo.nombre.trim().isEmpty) {
+      throw ArgumentError("El nombre del equipo no puede estar vacío");
+    }
+
+    log.informacion("Editando equipo ${equipo.id}");
     await servicio.editarEquipo(equipo);
   }
 }
