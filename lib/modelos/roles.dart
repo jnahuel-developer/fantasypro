@@ -20,4 +20,13 @@ extension RolUsuarioExt on RolUsuario {
         return TextosApp.REGISTRO_DESKTOP_ROL_ADMIN;
     }
   }
+
+  static RolUsuario desdeValorDB(String valor) {
+    switch (valor) {
+      case "admin":
+        return RolUsuario.admin;
+      default:
+        return RolUsuario.usuario;
+    }
+  }
 }

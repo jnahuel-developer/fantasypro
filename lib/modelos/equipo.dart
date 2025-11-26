@@ -3,43 +3,33 @@
   Descripción:
     Modelo de datos que representa un Equipo dentro de una Liga en FantasyPro.
     Incluye métodos de serialización y deserialización para Firestore.
-  Dependencias:
-    - Ninguna directa (solo tipos básicos de Dart).
 */
 
 class Equipo {
-  /// Identificador único del equipo en Firestore.
-  final String id;
+  // ---------------------------------------------------------------------------
+  // Campos Firestore (constantes internas para evitar hardcodeo)
+  // ---------------------------------------------------------------------------
+  static const String campoIdLiga = "idLiga";
+  static const String campoNombre = "nombre";
+  static const String campoDescripcion = "descripcion";
+  static const String campoEscudoUrl = "escudoUrl";
+  static const String campoFechaCreacion = "fechaCreacion";
+  static const String campoActivo = "activo";
 
-  /// Identificador de la liga a la que pertenece el equipo.
-  final String idLiga;
+  // ---------------------------------------------------------------------------
+  // Atributos del modelo
+  // ---------------------------------------------------------------------------
+  final String id; // ID del documento en Firestore
+  final String idLiga; // Liga a la cual pertenece
+  final String nombre; // Nombre visible
+  final String descripcion; // Descripción breve
+  final String escudoUrl; // URL del escudo (opcional)
+  final int fechaCreacion; // Timestamp en milisegundos
+  final bool activo; // true = activo, false = archivado
 
-  /// Nombre visible del equipo.
-  final String nombre;
-
-  /// Descripción breve del equipo.
-  final String descripcion;
-
-  /// URL del escudo del equipo (opcional).
-  final String escudoUrl;
-
-  /// Fecha de creación como timestamp en milisegundos.
-  final int fechaCreacion;
-
-  /// Estado del equipo (true = activo).
-  final bool activo;
-
-  /*
-    Constructor principal del Equipo.
-    Entradas:
-      - id (String)
-      - idLiga (String)
-      - nombre (String)
-      - descripcion (String)
-      - escudoUrl (String)
-      - fechaCreacion (int)
-      - activo (bool)
-  */
+  // ---------------------------------------------------------------------------
+  // Constructor principal
+  // ---------------------------------------------------------------------------
   const Equipo({
     required this.id,
     required this.idLiga,
@@ -50,44 +40,38 @@ class Equipo {
     required this.activo,
   });
 
-  /*
-    Nombre: desdeMapa
-    Descripción:
-      Crea una instancia de Equipo desde un Map recuperado de Firestore.
-  */
+  // ---------------------------------------------------------------------------
+  // Deserialización desde Firestore
+  // ---------------------------------------------------------------------------
   factory Equipo.desdeMapa(String id, Map<String, dynamic> datos) {
     return Equipo(
       id: id,
-      idLiga: datos['idLiga'] ?? '',
-      nombre: datos['nombre'] ?? '',
-      descripcion: datos['descripcion'] ?? '',
-      escudoUrl: datos['escudoUrl'] ?? '',
-      fechaCreacion: datos['fechaCreacion'] ?? 0,
-      activo: datos['activo'] ?? true,
+      idLiga: datos[campoIdLiga] ?? "",
+      nombre: datos[campoNombre] ?? "",
+      descripcion: datos[campoDescripcion] ?? "",
+      escudoUrl: datos[campoEscudoUrl] ?? "",
+      fechaCreacion: datos[campoFechaCreacion] ?? 0,
+      activo: datos[campoActivo] ?? true,
     );
   }
 
-  /*
-    Nombre: aMapa
-    Descripción:
-      Convierte la instancia actual en un Map<String, dynamic> para Firestore.
-  */
+  // ---------------------------------------------------------------------------
+  // Serialización a Firestore
+  // ---------------------------------------------------------------------------
   Map<String, dynamic> aMapa() {
     return {
-      'idLiga': idLiga,
-      'nombre': nombre,
-      'descripcion': descripcion,
-      'escudoUrl': escudoUrl,
-      'fechaCreacion': fechaCreacion,
-      'activo': activo,
+      campoIdLiga: idLiga,
+      campoNombre: nombre,
+      campoDescripcion: descripcion,
+      campoEscudoUrl: escudoUrl,
+      campoFechaCreacion: fechaCreacion,
+      campoActivo: activo,
     };
   }
 
-  /*
-    Nombre: copiarCon
-    Descripción:
-      Genera una nueva instancia copiando la actual pero con cambios opcionales.
-  */
+  // ---------------------------------------------------------------------------
+  // Copia con campos opcionales
+  // ---------------------------------------------------------------------------
   Equipo copiarCon({
     String? id,
     String? idLiga,

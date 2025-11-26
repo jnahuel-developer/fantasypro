@@ -10,10 +10,128 @@
 
 class TextosApp {
   // ---------------------------------------------------------------------------
-  // Bloque: Mensajes de log
+  // Mensajes de log
   // ---------------------------------------------------------------------------
 
   static const LOG_REGISTRO_USUARIO_CREADO = "Usuario creado con UID";
+
+  // ---------------------------------------------------------------------------
+  // Logs - Autenticación
+  // ---------------------------------------------------------------------------
+  static const LOG_AUTH_USUARIO_REGISTRADO = "Usuario registrado:";
+  static const LOG_AUTH_REGISTRO_FALLIDO = "Error al registrar usuario:";
+  static const LOG_AUTH_INICIO_SESION = "Inicio de sesión:";
+  static const LOG_AUTH_LOGIN_ERROR = "Error en login:";
+  static const LOG_AUTH_LOGOUT = "Sesión cerrada";
+  static const LOG_AUTH_ERROR_ROL = "Error verificando rol de administrador:";
+
+  // ---------------------------------------------------------------------------
+  // Logs - Base de Datos
+  // ---------------------------------------------------------------------------
+  static const LOG_BD_GUARDAR_USUARIO = "Guardar/actualizar usuario:";
+  static const LOG_BD_OBTENER_USUARIO = "Obtener usuario:";
+  static const LOG_BD_CREAR_LIGA = "Crear liga:";
+  static const LOG_BD_LISTAR_LIGAS = "Listar ligas (stream):";
+  static const LOG_BD_ERROR = "Error en operación de BD:";
+
+  // ---------------------------------------------------------------------------
+  // Logs - Equipos
+  // ---------------------------------------------------------------------------
+  static const LOG_EQUIPOS_CREAR = "Crear equipo:";
+  static const LOG_EQUIPOS_EDITAR = "Editar equipo:";
+  static const LOG_EQUIPOS_ARCHIVAR = "Archivar equipo:";
+  static const LOG_EQUIPOS_ACTIVAR = "Activar equipo:";
+  static const LOG_EQUIPOS_ELIMINAR = "Eliminar equipo:";
+  static const LOG_EQUIPOS_LISTAR = "Listar equipos de liga:";
+  static const LOG_EQUIPOS_ERROR = "Error en operación de equipos:";
+
+  // ---------------------------------------------------------------------------
+  // Logs - Inicialización Firebase
+  // ---------------------------------------------------------------------------
+  static const LOG_INICIO_FIREBASE_OK = "Firebase inicializado correctamente.";
+  static const LOG_INICIO_FIREBASE_EMULADOR =
+      "Firebase conectado al Emulator Suite en";
+  static const LOG_INICIO_FIREBASE_ERROR = "Error al inicializar Firebase:";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Ligas
+  // ---------------------------------------------------------------------------
+  static const LOG_LIGA_CREADA = "Liga creada:";
+  static const LOG_LIGA_ERROR_CREAR = "Error al crear liga:";
+  static const LOG_LIGA_NO_ENCONTRADA = "Liga no encontrada:";
+  static const LOG_LIGA_ERROR_OBTENER = "Error al obtener liga:";
+  static const LOG_LIGA_ERROR_LISTAR_ACTIVAS = "Error al listar ligas activas:";
+  static const LOG_LIGA_ERROR_LISTAR_TODAS = "Error al listar todas las ligas:";
+  static const LOG_LIGA_EDITADA = "Liga editada:";
+  static const LOG_LIGA_ERROR_EDITAR = "Error al editar liga:";
+  static const LOG_LIGA_ARCHIVADA = "Liga archivada:";
+  static const LOG_LIGA_ERROR_ARCHIVAR = "Error al archivar liga:";
+  static const LOG_LIGA_ACTIVADA = "Liga activada:";
+  static const LOG_LIGA_ERROR_ACTIVAR = "Error al activar liga:";
+  static const LOG_LIGA_ELIMINADA = "Liga eliminada:";
+  static const LOG_LIGA_ERROR_ELIMINAR = "Error al eliminar liga:";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Equipos
+  // ---------------------------------------------------------------------------
+  static const ERR_EQUIPO_ID_LIGA_VACIO =
+      "El identificador de liga no puede estar vacío.";
+  static const ERR_EQUIPO_NOMBRE_VACIO =
+      "El nombre del equipo no puede quedar vacío.";
+
+  // ---------------------------------------------------------------------------
+  // Valores por defecto – Equipos
+  // ---------------------------------------------------------------------------
+  static const EQUIPO_DESCRIPCION_POR_DEFECTO =
+      "Equipo creado por el administrador.";
+  static const EQUIPO_ESCUDO_PENDIENTE = "pendiente";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Equipos
+  // ---------------------------------------------------------------------------
+  static const LOG_EQUIPO_CREANDO = "Creando equipo en liga";
+  static const LOG_EQUIPO_ARCHIVANDO = "Archivando equipo";
+  static const LOG_EQUIPO_ACTIVANDO = "Activando equipo";
+  static const LOG_EQUIPO_ELIMINANDO = "Eliminando equipo";
+  static const LOG_EQUIPO_EDITANDO = "Editando equipo";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Ligas
+  // ---------------------------------------------------------------------------
+  static const ERR_LIGA_NOMBRE_VACIO =
+      "El nombre de la liga no puede quedar vacío.";
+
+  // ---------------------------------------------------------------------------
+  // Valores por defecto – Ligas
+  // ---------------------------------------------------------------------------
+  static const LIGA_DESCRIPCION_POR_DEFECTO =
+      "Liga generada por el administrador.";
+  static const LIGA_TEXTO_TEMPORADA = "Temporada";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Ligas
+  // ---------------------------------------------------------------------------
+  static const LOG_LIGA_CREANDO = "Creando liga";
+  static const LOG_LIGA_ARCHIVANDO = "Archivando liga";
+  static const LOG_LIGA_ACTIVANDO = "Activando liga";
+  static const LOG_LIGA_ELIMINANDO = "Eliminando liga";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Roles
+  // ---------------------------------------------------------------------------
+  static const ERROR_ROL_DESCONOCIDO =
+      "No se pudo determinar el rol del usuario.";
+
+  // ---------------------------------------------------------------------------
+  // Login
+  // ---------------------------------------------------------------------------
+  static const LOGIN_MENSAJE_BIENVENIDA =
+      "Bienvenido a FantasyPro. Inicie sesión para continuar.";
+
+  // ---------------------------------------------------------------------------
+  // Usuario Final
+  // ---------------------------------------------------------------------------
+  static const TEXTO_BIENVENIDA_GENERAL = "Bienvenido al panel de usuario.";
 
   // ---------------------------------------------------------------------------
   // Pantalla: Inicio Desktop para usuarios

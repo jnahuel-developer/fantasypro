@@ -1,125 +1,118 @@
 /*
   Archivo: servicio_equipos.dart
   Descripción:
-    Servicio responsable de administrar la colección "equipos" en Firestore.
-    Relación directa: cada equipo pertenece a una liga (idLiga).
-    Permite crear, obtener, editar, activar, archivar y eliminar equipos.
+    Servicio dedicado a la administración CRUD de la colección "equipos".
+    Incluye creación, edición, archivado, activación, eliminación y consulta
+    de equipos pertenecientes a una liga.
+
   Dependencias:
     - cloud_firestore
     - modelos/equipo.dart
     - servicio_log.dart
+    - textos_app.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ServicioEquipos {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final ServicioLog log = ServicioLog();
+  final ServicioLog _log = ServicioLog();
 
-  /// Nombre de la colección principal.
+  // ---------------------------------------------------------------------------
+  // Constantes internas: nombres de colección y campos
+  // ---------------------------------------------------------------------------
+
   static const String _coleccion = "equipos";
 
-  /*
-    Nombre: crearEquipo
-    Descripción:
-      Crea un equipo y lo almacena en Firestore.
-    Entradas:
-      - equipo (sin ID asignado)
-    Salida:
-      - Equipo con ID asignado por Firestore.
-  */
+  static const String _campoIdLiga = "idLiga";
+  static const String _campoActivo = "activo";
+
+  // ---------------------------------------------------------------------------
+  // Crear equipo
+  // ---------------------------------------------------------------------------
   Future<Equipo> crearEquipo(Equipo equipo) async {
     try {
       final doc = await _db.collection(_coleccion).add(equipo.aMapa());
-      final nuevoEquipo = equipo.copiarCon(id: doc.id);
+      final nuevo = equipo.copiarCon(id: doc.id);
 
-      log.informacion("Equipo creado: ${nuevoEquipo.id}");
-      return nuevoEquipo;
+      _log.informacion("${TextosApp.LOG_EQUIPOS_CREAR} ${nuevo.id}");
+      return nuevo;
     } catch (e) {
-      log.error("Error al crear equipo: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: obtenerEquiposDeLiga
-    Descripción:
-      Devuelve todos los equipos asociados a una liga por idLiga.
-  */
+  // ---------------------------------------------------------------------------
+  // Obtener todos los equipos de una liga
+  // ---------------------------------------------------------------------------
   Future<List<Equipo>> obtenerEquiposDeLiga(String idLiga) async {
     try {
-      final consulta = await _db
+      final query = await _db
           .collection(_coleccion)
-          .where('idLiga', isEqualTo: idLiga)
+          .where(_campoIdLiga, isEqualTo: idLiga)
           .get();
 
-      return consulta.docs
-          .map((doc) => Equipo.desdeMapa(doc.id, doc.data()))
-          .toList();
+      _log.informacion("${TextosApp.LOG_EQUIPOS_LISTAR} $idLiga");
+
+      return query.docs.map((d) => Equipo.desdeMapa(d.id, d.data())).toList();
     } catch (e) {
-      log.error("Error al obtener equipos de liga: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: editarEquipo
-    Descripción:
-      Actualiza un equipo existente.
-  */
+  // ---------------------------------------------------------------------------
+  // Editar equipo
+  // ---------------------------------------------------------------------------
   Future<void> editarEquipo(Equipo equipo) async {
     try {
       await _db.collection(_coleccion).doc(equipo.id).update(equipo.aMapa());
-      log.informacion("Equipo actualizado: ${equipo.id}");
+      _log.informacion("${TextosApp.LOG_EQUIPOS_EDITAR} ${equipo.id}");
     } catch (e) {
-      log.error("Error al editar equipo: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: archivarEquipo
-    Descripción:
-      Cambia estado activo=false.
-  */
+  // ---------------------------------------------------------------------------
+  // Archivar equipo (activo = false)
+  // ---------------------------------------------------------------------------
   Future<void> archivarEquipo(String id) async {
     try {
-      await _db.collection(_coleccion).doc(id).update({'activo': false});
-      log.informacion("Equipo archivado: $id");
+      await _db.collection(_coleccion).doc(id).update({_campoActivo: false});
+      _log.informacion("${TextosApp.LOG_EQUIPOS_ARCHIVAR} $id");
     } catch (e) {
-      log.error("Error al archivar equipo: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: activarEquipo
-    Descripción:
-      Cambia estado activo=true.
-  */
+  // ---------------------------------------------------------------------------
+  // Activar equipo (activo = true)
+  // ---------------------------------------------------------------------------
   Future<void> activarEquipo(String id) async {
     try {
-      await _db.collection(_coleccion).doc(id).update({'activo': true});
-      log.informacion("Equipo activado: $id");
+      await _db.collection(_coleccion).doc(id).update({_campoActivo: true});
+      _log.informacion("${TextosApp.LOG_EQUIPOS_ACTIVAR} $id");
     } catch (e) {
-      log.error("Error al activar equipo: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: eliminarEquipo
-    Descripción:
-      Elimina un equipo de forma permanente.
-  */
+  // ---------------------------------------------------------------------------
+  // Eliminar equipo
+  // ---------------------------------------------------------------------------
   Future<void> eliminarEquipo(String id) async {
     try {
       await _db.collection(_coleccion).doc(id).delete();
-      log.informacion("Equipo eliminado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPOS_ELIMINAR} $id");
     } catch (e) {
-      log.error("Error al eliminar equipo: $e");
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
       rethrow;
     }
   }

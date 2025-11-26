@@ -1,18 +1,21 @@
 /*
   Archivo: servicio_autenticacion.dart
   Descripción:
-    Servicio encargado de gestionar la autenticación de usuarios mediante Firebase Auth.
-    Permite registrar usuarios, iniciar sesión, cerrar sesión y obtener información de roles
-    almacenados en Firestore.
+    Servicio encargado de gestionar la autenticación mediante Firebase Auth
+    y la administración de los documentos de usuario en Firestore.
 
   Dependencias:
     - firebase_auth
     - cloud_firestore
     - servicio_log.dart
+    - roles.dart
+    - textos_app.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fantasypro/modelos/roles.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import '../utilidades/servicio_log.dart';
 
 class ServicioAutenticacion {
@@ -20,19 +23,25 @@ class ServicioAutenticacion {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final ServicioLog _log = ServicioLog();
 
-  /// Registra un usuario nuevo en Firebase Auth y genera su documento en Firestore.
-  /// Entradas:
-  ///   - email (String)
-  ///   - password (String)
-  ///   - nombre (String)
-  ///   - rol (String)
-  /// Salida:
-  ///   - Future<String?>: UID del usuario creado, o null si falla.
+  // ---------------------------------------------------------------------------
+  // Constantes internas: nombres de colección y campos Firestore
+  // ---------------------------------------------------------------------------
+  static const String _coleccionUsuarios = "usuarios";
+
+  static const String _campoUid = "uid";
+  static const String _campoNombre = "nombre";
+  static const String _campoEmail = "email";
+  static const String _campoRol = "rol";
+  static const String _campoCreado = "creado";
+
+  // ---------------------------------------------------------------------------
+  // Registrar usuario
+  // ---------------------------------------------------------------------------
   Future<String?> registrarUsuario(
     String email,
     String password,
     String nombre,
-    String rol,
+    String rolDB, // debe venir de RolUsuario.valorDB
   ) async {
     try {
       final cred = await _auth.createUserWithEmailAndPassword(
@@ -42,57 +51,70 @@ class ServicioAutenticacion {
 
       final uid = cred.user!.uid;
 
-      await _db.collection('usuarios').doc(uid).set({
-        'uid': uid,
-        'nombre': nombre,
-        'email': email,
-        'rol': rol,
-        'creado': DateTime.now().toIso8601String(),
+      await _db.collection(_coleccionUsuarios).doc(uid).set({
+        _campoUid: uid,
+        _campoNombre: nombre,
+        _campoEmail: email,
+        _campoRol: rolDB,
+        _campoCreado: DateTime.now().millisecondsSinceEpoch,
       });
 
-      _log.informacion("Usuario registrado con rol $rol: $email");
+      _log.informacion(
+        "${TextosApp.LOG_AUTH_USUARIO_REGISTRADO} $email (rol: $rolDB)",
+      );
+
       return uid;
     } catch (e) {
-      _log.error("Error al registrar usuario: $e");
+      _log.error("${TextosApp.LOG_AUTH_REGISTRO_FALLIDO} $e");
       return null;
     }
   }
 
-  /// Inicia sesión con correo y contraseña.
+  // ---------------------------------------------------------------------------
+  // Inicio de sesión
+  // ---------------------------------------------------------------------------
   Future<User?> iniciarSesion(String email, String password) async {
     try {
       final cred = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      _log.informacion("Inicio de sesión: $email");
+
+      _log.informacion("${TextosApp.LOG_AUTH_INICIO_SESION} $email");
       return cred.user;
     } catch (e) {
-      _log.error("Error en login: $e");
+      _log.error("${TextosApp.LOG_AUTH_LOGIN_ERROR} $e");
       return null;
     }
   }
 
-  /// Cierra la sesión del usuario actual.
+  // ---------------------------------------------------------------------------
+  // Cerrar sesión
+  // ---------------------------------------------------------------------------
   Future<void> cerrarSesion() async {
     await _auth.signOut();
-    _log.informacion("Sesión cerrada");
+    _log.informacion(TextosApp.LOG_AUTH_LOGOUT);
   }
 
-  /// Devuelve el usuario actualmente autenticado.
+  // ---------------------------------------------------------------------------
+  // Usuario actual
+  // ---------------------------------------------------------------------------
   User? obtenerUsuarioActual() {
     return _auth.currentUser;
   }
 
-  /// Valida si el usuario es administrador
-  /// (lee campo "rol" desde Firestore).
+  // ---------------------------------------------------------------------------
+  // Validación de rol administrador
+  // ---------------------------------------------------------------------------
   Future<bool> esAdmin(String uid) async {
     try {
-      final doc = await _db.collection('usuarios').doc(uid).get();
+      final doc = await _db.collection(_coleccionUsuarios).doc(uid).get();
       if (!doc.exists) return false;
-      return doc['rol'] == 'admin';
+
+      final rolDB = (doc[_campoRol] ?? "") as String;
+      return RolUsuarioExt.desdeValorDB(rolDB) == RolUsuario.admin;
     } catch (e) {
-      _log.error("Error verificando rol de admin: $e");
+      _log.error("${TextosApp.LOG_AUTH_ERROR_ROL} $e");
       return false;
     }
   }
