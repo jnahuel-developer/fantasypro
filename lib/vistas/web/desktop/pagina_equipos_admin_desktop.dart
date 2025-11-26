@@ -1,13 +1,25 @@
 /*
   Archivo: pagina_equipos_admin_desktop.dart
   Descripción:
-    Pantalla de administración de equipos dentro de una liga específica.
+    Pantalla de administración de equipos pertenecientes a una liga.
+    Permite:
+      - Visualizar equipos activos y archivados.
+      - Crear nuevos equipos.
+      - Editar un equipo existente.
+      - Archivar / activar equipos.
+      - Eliminar equipos de forma permanente.
+  Dependencias:
+    - modelos/liga.dart
+    - modelos/equipo.dart
+    - controladores/controlador_equipos.dart
+    - vistas/web/desktop/pagina_equipo_editar_desktop.dart
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/controladores/controlador_equipos.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/controladores/controlador_equipos.dart';
+import 'package:fantasypro/vistas/web/desktop/pagina_equipo_editar_desktop.dart';
 
 class PaginaEquiposAdminDesktop extends StatefulWidget {
   final Liga liga;
@@ -33,80 +45,115 @@ class _PaginaEquiposAdminDesktopEstado
     cargar();
   }
 
+  /*
+    Nombre: cargar
+    Descripción:
+      Recupera todos los equipos pertenecientes a la liga actual.
+      Divide el resultado entre activos y archivados para mostrarlos en columnas separadas.
+  */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
-    final lista = await controlador.obtenerPorLiga(widget.liga.id);
+    final todos = await controlador.obtenerPorLiga(widget.liga.id);
 
-    activos = lista.where((e) => e.activo).toList();
-    archivados = lista.where((e) => !e.activo).toList();
+    activos = todos.where((e) => e.activo).toList();
+    archivados = todos.where((e) => !e.activo).toList();
 
     setState(() => cargando = false);
   }
 
+  /*
+    Nombre: crearEquipo
+    Descripción:
+      Abre un diálogo para ingresar nombre y descripción del equipo.
+  */
   Future<void> crearEquipo() async {
-    final txtNombre = TextEditingController();
-    final txtDescripcion = TextEditingController();
+    final controladorNombre = TextEditingController();
+    final controladorDescripcion = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text("Crear equipo en ${widget.liga.nombre}"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: txtNombre,
-              decoration: const InputDecoration(labelText: "Nombre del equipo"),
-            ),
-            TextField(
-              controller: txtDescripcion,
-              decoration: const InputDecoration(
-                labelText: "Descripción (opcional)",
+      builder: (_) {
+        return AlertDialog(
+          title: Text("Crear equipo en ${widget.liga.nombre}"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controladorNombre,
+                decoration: const InputDecoration(
+                  labelText: "Nombre del equipo",
+                ),
               ),
+              TextField(
+                controller: controladorDescripcion,
+                decoration: const InputDecoration(labelText: "Descripción"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            ElevatedButton(
+              child: const Text("Crear"),
+              onPressed: () async {
+                final nombre = controladorNombre.text.trim();
+                final descripcion = controladorDescripcion.text.trim();
+
+                if (nombre.isEmpty) return;
+
+                await controlador.crearEquipo(
+                  widget.liga.id,
+                  nombre,
+                  descripcion,
+                );
+
+                Navigator.pop(context);
+                cargar();
+              },
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("Cancelar"),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            child: const Text("Crear"),
-            onPressed: () async {
-              final nombre = txtNombre.text.trim();
-              final descripcion = txtDescripcion.text.trim();
-
-              if (nombre.isEmpty) return;
-
-              await controlador.crearEquipo(
-                widget.liga.id,
-                nombre,
-                descripcion,
-              );
-
-              Navigator.pop(context);
-              cargar();
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
+  /*
+    Nombre: itemEquipo
+    Descripción:
+      Construye un ListTile con acciones de administración para cada equipo.
+  */
   Widget itemEquipo(Equipo equipo) {
     return ListTile(
       title: Text(equipo.nombre),
-      subtitle: Text(
-        "Desde ${DateTime.fromMillisecondsSinceEpoch(equipo.fechaCreacion)}",
-      ),
+      subtitle: Text(equipo.descripcion),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Editar
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: "Editar equipo",
+            onPressed: () async {
+              final resultado = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PaginaEquipoEditarDesktop(equipo: equipo),
+                ),
+              );
+
+              if (resultado == true) {
+                cargar();
+              }
+            },
+          ),
+
           // Archivar / activar
           IconButton(
             icon: Icon(equipo.activo ? Icons.archive : Icons.unarchive),
+            tooltip: equipo.activo ? "Archivar" : "Activar",
             onPressed: () async {
               if (equipo.activo) {
                 await controlador.archivar(equipo.id);
@@ -116,9 +163,11 @@ class _PaginaEquiposAdminDesktopEstado
               cargar();
             },
           ),
+
           // Eliminar
           IconButton(
             icon: const Icon(Icons.delete),
+            tooltip: "Eliminar equipo",
             onPressed: () async {
               await controlador.eliminar(equipo.id);
               cargar();
@@ -132,7 +181,7 @@ class _PaginaEquiposAdminDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Equipos de ${widget.liga.nombre}")),
+      appBar: AppBar(title: Text("Equipos de la liga: ${widget.liga.nombre}")),
       floatingActionButton: FloatingActionButton(
         onPressed: crearEquipo,
         child: const Icon(Icons.add),
@@ -141,41 +190,44 @@ class _PaginaEquiposAdminDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Activos
+                // -------------------------------
+                // Columnas de equipos activos
+                // -------------------------------
                 Expanded(
                   child: Column(
                     children: [
                       const Text(
                         "Activos",
                         style: TextStyle(
-                          fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                       Expanded(
                         child: ListView(
-                          children: activos.map((e) => itemEquipo(e)).toList(),
+                          children: activos.map(itemEquipo).toList(),
                         ),
                       ),
                     ],
                   ),
                 ),
-                // Archivados
+
+                // -------------------------------
+                // Columnas de equipos archivados
+                // -------------------------------
                 Expanded(
                   child: Column(
                     children: [
                       const Text(
                         "Archivados",
                         style: TextStyle(
-                          fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                       Expanded(
                         child: ListView(
-                          children: archivados
-                              .map((e) => itemEquipo(e))
-                              .toList(),
+                          children: archivados.map(itemEquipo).toList(),
                         ),
                       ),
                     ],
