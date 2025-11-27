@@ -72,6 +72,17 @@ class TextosApp {
   static const LOG_LIGA_ERROR_ELIMINAR = "Error al eliminar liga:";
 
   // ---------------------------------------------------------------------------
+  // Logs - Jugadores
+  // ---------------------------------------------------------------------------
+  static const LOG_JUGADORES_CREAR = "Crear jugador:";
+  static const LOG_JUGADORES_EDITAR = "Editar jugador:";
+  static const LOG_JUGADORES_ARCHIVAR = "Archivar jugador:";
+  static const LOG_JUGADORES_ACTIVAR = "Activar jugador:";
+  static const LOG_JUGADORES_ELIMINAR = "Eliminar jugador:";
+  static const LOG_JUGADORES_LISTAR = "Listar jugadores de equipo:";
+  static const LOG_JUGADORES_ERROR = "Error en operación de jugadores:";
+
+  // ---------------------------------------------------------------------------
   // Errores – Equipos
   // ---------------------------------------------------------------------------
   static const ERR_EQUIPO_ID_LIGA_VACIO =
@@ -115,6 +126,35 @@ class TextosApp {
   static const LOG_LIGA_ARCHIVANDO = "Archivando liga";
   static const LOG_LIGA_ACTIVANDO = "Activando liga";
   static const LOG_LIGA_ELIMINANDO = "Eliminando liga";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Jugadores
+  // ---------------------------------------------------------------------------
+  static const ERR_JUGADOR_ID_EQUIPO_VACIO =
+      "El identificador del equipo no puede estar vacío.";
+  static const ERR_JUGADOR_NOMBRE_VACIO =
+      "El nombre del jugador no puede quedar vacío.";
+  static const ERR_JUGADOR_POSICION_VACIO =
+      "La posición del jugador no puede quedar vacía.";
+  static const ERR_JUGADOR_DORSAL_NEGATIVO =
+      "El número de dorsal no puede ser negativo.";
+
+  // ---------------------------------------------------------------------------
+  // Valores por defecto – Jugadores
+  // (si en el futuro querés agregar defaults, quedan definidas aquí)
+  // ---------------------------------------------------------------------------
+  static const JUGADOR_NACIONALIDAD_POR_DEFECTO = "";
+  static const JUGADOR_DORSAL_POR_DEFECTO = 0;
+
+  // ---------------------------------------------------------------------------
+  // Logs – Jugadores
+  // ---------------------------------------------------------------------------
+  static const LOG_JUGADOR_CREANDO = "Creando jugador en equipo";
+  static const LOG_JUGADOR_LISTANDO = "Solicitando jugadores del equipo";
+  static const LOG_JUGADOR_ARCHIVANDO = "Archivando jugador";
+  static const LOG_JUGADOR_ACTIVANDO = "Activando jugador";
+  static const LOG_JUGADOR_ELIMINANDO = "Eliminando jugador";
+  static const LOG_JUGADOR_EDITANDO = "Editando jugador";
 
   // ---------------------------------------------------------------------------
   // Errores – Roles
@@ -273,4 +313,74 @@ class TextosApp {
   // Columnas
   static const EQUIPOS_ADMIN_COLUMNA_ACTIVOS = "Activos ({CANT})";
   static const EQUIPOS_ADMIN_COLUMNA_ARCHIVADOS = "Archivados ({CANT})";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Edición de jugador
+  // Archivo: pagina_jugador_editar_desktop.dart
+  // Prefijo: JUGADOR_EDITAR_
+  // ---------------------------------------------------------------------------
+
+  static const JUGADOR_EDITAR_TITULO = "Editar jugador";
+  static const JUGADOR_EDITAR_BOTON_VOLVER = "Volver";
+
+  static const JUGADOR_EDITAR_LABEL_NOMBRE = "Nombre";
+  static const JUGADOR_EDITAR_LABEL_POSICION = "Posición";
+  static const JUGADOR_EDITAR_LABEL_NACIONALIDAD = "Nacionalidad";
+  static const JUGADOR_EDITAR_LABEL_DORSAL = "Dorsal (opcional)";
+
+  static const JUGADOR_EDITAR_BOTON_GUARDAR = "Guardar cambios";
+
+  static const JUGADOR_EDITAR_VALIDACION_OBLIGATORIOS =
+      "Los campos Nombre y Posición son obligatorios.";
+
+  static const JUGADOR_EDITAR_DIALOGO_DESCARTAR_TITULO = "Descartar cambios";
+  static const JUGADOR_EDITAR_DIALOGO_DESCARTAR_MENSAJE =
+      "Hay cambios sin guardar. ¿Desea salir igualmente?";
+  static const JUGADOR_EDITAR_DIALOGO_DESCARTAR_BOTON_CANCELAR = "Cancelar";
+  static const JUGADOR_EDITAR_DIALOGO_DESCARTAR_BOTON_SALIR = "Salir";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Administración de jugadores de un equipo
+  // Archivo: pagina_jugadores_admin_desktop.dart
+  // Prefijo: JUGADORES_ADMIN_
+  // ---------------------------------------------------------------------------
+
+  // AppBar
+  static const JUGADORES_ADMIN_APPBAR_TITULO = "Jugadores — {EQUIPO}";
+  static const JUGADORES_ADMIN_APPBAR_VOLVER = "Volver";
+  static const JUGADORES_ADMIN_APPBAR_GESTION_TEXTO = "Gestión de jugadores";
+
+  // Crear jugador
+  static const JUGADORES_ADMIN_CREAR_TITULO = "Crear jugador en {EQUIPO}";
+  static const JUGADORES_ADMIN_CREAR_LABEL_NOMBRE = "Nombre";
+  static const JUGADORES_ADMIN_CREAR_LABEL_POSICION = "Posición";
+  static const JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD = "Nacionalidad";
+  static const JUGADORES_ADMIN_CREAR_LABEL_DORSAL = "Dorsal (opcional)";
+  static const JUGADORES_ADMIN_CREAR_BOTON_CANCELAR = "Cancelar";
+  static const JUGADORES_ADMIN_CREAR_BOTON_CREAR = "Crear";
+
+  // Validación
+  static const JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS =
+      "Los campos Nombre y Posición son obligatorios.";
+
+  // Confirmaciones
+  static const JUGADORES_ADMIN_CONFIRMAR_TITULO = "Confirmación";
+  static const JUGADORES_ADMIN_CONFIRMAR_CANCELAR = "Cancelar";
+  static const JUGADORES_ADMIN_CONFIRMAR_ACEPTAR = "Aceptar";
+
+  static const JUGADORES_ADMIN_CONFIRMAR_ARCHIVAR =
+      "¿Desea archivar el jugador?";
+  static const JUGADORES_ADMIN_CONFIRMAR_ACTIVAR = "¿Desea activar el jugador?";
+  static const JUGADORES_ADMIN_CONFIRMAR_ELIMINAR =
+      "¿Seguro que desea eliminar este jugador?";
+
+  // Tooltips
+  static const JUGADORES_ADMIN_TOOLTIP_EDITAR = "Editar jugador";
+  static const JUGADORES_ADMIN_TOOLTIP_ARCHIVAR = "Archivar";
+  static const JUGADORES_ADMIN_TOOLTIP_ACTIVAR = "Activar";
+  static const JUGADORES_ADMIN_TOOLTIP_ELIMINAR = "Eliminar jugador";
+
+  // Columnas
+  static const JUGADORES_ADMIN_COLUMNA_ACTIVOS = "Activos ({CANT})";
+  static const JUGADORES_ADMIN_COLUMNA_ARCHIVADOS = "Archivados ({CANT})";
 }
