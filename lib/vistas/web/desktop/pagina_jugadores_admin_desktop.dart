@@ -6,7 +6,6 @@
     - Crear jugador
     - Editar jugador
     - Archivar / Activar / Eliminar con confirmación
-    - Conteos y ordenamiento A–Z
 */
 
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:fantasypro/modelos/jugador.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/controladores/controlador_jugadores.dart';
 import 'package:fantasypro/vistas/web/desktop/pagina_jugador_editar_desktop.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class PaginaJugadoresAdminDesktop extends StatefulWidget {
   final Equipo equipo;
@@ -58,40 +58,52 @@ class _PaginaJugadoresAdminDesktopEstado
   }
 
   Future<void> crearJugador() async {
-    final controladorNombre = TextEditingController();
-    final controladorPosicion = TextEditingController();
-    final controladorNacionalidad = TextEditingController();
-    final controladorDorsal = TextEditingController();
+    final ctrlNombre = TextEditingController();
+    final ctrlPosicion = TextEditingController();
+    final ctrlNacionalidad = TextEditingController();
+    final ctrlDorsal = TextEditingController();
 
     showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text("Crear jugador en ${widget.equipo.nombre}"),
+          title: Text(
+            TextosApp.JUGADORES_ADMIN_CREAR_TITULO.replaceAll(
+              "{EQUIPO}",
+              widget.equipo.nombre,
+            ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: controladorNombre,
-                  decoration: const InputDecoration(labelText: "Nombre"),
+                  controller: ctrlNombre,
+                  decoration: const InputDecoration(
+                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NOMBRE,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: controladorPosicion,
-                  decoration: const InputDecoration(labelText: "Posición"),
+                  controller: ctrlPosicion,
+                  decoration: const InputDecoration(
+                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_POSICION,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: controladorNacionalidad,
-                  decoration: const InputDecoration(labelText: "Nacionalidad"),
+                  controller: ctrlNacionalidad,
+                  decoration: const InputDecoration(
+                    labelText:
+                        TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: controladorDorsal,
+                  controller: ctrlDorsal,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: "Dorsal (opcional)",
+                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_DORSAL,
                   ),
                 ),
               ],
@@ -99,25 +111,26 @@ class _PaginaJugadoresAdminDesktopEstado
           ),
           actions: [
             TextButton(
-              child: const Text("Cancelar"),
+              child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CANCELAR),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              child: const Text("Crear"),
+              child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CREAR),
               onPressed: () async {
-                final nombre = controladorNombre.text.trim();
-                final posicion = controladorPosicion.text.trim();
-                final nacionalidad = controladorNacionalidad.text.trim();
-                final dorsalText = controladorDorsal.text.trim();
+                final nombre = ctrlNombre.text.trim();
+                final posicion = ctrlPosicion.text.trim();
+                final nacionalidad = ctrlNacionalidad.text.trim();
+                final dorsalText = ctrlDorsal.text.trim();
                 final dorsal = dorsalText.isEmpty
                     ? 0
                     : int.tryParse(dorsalText) ?? 0;
 
                 if (nombre.isEmpty || posicion.isEmpty) {
-                  // validación mínima
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Nombre y posición son obligatorios."),
+                      content: Text(
+                        TextosApp.JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS,
+                      ),
                     ),
                   );
                   return;
@@ -145,15 +158,15 @@ class _PaginaJugadoresAdminDesktopEstado
     final res = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Confirmación"),
+        title: const Text(TextosApp.JUGADORES_ADMIN_CONFIRMAR_TITULO),
         content: Text(mensaje),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.JUGADORES_ADMIN_CONFIRMAR_CANCELAR),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Aceptar"),
+            child: const Text(TextosApp.JUGADORES_ADMIN_CONFIRMAR_ACEPTAR),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -186,7 +199,7 @@ class _PaginaJugadoresAdminDesktopEstado
           children: [
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: "Editar jugador",
+              tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_EDITAR,
               onPressed: () async {
                 final resultado = await Navigator.push(
                   context,
@@ -199,12 +212,14 @@ class _PaginaJugadoresAdminDesktopEstado
             ),
             IconButton(
               icon: Icon(j.activo ? Icons.archive : Icons.unarchive),
-              tooltip: j.activo ? "Archivar" : "Activar",
+              tooltip: j.activo
+                  ? TextosApp.JUGADORES_ADMIN_TOOLTIP_ARCHIVAR
+                  : TextosApp.JUGADORES_ADMIN_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 final ok = await confirmar(
                   j.activo
-                      ? "¿Desea archivar el jugador?"
-                      : "¿Desea activar el jugador?",
+                      ? TextosApp.JUGADORES_ADMIN_CONFIRMAR_ARCHIVAR
+                      : TextosApp.JUGADORES_ADMIN_CONFIRMAR_ACTIVAR,
                 );
                 if (!ok) return;
 
@@ -218,10 +233,10 @@ class _PaginaJugadoresAdminDesktopEstado
             ),
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: "Eliminar jugador",
+              tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 final ok = await confirmar(
-                  "¿Seguro que desea eliminar este jugador?",
+                  TextosApp.JUGADORES_ADMIN_CONFIRMAR_ELIMINAR,
                 );
                 if (!ok) return;
 
@@ -239,10 +254,15 @@ class _PaginaJugadoresAdminDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Jugadores — ${widget.equipo.nombre}"),
+        title: Text(
+          TextosApp.JUGADORES_ADMIN_APPBAR_TITULO.replaceAll(
+            "{EQUIPO}",
+            widget.equipo.nombre,
+          ),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: "Volver",
+          tooltip: TextosApp.JUGADORES_ADMIN_APPBAR_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -250,7 +270,7 @@ class _PaginaJugadoresAdminDesktopEstado
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de jugadores",
+                TextosApp.JUGADORES_ADMIN_APPBAR_GESTION_TEXTO,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -269,7 +289,10 @@ class _PaginaJugadoresAdminDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Activos (${activos.length})",
+                        TextosApp.JUGADORES_ADMIN_COLUMNA_ACTIVOS.replaceAll(
+                          "{CANT}",
+                          activos.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -287,7 +310,10 @@ class _PaginaJugadoresAdminDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Archivados (${archivados.length})",
+                        TextosApp.JUGADORES_ADMIN_COLUMNA_ARCHIVADOS.replaceAll(
+                          "{CANT}",
+                          archivados.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

@@ -9,6 +9,7 @@
 import 'package:fantasypro/modelos/jugador.dart';
 import 'package:fantasypro/servicios/firebase/servicio_jugadores.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ControladorJugadores {
   final ServicioJugadores _servicio = ServicioJugadores();
@@ -21,23 +22,23 @@ class ControladorJugadores {
     String idEquipo,
     String nombre,
     String posicion, {
-    String nacionalidad = "",
-    int dorsal = 0,
+    String nacionalidad = TextosApp.JUGADOR_NACIONALIDAD_POR_DEFECTO,
+    int dorsal = TextosApp.JUGADOR_DORSAL_POR_DEFECTO,
   }) async {
     if (idEquipo.isEmpty) {
-      throw ArgumentError("El idEquipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_ID_EQUIPO_VACIO);
     }
 
     if (nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre del jugador no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_NOMBRE_VACIO);
     }
 
     if (posicion.trim().isEmpty) {
-      throw ArgumentError("La posición del jugador no puede estar vacía.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_POSICION_VACIO);
     }
 
     if (dorsal < 0) {
-      throw ArgumentError("El dorsal no puede ser negativo.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_DORSAL_NEGATIVO);
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -53,7 +54,7 @@ class ControladorJugadores {
       activo: true,
     );
 
-    _log.informacion("Creando jugador en equipo $idEquipo: ${jugador.nombre}");
+    _log.informacion("${TextosApp.LOG_JUGADOR_CREANDO} $idEquipo");
 
     return await _servicio.crearJugador(jugador);
   }
@@ -63,10 +64,11 @@ class ControladorJugadores {
   // ---------------------------------------------------------------------------
   Future<List<Jugador>> obtenerPorEquipo(String idEquipo) async {
     if (idEquipo.isEmpty) {
-      throw ArgumentError("El idEquipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_ID_EQUIPO_VACIO);
     }
 
-    _log.informacion("Solicitando jugadores del equipo $idEquipo");
+    _log.informacion("${TextosApp.LOG_JUGADOR_LISTANDO} $idEquipo");
+
     return await _servicio.obtenerJugadoresDeEquipo(idEquipo);
   }
 
@@ -74,7 +76,7 @@ class ControladorJugadores {
   // Archivar jugador
   // ---------------------------------------------------------------------------
   Future<void> archivar(String idJugador) async {
-    _log.advertencia("Archivando jugador $idJugador");
+    _log.advertencia("${TextosApp.LOG_JUGADOR_ARCHIVANDO} $idJugador");
     await _servicio.archivarJugador(idJugador);
   }
 
@@ -82,7 +84,7 @@ class ControladorJugadores {
   // Activar jugador
   // ---------------------------------------------------------------------------
   Future<void> activar(String idJugador) async {
-    _log.informacion("Activando jugador $idJugador");
+    _log.informacion("${TextosApp.LOG_JUGADOR_ACTIVANDO} $idJugador");
     await _servicio.activarJugador(idJugador);
   }
 
@@ -90,7 +92,7 @@ class ControladorJugadores {
   // Eliminar jugador
   // ---------------------------------------------------------------------------
   Future<void> eliminar(String idJugador) async {
-    _log.error("Eliminando jugador $idJugador");
+    _log.error("${TextosApp.LOG_JUGADOR_ELIMINANDO} $idJugador");
     await _servicio.eliminarJugador(idJugador);
   }
 
@@ -99,18 +101,19 @@ class ControladorJugadores {
   // ---------------------------------------------------------------------------
   Future<void> editar(Jugador jugador) async {
     if (jugador.nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre del jugador no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_NOMBRE_VACIO);
     }
 
     if (jugador.posicion.trim().isEmpty) {
-      throw ArgumentError("La posición del jugador no puede estar vacía.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_POSICION_VACIO);
     }
 
     if (jugador.dorsal < 0) {
-      throw ArgumentError("El dorsal no puede ser negativo.");
+      throw ArgumentError(TextosApp.ERR_JUGADOR_DORSAL_NEGATIVO);
     }
 
-    _log.informacion("Editando jugador ${jugador.id}");
+    _log.informacion("${TextosApp.LOG_JUGADOR_EDITANDO} ${jugador.id}");
+
     await _servicio.editarJugador(jugador);
   }
 }

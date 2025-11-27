@@ -9,11 +9,13 @@
     - cloud_firestore
     - modelos/jugador.dart
     - servicio_log.dart
+    - textos_app.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/jugador.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ServicioJugadores {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -35,10 +37,10 @@ class ServicioJugadores {
       final doc = await _db.collection(_coleccion).add(jugador.aMapa());
       final nuevo = jugador.copiarCon(id: doc.id);
 
-      _log.informacion("Jugador creado: ${nuevo.id}");
+      _log.informacion("${TextosApp.LOG_JUGADORES_CREAR} ${nuevo.id}");
       return nuevo;
     } catch (e) {
-      _log.error("Error al crear jugador: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }
@@ -53,11 +55,11 @@ class ServicioJugadores {
           .where(_campoIdEquipo, isEqualTo: idEquipo)
           .get();
 
-      _log.informacion("Listado de jugadores para equipo $idEquipo");
+      _log.informacion("${TextosApp.LOG_JUGADORES_LISTAR} $idEquipo");
 
       return query.docs.map((d) => Jugador.desdeMapa(d.id, d.data())).toList();
     } catch (e) {
-      _log.error("Error al obtener jugadores: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }
@@ -68,9 +70,9 @@ class ServicioJugadores {
   Future<void> editarJugador(Jugador jugador) async {
     try {
       await _db.collection(_coleccion).doc(jugador.id).update(jugador.aMapa());
-      _log.informacion("Jugador editado: ${jugador.id}");
+      _log.informacion("${TextosApp.LOG_JUGADORES_EDITAR} ${jugador.id}");
     } catch (e) {
-      _log.error("Error al editar jugador: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }
@@ -81,9 +83,9 @@ class ServicioJugadores {
   Future<void> archivarJugador(String id) async {
     try {
       await _db.collection(_coleccion).doc(id).update({_campoActivo: false});
-      _log.informacion("Jugador archivado: $id");
+      _log.informacion("${TextosApp.LOG_JUGADORES_ARCHIVAR} $id");
     } catch (e) {
-      _log.error("Error al archivar jugador: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }
@@ -94,9 +96,9 @@ class ServicioJugadores {
   Future<void> activarJugador(String id) async {
     try {
       await _db.collection(_coleccion).doc(id).update({_campoActivo: true});
-      _log.informacion("Jugador activado: $id");
+      _log.informacion("${TextosApp.LOG_JUGADORES_ACTIVAR} $id");
     } catch (e) {
-      _log.error("Error al activar jugador: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }
@@ -107,9 +109,9 @@ class ServicioJugadores {
   Future<void> eliminarJugador(String id) async {
     try {
       await _db.collection(_coleccion).doc(id).delete();
-      _log.informacion("Jugador eliminado: $id");
+      _log.informacion("${TextosApp.LOG_JUGADORES_ELIMINAR} $id");
     } catch (e) {
-      _log.error("Error al eliminar jugador: $e");
+      _log.error("${TextosApp.LOG_JUGADORES_ERROR} $e");
       rethrow;
     }
   }

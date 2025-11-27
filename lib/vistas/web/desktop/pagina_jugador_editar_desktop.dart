@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/jugador.dart';
 import 'package:fantasypro/controladores/controlador_jugadores.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class PaginaJugadorEditarDesktop extends StatefulWidget {
   final Jugador jugador;
@@ -37,12 +38,16 @@ class _PaginaJugadorEditarDesktopEstado
   @override
   void initState() {
     super.initState();
+
     _ctrlNombre = TextEditingController(text: widget.jugador.nombre)
       ..addListener(() => setState(() => hayCambios = true));
+
     _ctrlPosicion = TextEditingController(text: widget.jugador.posicion)
       ..addListener(() => setState(() => hayCambios = true));
+
     _ctrlNacionalidad = TextEditingController(text: widget.jugador.nacionalidad)
       ..addListener(() => setState(() => hayCambios = true));
+
     _ctrlDorsal = TextEditingController(
       text: widget.jugador.dorsal > 0 ? widget.jugador.dorsal.toString() : "",
     )..addListener(() => setState(() => hayCambios = true));
@@ -54,17 +59,19 @@ class _PaginaJugadorEditarDesktopEstado
     final salir = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Descartar cambios"),
-        content: const Text(
-          "Hay cambios sin guardar. ¿Desea salir igualmente?",
-        ),
+        title: const Text(TextosApp.JUGADOR_EDITAR_DIALOGO_DESCARTAR_TITULO),
+        content: const Text(TextosApp.JUGADOR_EDITAR_DIALOGO_DESCARTAR_MENSAJE),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(
+              TextosApp.JUGADOR_EDITAR_DIALOGO_DESCARTAR_BOTON_CANCELAR,
+            ),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Salir"),
+            child: const Text(
+              TextosApp.JUGADOR_EDITAR_DIALOGO_DESCARTAR_BOTON_SALIR,
+            ),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -83,7 +90,9 @@ class _PaginaJugadorEditarDesktopEstado
 
     if (nombre.isEmpty || posicion.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Nombre y posición son obligatorios.")),
+        const SnackBar(
+          content: Text(TextosApp.JUGADOR_EDITAR_VALIDACION_OBLIGATORIOS),
+        ),
       );
       return;
     }
@@ -108,10 +117,10 @@ class _PaginaJugadorEditarDesktopEstado
       onWillPop: confirmarSalida,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Editar jugador"),
+          title: const Text(TextosApp.JUGADOR_EDITAR_TITULO),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            tooltip: "Volver",
+            tooltip: TextosApp.JUGADOR_EDITAR_BOTON_VOLVER,
             onPressed: () async {
               final ok = await confirmarSalida();
               if (ok && mounted) Navigator.pop(context);
@@ -129,7 +138,7 @@ class _PaginaJugadorEditarDesktopEstado
                   TextField(
                     controller: _ctrlNombre,
                     decoration: const InputDecoration(
-                      labelText: "Nombre",
+                      labelText: TextosApp.JUGADOR_EDITAR_LABEL_NOMBRE,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -137,7 +146,7 @@ class _PaginaJugadorEditarDesktopEstado
                   TextField(
                     controller: _ctrlPosicion,
                     decoration: const InputDecoration(
-                      labelText: "Posición",
+                      labelText: TextosApp.JUGADOR_EDITAR_LABEL_POSICION,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -145,7 +154,7 @@ class _PaginaJugadorEditarDesktopEstado
                   TextField(
                     controller: _ctrlNacionalidad,
                     decoration: const InputDecoration(
-                      labelText: "Nacionalidad",
+                      labelText: TextosApp.JUGADOR_EDITAR_LABEL_NACIONALIDAD,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -154,7 +163,7 @@ class _PaginaJugadorEditarDesktopEstado
                     controller: _ctrlDorsal,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: "Dorsal (opcional)",
+                      labelText: TextosApp.JUGADOR_EDITAR_LABEL_DORSAL,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -168,7 +177,7 @@ class _PaginaJugadorEditarDesktopEstado
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.save),
-                    label: const Text("Guardar cambios"),
+                    label: const Text(TextosApp.JUGADOR_EDITAR_BOTON_GUARDAR),
                   ),
                 ],
               ),
