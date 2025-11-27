@@ -7,6 +7,7 @@
       - Refuerzo visual de estructura
 */
 
+import 'package:fantasypro/vistas/web/desktop/pagina_jugadores_admin_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/modelos/liga.dart';
@@ -172,7 +173,14 @@ class _PaginaEquiposAdminDesktopEstado
             IconButton(
               icon: const Icon(Icons.person),
               tooltip: TextosApp.EQUIPOS_ADMIN_TOOLTIP_GESTION_JUGADORES,
-              onPressed: null,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaginaJugadoresAdminDesktop(equipo: equipo),
+                  ),
+                ).then((_) => cargar()); // recargar al volver
+              },
             ),
             IconButton(
               icon: const Icon(Icons.edit),
