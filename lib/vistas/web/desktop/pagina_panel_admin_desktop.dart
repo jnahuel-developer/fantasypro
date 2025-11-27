@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'package:fantasypro/vistas/web/desktop/pagina_ligas_admin_desktop.dart';
 
 class PaginaPanelAdminDesktop extends StatelessWidget {
@@ -16,10 +17,11 @@ class PaginaPanelAdminDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Panel Administrador"),
+        title: const Text(TextosApp.ADMIN_PANEL_DESKTOP_TITULO),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: TextosApp.ADMIN_PANEL_DESKTOP_TOOLTIP_LOGOUT,
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
             },
@@ -32,8 +34,8 @@ class PaginaPanelAdminDesktop extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Botón: administrar ligas
               ElevatedButton(
-                child: const Text("Administrar Ligas"),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -42,6 +44,7 @@ class PaginaPanelAdminDesktop extends StatelessWidget {
                     ),
                   );
                 },
+                child: const Text(TextosApp.ADMIN_PANEL_DESKTOP_BOTON_LIGAS),
               ),
             ],
           ),

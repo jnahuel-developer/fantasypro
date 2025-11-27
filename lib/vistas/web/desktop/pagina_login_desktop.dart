@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import '../../../servicios/firebase/servicio_autenticacion.dart';
 import 'pagina_registro_desktop.dart';
 
@@ -32,18 +33,28 @@ class _PaginaLoginDesktopEstado extends State<PaginaLoginDesktop> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("LOGIN - FANTASYPRO", style: TextStyle(fontSize: 22)),
-              const SizedBox(height: 20),
-
-              TextField(
-                controller: _email,
-                decoration: const InputDecoration(labelText: "Correo"),
+              const Text(
+                TextosApp.LOGIN_DESKTOP_TITULO,
+                style: TextStyle(fontSize: 22),
               ),
 
+              const SizedBox(height: 20),
+
+              // Email
+              TextField(
+                controller: _email,
+                decoration: const InputDecoration(
+                  labelText: TextosApp.LOGIN_DESKTOP_INPUT_EMAIL,
+                ),
+              ),
+
+              // Password
               TextField(
                 controller: _pass,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: "Contraseña"),
+                decoration: const InputDecoration(
+                  labelText: TextosApp.LOGIN_DESKTOP_INPUT_PASSWORD,
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -56,12 +67,15 @@ class _PaginaLoginDesktopEstado extends State<PaginaLoginDesktop> {
                   );
 
                   setState(() {
-                    mensaje = user != null
-                        ? "Inicio correcto. UID: ${user.uid}"
-                        : "Login incorrecto.";
+                    if (user != null) {
+                      mensaje = TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_OK
+                          .replaceAll("{UID}", user.uid);
+                    } else {
+                      mensaje = TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_ERROR;
+                    }
                   });
                 },
-                child: const Text("Iniciar sesión"),
+                child: const Text(TextosApp.LOGIN_DESKTOP_BOTON_INICIAR),
               ),
 
               const SizedBox(height: 10),
@@ -75,11 +89,12 @@ class _PaginaLoginDesktopEstado extends State<PaginaLoginDesktop> {
                     ),
                   );
                 },
-                child: const Text("¿No tienes cuenta? Registrar usuario"),
+                child: const Text(TextosApp.LOGIN_DESKTOP_BOTON_REGISTRAR),
               ),
 
               const SizedBox(height: 20),
-              Text(mensaje),
+
+              Text(mensaje, style: const TextStyle(fontSize: 14)),
             ],
           ),
         ),
