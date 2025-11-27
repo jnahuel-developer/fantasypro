@@ -1,13 +1,7 @@
 /*
   Archivo: servicio_alineaciones.dart
   Descripción:
-    Servicio dedicado a la administración CRUD de alineaciones dentro de una liga.
-    Permite crear, obtener, editar, activar, archivar y eliminar alineaciones.
-
-  Dependencias:
-    - cloud_firestore
-    - modelos/alineacion.dart
-    - servicio_log.dart
+    Servicio CRUD para alineaciones de usuario dentro de una liga.
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,7 +38,7 @@ class ServicioAlineaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Obtener alineaciones de un usuario dentro de una liga
+  // Obtener alineaciones por usuario en liga
   // ---------------------------------------------------------------------------
   Future<List<Alineacion>> obtenerPorUsuarioEnLiga(
     String idLiga,
@@ -88,7 +82,7 @@ class ServicioAlineaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Archivar alineación
+  // Archivar
   // ---------------------------------------------------------------------------
   Future<void> archivarAlineacion(String id) async {
     try {
@@ -102,7 +96,7 @@ class ServicioAlineaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Activar alineación
+  // Activar
   // ---------------------------------------------------------------------------
   Future<void> activarAlineacion(String id) async {
     try {
@@ -116,7 +110,7 @@ class ServicioAlineaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Eliminar alineación
+  // Eliminar
   // ---------------------------------------------------------------------------
   Future<void> eliminarAlineacion(String id) async {
     try {

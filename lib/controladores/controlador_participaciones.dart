@@ -25,8 +25,8 @@ class ControladorParticipaciones {
   // ---------------------------------------------------------------------------
   Future<ParticipacionLiga> crearParticipacion(
     String idLiga,
-    String idUsuario, {
-    String nombreEquipoFantasy = "",
+    String idUsuario,
+    String nombreEquipoFantasy, {
     int puntos = 0,
   }) async {
     if (idLiga.trim().isEmpty) {
@@ -34,6 +34,9 @@ class ControladorParticipaciones {
     }
     if (idUsuario.trim().isEmpty) {
       throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+    if (nombreEquipoFantasy.trim().isEmpty) {
+      throw ArgumentError("El nombre del equipo fantasy no puede estar vacío.");
     }
     if (puntos < 0) {
       throw ArgumentError("Los puntos no pueden ser negativos.");
