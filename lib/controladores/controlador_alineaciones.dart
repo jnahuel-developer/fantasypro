@@ -1,88 +1,141 @@
 /*
-  Archivo: alineacion.dart
+  Archivo: controlador_alineaciones.dart
   Descripción:
-    Modelo de datos que representa una alineación seleccionada por un usuario
-    dentro de una liga. Incluye jugadores, puntos y formación táctica.
+    Lógica de negocio y validación para gestión de alineaciones.
 */
 
-class Alineacion {
-  final String id;
-  final String idLiga;
-  final String idUsuario;
+import 'package:fantasypro/modelos/alineacion.dart';
+import 'package:fantasypro/servicios/firebase/servicio_alineaciones.dart';
+import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
-  /// Lista de IDs de jugadores incluidos en esta alineación.
-  final List<String> jugadoresSeleccionados;
+class ControladorAlineaciones {
+  final ServicioAlineaciones _servicio = ServicioAlineaciones();
+  final ServicioLog _log = ServicioLog();
 
-  /// Formación táctica (ej.: "4-4-2", "4-3-3").
-  final String formacion;
+  // ---------------------------------------------------------------------------
+  // Crear alineación
+  // ---------------------------------------------------------------------------
+  Future<Alineacion> crearAlineacion(
+    String idLiga,
+    String idUsuario,
+    List<String> jugadoresSeleccionados, {
+    String formacion = "4-4-2",
+    int puntosTotales = 0,
+  }) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El ID de la liga no puede estar vacío.");
+    }
 
-  /// Puntos totales obtenidos por la alineación.
-  final int puntosTotales;
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El ID del usuario no puede estar vacío.");
+    }
 
-  /// Timestamp de creación en milisegundos.
-  final int fechaCreacion;
+    if (jugadoresSeleccionados.isEmpty) {
+      throw ArgumentError("Debe seleccionar al menos un jugador.");
+    }
 
-  /// Estado de la alineación.
-  final bool activo;
+    if (puntosTotales < 0) {
+      throw ArgumentError("Los puntos no pueden ser negativos.");
+    }
 
-  const Alineacion({
-    required this.id,
-    required this.idLiga,
-    required this.idUsuario,
-    required this.jugadoresSeleccionados,
-    required this.formacion,
-    required this.puntosTotales,
-    required this.fechaCreacion,
-    required this.activo,
-  });
+    if (!_validarFormacion(formacion)) {
+      throw ArgumentError("Formación no válida: $formacion");
+    }
 
-  factory Alineacion.desdeMapa(String id, Map<String, dynamic> datos) {
-    return Alineacion(
-      id: id,
-      idLiga: datos['idLiga'] ?? '',
-      idUsuario: datos['idUsuario'] ?? '',
-      jugadoresSeleccionados: List<String>.from(
-        datos['jugadoresSeleccionados'] ?? [],
-      ),
-      formacion: datos['formacion'] ?? '4-4-2',
-      puntosTotales: datos['puntosTotales'] ?? 0,
-      fechaCreacion: datos['fechaCreacion'] ?? 0,
-      activo: datos['activo'] ?? true,
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    final alineacion = Alineacion(
+      id: "",
+      idLiga: idLiga,
+      idUsuario: idUsuario,
+      jugadoresSeleccionados: jugadoresSeleccionados,
+      formacion: formacion,
+      puntosTotales: puntosTotales,
+      fechaCreacion: timestamp,
+      activo: true,
     );
+
+    _log.informacion(
+      "Creando alineación para usuario $idUsuario en liga $idLiga",
+    );
+
+    return await _servicio.crearAlineacion(alineacion);
   }
 
-  Map<String, dynamic> aMapa() {
-    return {
-      'idLiga': idLiga,
-      'idUsuario': idUsuario,
-      'jugadoresSeleccionados': jugadoresSeleccionados,
-      'formacion': formacion,
-      'puntosTotales': puntosTotales,
-      'fechaCreacion': fechaCreacion,
-      'activo': activo,
-    };
+  // ---------------------------------------------------------------------------
+  // Obtener alineaciones por usuario en liga
+  // ---------------------------------------------------------------------------
+  Future<List<Alineacion>> obtenerPorUsuarioEnLiga(
+    String idLiga,
+    String idUsuario,
+  ) async {
+    if (idLiga.isEmpty) {
+      throw ArgumentError("El ID de la liga no puede estar vacío.");
+    }
+    if (idUsuario.isEmpty) {
+      throw ArgumentError("El ID del usuario no puede estar vacío.");
+    }
+
+    _log.informacion(
+      "Listando alineaciones de usuario $idUsuario en liga $idLiga",
+    );
+
+    return await _servicio.obtenerPorUsuarioEnLiga(idLiga, idUsuario);
   }
 
-  Alineacion copiarCon({
-    String? id,
-    String? idLiga,
-    String? idUsuario,
-    List<String>? jugadoresSeleccionados,
-    String? formacion,
-    int? puntosTotales,
-    int? fechaCreacion,
-    bool? activo,
-  }) {
-    return Alineacion(
-      id: id ?? this.id,
-      idLiga: idLiga ?? this.idLiga,
-      idUsuario: idUsuario ?? this.idUsuario,
-      jugadoresSeleccionados:
-          jugadoresSeleccionados ?? this.jugadoresSeleccionados,
-      formacion: formacion ?? this.formacion,
-      puntosTotales: puntosTotales ?? this.puntosTotales,
-      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
-      activo: activo ?? this.activo,
-    );
+  // ---------------------------------------------------------------------------
+  // Archivar
+  // ---------------------------------------------------------------------------
+  Future<void> archivar(String idAlineacion) async {
+    _log.advertencia("Archivando alineación $idAlineacion");
+    await _servicio.archivarAlineacion(idAlineacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Activar
+  // ---------------------------------------------------------------------------
+  Future<void> activar(String idAlineacion) async {
+    _log.informacion("Activando alineación $idAlineacion");
+    await _servicio.activarAlineacion(idAlineacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Eliminar
+  // ---------------------------------------------------------------------------
+  Future<void> eliminar(String idAlineacion) async {
+    _log.error("Eliminando alineación $idAlineacion");
+    await _servicio.eliminarAlineacion(idAlineacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Editar
+  // ---------------------------------------------------------------------------
+  Future<void> editar(Alineacion alineacion) async {
+    if (alineacion.id.isEmpty) {
+      throw ArgumentError("El ID de la alineación no puede estar vacío.");
+    }
+
+    if (alineacion.jugadoresSeleccionados.isEmpty) {
+      throw ArgumentError("Debe seleccionar al menos un jugador.");
+    }
+
+    if (alineacion.puntosTotales < 0) {
+      throw ArgumentError("Los puntos no pueden ser negativos.");
+    }
+
+    if (!_validarFormacion(alineacion.formacion)) {
+      throw ArgumentError("Formación no válida: ${alineacion.formacion}");
+    }
+
+    _log.informacion("Editando alineación ${alineacion.id}");
+
+    await _servicio.editarAlineacion(alineacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Validación FORMACIONES
+  // ---------------------------------------------------------------------------
+  bool _validarFormacion(String f) {
+    return f == "4-4-2" || f == "4-3-3";
   }
 }

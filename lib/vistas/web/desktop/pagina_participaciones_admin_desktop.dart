@@ -10,6 +10,7 @@
       - Acceder a la gestión de alineaciones del usuario
 */
 
+import 'package:fantasypro/vistas/web/desktop/pagina_alineaciones_admin_desktop.dart';
 import 'package:fantasypro/vistas/web/desktop/pagina_participacion_editar_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
@@ -178,8 +179,8 @@ class _PaginaParticipacionesAdminDesktopEstado
                   context,
                   MaterialPageRoute(
                     builder: (_) => PaginaAlineacionesAdminDesktop(
-                      liga: widget.liga,
-                      participacion: p,
+                      idLiga: widget.liga.id,
+                      idUsuario: p.idUsuario,
                     ),
                   ),
                 ).then((_) => cargar());
