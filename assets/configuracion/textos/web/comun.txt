@@ -1,4 +1,0 @@
-# Textos comunes a todas las plataformas
-APP_NOMBRE=FantasyPro
-BOTON_ACEPTAR=Aceptar
-BOTON_CANCELAR=Cancelar
