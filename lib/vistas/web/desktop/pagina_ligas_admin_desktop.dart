@@ -5,6 +5,7 @@
 */
 
 import 'package:fantasypro/vistas/web/desktop/pagina_equipos_admin_desktop.dart';
+import 'package:fantasypro/vistas/web/desktop/pagina_participaciones_admin_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
@@ -110,6 +111,21 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Acceso a participaciones (navegación añadida)
+            IconButton(
+              icon: const Icon(Icons.supervised_user_circle),
+              tooltip: "Participaciones",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PaginaParticipacionesAdminDesktop(liga: liga),
+                  ),
+                ).then((_) => cargar());
+              },
+            ),
+
             // Administrar equipos
             IconButton(
               icon: const Icon(Icons.groups),
