@@ -4,11 +4,6 @@
     Servicio dedicado a la administración CRUD de la colección "participaciones_liga".
     Permite crear, obtener, editar, activar, archivar y eliminar participaciones
     de usuarios dentro de una liga.
-
-  Dependencias:
-    - cloud_firestore
-    - modelos/participacion_liga.dart
-    - servicio_log.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +43,32 @@ class ServicioParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
+  // Verificar si el usuario ya participa en una liga
+  // ---------------------------------------------------------------------------
+  Future<bool> usuarioYaParticipa(String idUsuario, String idLiga) async {
+    try {
+      final query = await _db
+          .collection(_coleccion)
+          .where(_campoIdUsuario, isEqualTo: idUsuario)
+          .where(_campoIdLiga, isEqualTo: idLiga)
+          .where(_campoActivo, isEqualTo: true)
+          .limit(1)
+          .get();
+
+      final existe = query.docs.isNotEmpty;
+
+      _log.informacion(
+        "Verificar participación: usuario=$idUsuario liga=$idLiga → $existe",
+      );
+
+      return existe;
+    } catch (e) {
+      _log.error("Error validando participación: $e");
+      rethrow;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Obtener participaciones de una liga
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
@@ -69,7 +90,7 @@ class ServicioParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Obtener participaciones de un usuario en alguna liga
+  // Obtener participaciones de un usuario
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
     try {
@@ -107,7 +128,7 @@ class ServicioParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Archivar participación (activo = false)
+  // Archivar participación
   // ---------------------------------------------------------------------------
   Future<void> archivarParticipacion(String id) async {
     try {
@@ -121,7 +142,7 @@ class ServicioParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Activar participación (activo = true)
+  // Activar participación
   // ---------------------------------------------------------------------------
   Future<void> activarParticipacion(String id) async {
     try {

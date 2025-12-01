@@ -2,12 +2,9 @@
   Archivo: pagina_participaciones_admin_desktop.dart
   Descripción:
     Administración de participaciones de usuarios dentro de una liga (Web Desktop).
-    Permite:
-      - Ver participantes activos / archivados
-      - Crear participación (idUsuario + nombre equipo fantasy)
-      - Editar participación
-      - Archivar / Activar / Eliminar
-      - Acceder a la gestión de alineaciones del usuario
+    Flujo aprobado por PM:
+      - El Admin puede crear participaciones directamente con ServicioParticipaciones.
+      - Debe construir manualmente el modelo ParticipacionLiga.
 */
 
 import 'package:fantasypro/vistas/web/desktop/pagina_alineaciones_admin_desktop.dart';
@@ -16,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 
 class PaginaParticipacionesAdminDesktop extends StatefulWidget {
   final Liga liga;
@@ -30,6 +28,8 @@ class PaginaParticipacionesAdminDesktop extends StatefulWidget {
 class _PaginaParticipacionesAdminDesktopEstado
     extends State<PaginaParticipacionesAdminDesktop> {
   final ControladorParticipaciones _controlador = ControladorParticipaciones();
+  final ServicioParticipaciones servicioParticipaciones =
+      ServicioParticipaciones();
 
   bool cargando = true;
   List<ParticipacionLiga> activos = [];
@@ -109,11 +109,17 @@ class _PaginaParticipacionesAdminDesktopEstado
                   return;
                 }
 
-                await _controlador.crearParticipacion(
-                  widget.liga.id,
-                  idUsuario,
-                  nombre,
+                final participacion = ParticipacionLiga(
+                  id: "", // Firestore generará uno nuevo
+                  idLiga: widget.liga.id,
+                  idUsuario: idUsuario,
+                  nombreEquipoFantasy: nombre,
+                  puntos: 0,
+                  fechaCreacion: DateTime.now().millisecondsSinceEpoch,
+                  activo: true,
                 );
+
+                await servicioParticipaciones.crearParticipacion(participacion);
 
                 Navigator.pop(context);
                 cargar();
@@ -170,7 +176,7 @@ class _PaginaParticipacionesAdminDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Botón: Alineaciones
+            // Alineaciones
             IconButton(
               icon: const Icon(Icons.sports_soccer),
               tooltip: "Gestionar alineaciones",
@@ -276,7 +282,7 @@ class _PaginaParticipacionesAdminDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Columna Activos
+                // Activos
                 Expanded(
                   child: Column(
                     children: [
@@ -296,7 +302,7 @@ class _PaginaParticipacionesAdminDesktopEstado
                   ),
                 ),
 
-                // Columna Archivados
+                // Archivados
                 Expanded(
                   child: Column(
                     children: [

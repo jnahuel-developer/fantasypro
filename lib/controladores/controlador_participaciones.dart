@@ -3,13 +3,9 @@
   Descripción:
     Lógica de negocio y validación para la gestión de participaciones
     de usuarios en una liga.
-    Permite:
-      - Crear participación
-      - Listar por liga
-      - Listar por usuario
-      - Archivar / Activar
-      - Eliminar
-      - Editar
+    Etapa 1:
+      - Validar si usuario ya participa
+      - Crear participación si no existe
 */
 
 import 'package:fantasypro/modelos/participacion_liga.dart';
@@ -21,14 +17,13 @@ class ControladorParticipaciones {
   final ServicioLog _log = ServicioLog();
 
   // ---------------------------------------------------------------------------
-  // Crear participación
+  // Crear participación (Etapa 1)
   // ---------------------------------------------------------------------------
-  Future<ParticipacionLiga> crearParticipacion(
+  Future<ParticipacionLiga> crearParticipacionSiNoExiste(
     String idLiga,
     String idUsuario,
-    String nombreEquipoFantasy, {
-    int puntos = 0,
-  }) async {
+    String nombreEquipoFantasy,
+  ) async {
     if (idLiga.trim().isEmpty) {
       throw ArgumentError("El idLiga no puede estar vacío.");
     }
@@ -38,8 +33,19 @@ class ControladorParticipaciones {
     if (nombreEquipoFantasy.trim().isEmpty) {
       throw ArgumentError("El nombre del equipo fantasy no puede estar vacío.");
     }
-    if (puntos < 0) {
-      throw ArgumentError("Los puntos no pueden ser negativos.");
+
+    _log.informacion(
+      "Verificando si usuario $idUsuario ya participa en liga $idLiga",
+    );
+
+    final bool yaParticipa = await _servicio.usuarioYaParticipa(
+      idUsuario,
+      idLiga,
+    );
+
+    if (yaParticipa) {
+      _log.advertencia("El usuario ya participa en la liga");
+      throw Exception("El usuario ya participa en esta liga.");
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -49,14 +55,12 @@ class ControladorParticipaciones {
       idLiga: idLiga,
       idUsuario: idUsuario,
       nombreEquipoFantasy: nombreEquipoFantasy.trim(),
-      puntos: puntos,
+      puntos: 0,
       fechaCreacion: timestamp,
       activo: true,
     );
 
-    _log.informacion(
-      "Creando participación en liga $idLiga para usuario $idUsuario",
-    );
+    _log.informacion("Creando participación (Etapa 1)");
 
     return await _servicio.crearParticipacion(participacion);
   }

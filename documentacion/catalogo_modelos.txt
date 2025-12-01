@@ -1,0 +1,341 @@
+📘 CATÁLOGO DE MODELOS — FantasyPro (Actualizado a la mod0012)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟦 1. Modelo: Liga (liga.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Constructor principal
+
+const Liga({
+  required this.id,
+  required this.nombre,
+  required this.temporada,
+  required this.descripcion,
+  required this.fechaCreacion,
+  required this.activa,
+});
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos presentes
+
+factory Liga.desdeMapa(String id, Map<String, dynamic> datos) ->  Deserialización desde Firestore.
+
+Map<String, dynamic> aMapa()  ->  Serialización hacia Firestore.
+
+Liga copiarCon({ ... }) ->  Crea una copia con valores reemplazados.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+Obligatorios
+    - id
+    - nombre
+    - temporada
+    - descripcion
+    - fechaCreacion
+    - activa
+Opcionales
+    - Ninguno (todos required).
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧪 Ejemplo de creación
+
+final liga = Liga(
+  id: "L1",
+  nombre: "Liga Pro",
+  temporada: "2024/2025",
+  descripcion: "Competencia oficial",
+  fechaCreacion: 1700000000000,
+  activa: true,
+);
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟧 2. Modelo: ParticipacionLiga (participacion_liga.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Constructor principal
+
+const ParticipacionLiga({
+  required this.id,
+  required this.idLiga,
+  required this.idUsuario,
+  required this.nombreEquipoFantasy,
+  required this.puntos,
+  required this.fechaCreacion,
+  required this.activo,
+});
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos presentes
+
+factory ParticipacionLiga.desdeMapa(String id, Map<String, dynamic> datos) ->  Deserialización desde Firestore.
+
+Map<String, dynamic> aMapa()  ->  Serialización hacia Firestore.
+
+ParticipacionLiga copiarCon({ ... }) ->  Crea una copia con valores reemplazados.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+Obligatorios
+    - id
+    - idLiga
+    - idUsuario
+    - nombreEquipoFantasy
+    - puntos
+    - fechaCreacion
+    - activo
+Opcionales
+    - Ninguno (todos required).
+
+----------------------------------------------------------------------------------------------------------------------------------
+ 
+🧪 Ejemplo de creación
+
+final participacion = ParticipacionLiga(
+  id: "P1",
+  idLiga: "L1",
+  idUsuario: "U1",
+  nombreEquipoFantasy: "Titanes FC",
+  puntos: 0,
+  fechaCreacion: 1700000000000,
+  activo: true,
+);
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟥 3. Modelo: Equipo (equipo.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Constructor principal
+
+const Equipo({
+  required this.id,
+  required this.idLiga,
+  required this.nombre,
+  required this.descripcion,
+  required this.escudoUrl,
+  required this.fechaCreacion,
+  required this.activo,
+});
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos presentes
+
+factory Equipo.desdeMapa(String id, Map<String, dynamic> datos) ->  Deserialización desde Firestore.
+
+Map<String, dynamic> aMapa()  ->  Serialización hacia Firestore.
+
+Equipo copiarCon({ ... }) ->  Crea una copia con valores reemplazados.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+Obligatorios
+    - id
+    - idLiga
+    - nombre
+    - descripcion
+    - escudoUrl
+    - fechaCreacion
+    - activo
+Opcionales
+    - Ninguno (todos required).
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧪 Ejemplo de creación
+
+final equipo = Equipo(
+  id: "E1",
+  idLiga: "L1",
+  nombre: "Dragones",
+  descripcion: "Equipo principal",
+  escudoUrl: "",
+  fechaCreacion: 1700000000000,
+  activo: true,
+);
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟩 4. MODELO: Jugador (jugador.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Constructor principal
+
+const Jugador({
+  required this.id,
+  required this.idEquipo,
+  required this.nombre,
+  required this.posicion,
+  required this.nacionalidad,
+  required this.dorsal,
+  required this.fechaCreacion,
+  required this.activo,
+});
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos presentes
+
+factory Jugador.desdeMapa(String id, Map<String, dynamic> datos) ->  Deserialización desde Firestore.
+
+Map<String, dynamic> aMapa()  ->  Serialización hacia Firestore.
+
+Jugador copiarCon({ ... }) ->  Crea una copia con valores reemplazados.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+Obligatorios
+    - id
+    - idEquipo
+    - nombre
+    - posicion
+    - nacionalidad
+    - dorsal
+    - fechaCreacion
+    - activo
+Opcionales
+    - Ninguno (todos required).
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧪 Ejemplo de creación
+
+final jugador = Jugador(
+  id: "J1",
+  idEquipo: "E1",
+  nombre: "Carlos Pérez",
+  posicion: "DEF",
+  nacionalidad: "ARG",
+  dorsal: 4,
+  fechaCreacion: 1700000000000,
+  activo: true,
+);
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟦 5. MODELO: Alineacion (alineacion.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Constructor principal
+
+const Alineacion({
+  required this.id,
+  required this.idLiga,
+  required this.idUsuario,
+  required this.jugadoresSeleccionados,
+  required this.formacion,
+  required this.puntosTotales,
+  required this.fechaCreacion,
+  required this.activo,
+});
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos presentes
+
+factory Alineacion.desdeMapa(String id, Map<String, dynamic> datos) ->  Deserialización desde Firestore.
+
+Map<String, dynamic> aMapa()  ->  Serialización hacia Firestore.
+
+Alineacion copiarCon({ ... }) ->  Crea una copia con valores reemplazados.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+Obligatorios
+    - id
+    - idLiga
+    - idUsuario
+    - jugadoresSeleccionados
+    - formacion
+    - puntosTotales
+    - fechaCreacion
+    - activo
+Opcionales
+    - Ninguno (todos required).
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧪 Ejemplo de creación
+
+final alineacion = Alineacion(
+  id: "A1",
+  idLiga: "L1",
+  idUsuario: "U1",
+  jugadoresSeleccionados: ["J1", "J2", "J3"],
+  formacion: "4-3-3",
+  puntosTotales: 0,
+  fechaCreacion: 1700000000000,
+  activo: true,
+);
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+🟪 6. MODELO: Roles (roles.dart)
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧱 Enum principal
+
+enum RolUsuario { usuario, admin }
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧩 Métodos / getters presentes mediante extension
+
+String get valorDB  ->  Devuelve el valor persistible en Firestore:
+  - "usuario"
+  - "admin"
+
+String get textoVisible ->  Devuelve el texto traducido desde TextosApp.
+
+static RolUsuario desdeValorDB(String valor)  ->  Convierte string → enum.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+📌 Campos
+
+No aplica (enum).
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🧪 Ejemplo de uso
+
+final rol = RolUsuario.admin;
+
+print(rol.valorDB);        // "admin"
+print(rol.textoVisible);   // texto traducido
+final rol2 = RolUsuarioExt.desdeValorDB("usuario");
+
+----------------------------------------------------------------------------------------------------------------------------------

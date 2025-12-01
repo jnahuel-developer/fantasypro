@@ -1,0 +1,265 @@
+📘 CATÁLOGO DE MÉTODOS — FantasyPro (Actualizado a la mod0012)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioAlineaciones
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<Alineacion> crearAlineacion(Alineacion alineacion)
+Descripción: Crea una nueva alineación en la colección "alineaciones".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Alineacion>> obtenerPorUsuarioEnLiga(String idLiga, String idUsuario)
+Descripción: Obtiene todas las alineaciones de un usuario dentro de una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> editarAlineacion(Alineacion alineacion)
+Descripción: Actualiza una alineación existente en Firestore.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> archivarAlineacion(String id)
+Descripción: Marca una alineación como inactiva (activo = false).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> activarAlineacion(String id)
+Descripción: Marca una alineación como activa (activo = true).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> eliminarAlineacion(String id)
+Descripción: Elimina definitivamente una alineación de Firestore.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioBaseDeDatos
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<void> guardarUsuario(String uid, Map<String, dynamic> datos)
+Descripción: Crea o actualiza el documento de un usuario en la colección "usuarios".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<DocumentSnapshot<Map<String, dynamic>>> obtenerUsuario(String uid)
+Descripción: Obtiene el documento de un usuario por su UID.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<String> crearLiga(Map<String, dynamic> datos)
+Descripción: Crea una liga mínima en la colección "ligas" y devuelve su ID.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Stream<QuerySnapshot<Map<String, dynamic>>> listarLigasStream()
+Descripción: Devuelve un stream en tiempo real de las ligas ordenadas por fecha de creación.
+Errores: Excepciones de FirebaseFirestore al iniciar la consulta o al obtener snapshots (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioEquipos
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<Equipo> crearEquipo(Equipo equipo)
+Descripción: Crea un equipo en la colección "equipos".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<Equipo> crearEquipoInicial(String idUsuario, String idLiga, String nombre)
+Descripción: Crea un equipo inicial vacío para un usuario en una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Equipo>> obtenerEquiposDeLiga(String idLiga)
+Descripción: Obtiene todos los equipos asociados a una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> editarEquipo(Equipo equipo)
+Descripción: Actualiza los datos de un equipo existente.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> archivarEquipo(String id)
+Descripción: Marca un equipo como inactivo (activo = false).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> activarEquipo(String id)
+Descripción: Marca un equipo como activo (activo = true).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> eliminarEquipo(String id)
+Descripción: Elimina un equipo de la colección "equipos".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioJugadores
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<Jugador> crearJugador(Jugador jugador)
+Descripción: Crea un jugador en la colección "jugadores".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Jugador>> obtenerJugadoresDeEquipo(String idEquipo)
+Descripción: Obtiene todos los jugadores pertenecientes a un equipo.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> editarJugador(Jugador jugador)
+Descripción: Actualiza los datos de un jugador existente.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> archivarJugador(String id)
+Descripción: Marca un jugador como inactivo (activo = false).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> activarJugador(String id)
+Descripción: Marca un jugador como activo (activo = true).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> eliminarJugador(String id)
+Descripción: Elimina un jugador de la colección "jugadores".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioLigas
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<Liga> crearLiga(Liga liga)
+Descripción: Crea una liga en la colección "ligas".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<Liga?> obtenerLiga(String id)
+Descripción: Obtiene una liga por su ID de documento.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Liga>> obtenerLigasActivas()
+Descripción: Obtiene todas las ligas cuyo campo activa es true.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Liga>> buscarLigasPorNombre(String texto)
+Descripción: Busca ligas filtrando por campo normalizado de nombre.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<Liga>> obtenerTodasLasLigas()
+Descripción: Obtiene todas las ligas sin filtros adicionales.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> editarLiga(Liga liga)
+Descripción: Actualiza los datos de una liga existente.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> archivarLiga(String id)
+Descripción: Marca una liga como inactiva (activa = false).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> activarLiga(String id)
+Descripción: Marca una liga como activa (activa = true).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> eliminarLiga(String id)
+Descripción: Elimina una liga de la colección "ligas".
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioParticipaciones
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<ParticipacionLiga> crearParticipacion(ParticipacionLiga participacion)
+Descripción: Crea una participación de usuario en una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<bool> usuarioYaParticipa(String idUsuario, String idLiga)
+Descripción: Verifica si un usuario ya tiene una participación activa en una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga)
+Descripción: Obtiene todas las participaciones asociadas a una liga.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario)
+Descripción: Obtiene todas las participaciones asociadas a un usuario.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> editarParticipacion(ParticipacionLiga participacion)
+Descripción: Actualiza los datos de una participación existente.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> archivarParticipacion(String id)
+Descripción: Marca una participación como inactiva (activo = false).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> activarParticipacion(String id)
+Descripción: Marca una participación como activa (activo = true).
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+Firma: Future<void> eliminarParticipacion(String id)
+Descripción: Elimina una participación de la colección correspondiente.
+Errores: Excepciones de FirebaseFirestore (rethrow).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioAutenticacion
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<String?> registrarUsuario(String email, String password, String nombre, String rolDB)
+Descripción: Registra un usuario en Firebase Auth y crea su documento en Firestore.
+Errores: Excepciones de FirebaseAuth y FirebaseFirestore (capturadas y retornan null).
+
+Firma: Future<User?> iniciarSesion(String email, String password)
+Descripción: Inicia sesión con email y contraseña en Firebase Auth.
+Errores: Excepciones de FirebaseAuth (capturadas y retornan null).
+
+Firma: Future<void> cerrarSesion()
+Descripción: Cierra la sesión del usuario autenticado.
+Errores: Puede lanzar excepciones internas de FirebaseAuth.signOut() (no capturadas).
+
+Firma: User? obtenerUsuarioActual()
+Descripción: Devuelve el usuario autenticado actualmente o null.
+Errores: No lanza excepciones.
+
+Firma: Future<bool> esAdmin(String uid)
+Descripción: Verifica si el usuario indicado tiene rol administrador.
+Errores: Excepciones de Firestore (capturadas y retornan false).
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioInicializacion
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: Future<FirebaseApp> inicializarDesdeArchivo(String rutaConfig)
+Descripción: Inicializa Firebase usando un archivo JSON de configuración y opcionalmente conecta a emuladores.
+Errores: Excepciones de lectura de archivo, JSON parsing, Firebase.initializeApp y configuración de Firestore (rethrow).
+
+Firma: FirebaseApp? get app
+Descripción: Devuelve la instancia FirebaseApp inicializada o null si aún no se inicializó.
+Errores: No lanza excepciones.
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+SERVICIO: ServicioReglasDeSeguridad
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Firma: String reglasEjemplo()
+Descripción: Retorna un bloque de reglas Firestore de ejemplo.
+Errores: No lanza excepciones.

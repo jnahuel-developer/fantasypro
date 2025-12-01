@@ -70,6 +70,29 @@ class ServicioLigas {
   }
 
   // ---------------------------------------------------------------------------
+  // Buscar ligas por texto (nombre)
+  // ---------------------------------------------------------------------------
+  Future<List<Liga>> buscarLigasPorNombre(String texto) async {
+    try {
+      if (texto.trim().isEmpty) return [];
+
+      final query = await _db
+          .collection(_coleccion)
+          .where('nombreBusqueda', isGreaterThanOrEqualTo: texto.toLowerCase())
+          .where('nombreBusqueda', isLessThan: '${texto.toLowerCase()}z')
+          .get();
+
+      _log.informacion("Buscar ligas por nombre: '$texto'");
+
+      return query.docs.map((d) => Liga.desdeMapa(d.id, d.data())).toList();
+    } catch (e) {
+      _log.informacion("Buscar ligas por nombre: '$texto'");
+
+      rethrow;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Obtener todas las ligas
   // ---------------------------------------------------------------------------
   Future<List<Liga>> obtenerTodasLasLigas() async {

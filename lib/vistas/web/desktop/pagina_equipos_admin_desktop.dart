@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/equipo.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_equipos.dart';
+import 'package:fantasypro/servicios/firebase/servicio_equipos.dart';
 import 'package:fantasypro/vistas/web/desktop/pagina_equipo_editar_desktop.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 
@@ -100,11 +101,19 @@ class _PaginaEquiposAdminDesktopEstado
                 final descripcion = controladorDescripcion.text.trim();
                 if (nombre.isEmpty) return;
 
-                await controlador.crearEquipo(
-                  widget.liga.id,
-                  nombre,
-                  descripcion,
+                final equipo = Equipo(
+                  id: "", // Firestore generará uno nuevo
+                  idUsuario: "", // ← requerido por el modelo actual
+                  idLiga: widget.liga.id,
+                  nombre: nombre,
+                  descripcion: descripcion,
+                  escudoUrl: "",
+                  fechaCreacion: DateTime.now().millisecondsSinceEpoch,
+                  activo: true,
                 );
+
+                final servicio = ServicioEquipos();
+                await servicio.crearEquipo(equipo);
 
                 Navigator.pop(context);
                 cargar();

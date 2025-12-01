@@ -4,12 +4,6 @@
     Servicio dedicado a la administración CRUD de la colección "equipos".
     Incluye creación, edición, archivado, activación, eliminación y consulta
     de equipos pertenecientes a una liga.
-
-  Dependencias:
-    - cloud_firestore
-    - modelos/equipo.dart
-    - servicio_log.dart
-    - textos_app.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,12 +16,13 @@ class ServicioEquipos {
   final ServicioLog _log = ServicioLog();
 
   // ---------------------------------------------------------------------------
-  // Constantes internas: nombres de colección y campos
+  // Constantes internas
   // ---------------------------------------------------------------------------
 
   static const String _coleccion = "equipos";
 
   static const String _campoIdLiga = "idLiga";
+  static const String _campoIdUsuario = "idUsuario";
   static const String _campoActivo = "activo";
 
   // ---------------------------------------------------------------------------
@@ -47,7 +42,41 @@ class ServicioEquipos {
   }
 
   // ---------------------------------------------------------------------------
-  // Obtener todos los equipos de una liga
+  // Crear equipo inicial vacío (Etapa 1)
+  // ---------------------------------------------------------------------------
+  Future<Equipo> crearEquipoInicial(
+    String idUsuario,
+    String idLiga,
+    String nombre,
+  ) async {
+    try {
+      final equipo = Equipo(
+        id: "", // Se sobreescribe tras guardar en Firestore
+        idUsuario: idUsuario,
+        idLiga: idLiga,
+        nombre: nombre,
+        descripcion: "", // Etapa 1 → vacío
+        escudoUrl: "", // Etapa 1 → vacío
+        fechaCreacion: DateTime.now().millisecondsSinceEpoch,
+        activo: true,
+      );
+
+      final doc = await _db.collection(_coleccion).add(equipo.aMapa());
+      final nuevo = equipo.copiarCon(id: doc.id);
+
+      _log.informacion(
+        "Equipo inicial creado: usuario=$idUsuario liga=$idLiga → ${nuevo.id}",
+      );
+
+      return nuevo;
+    } catch (e) {
+      _log.error("${TextosApp.LOG_EQUIPOS_ERROR} $e");
+      rethrow;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Obtener equipos de una liga
   // ---------------------------------------------------------------------------
   Future<List<Equipo>> obtenerEquiposDeLiga(String idLiga) async {
     try {
@@ -79,7 +108,7 @@ class ServicioEquipos {
   }
 
   // ---------------------------------------------------------------------------
-  // Archivar equipo (activo = false)
+  // Archivar equipo
   // ---------------------------------------------------------------------------
   Future<void> archivarEquipo(String id) async {
     try {
@@ -92,7 +121,7 @@ class ServicioEquipos {
   }
 
   // ---------------------------------------------------------------------------
-  // Activar equipo (activo = true)
+  // Activar equipo
   // ---------------------------------------------------------------------------
   Future<void> activarEquipo(String id) async {
     try {

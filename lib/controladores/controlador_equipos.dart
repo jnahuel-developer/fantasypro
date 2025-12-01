@@ -2,6 +2,9 @@
   Archivo: controlador_equipos.dart
   Descripción:
     Lógica de negocio y validación para la gestión de equipos.
+    Ajustado para Etapa 1:
+      - Crear equipo inicial vacío mediante servicio.crearEquipoInicial
+      - El modelo Equipo requiere idUsuario
 */
 
 import 'package:fantasypro/modelos/equipo.dart';
@@ -14,38 +17,28 @@ class ControladorEquipos {
   final ServicioLog _log = ServicioLog();
 
   // ---------------------------------------------------------------------------
-  // Crear equipo
+  // Crear equipo inicial (Etapa 1)
   // ---------------------------------------------------------------------------
-  Future<Equipo> crearEquipo(
+  Future<Equipo> crearEquipoInicial(
+    String idUsuario,
     String idLiga,
-    String nombre, [
-    String descripcion = "",
-  ]) async {
-    if (idLiga.isEmpty) {
+    String nombre,
+  ) async {
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+    if (idLiga.trim().isEmpty) {
       throw ArgumentError(TextosApp.ERR_EQUIPO_ID_LIGA_VACIO);
     }
-
     if (nombre.trim().isEmpty) {
       throw ArgumentError(TextosApp.ERR_EQUIPO_NOMBRE_VACIO);
     }
 
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-
-    final equipo = Equipo(
-      id: "",
-      idLiga: idLiga,
-      nombre: nombre.trim(),
-      descripcion: descripcion.trim().isEmpty
-          ? TextosApp.EQUIPO_DESCRIPCION_POR_DEFECTO
-          : descripcion.trim(),
-      fechaCreacion: timestamp,
-      activo: true,
-      escudoUrl: TextosApp.EQUIPO_ESCUDO_PENDIENTE,
+    _log.informacion(
+      "Creando equipo inicial: usuario=$idUsuario liga=$idLiga nombre=$nombre",
     );
 
-    _log.informacion("${TextosApp.LOG_EQUIPO_CREANDO} $idLiga ($nombre)");
-
-    return await _servicio.crearEquipo(equipo);
+    return await _servicio.crearEquipoInicial(idUsuario, idLiga, nombre.trim());
   }
 
   // ---------------------------------------------------------------------------

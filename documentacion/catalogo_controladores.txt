@@ -1,0 +1,275 @@
+📘 CATÁLOGO DE CONTROLADORES — FantasyPro (Actualizado a la mod0012)
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+ControladorLigas
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Método: crearLiga
+
+Firma exacta:
+Future<Liga> crearLiga(String nombre, String descripcion) async
+Descripción: Crea una nueva liga validando el nombre e inicializando datos por defecto.
+Dependencias: ServicioLigas.crearLiga, ServicioLog.informacion
+
+Método: obtenerActivas
+
+Firma exacta:
+Future<List<Liga>> obtenerActivas() async
+Descripción: Obtiene todas las ligas activas.
+Dependencias: ServicioLigas.obtenerLigasActivas, ServicioLog.informacion
+
+Método: buscar
+
+Firma exacta:
+Future<List<Liga>> buscar(String texto) async
+Descripción: Busca ligas por nombre, validando texto vacío.
+Dependencias: ServicioLigas.buscarLigasPorNombre, ServicioLog.informacion, ServicioLog.advertencia
+
+Método: obtenerTodas
+
+Firma exacta:
+Future<List<Liga>> obtenerTodas() async
+Descripción: Obtiene todas las ligas del sistema.
+Dependencias: ServicioLigas.obtenerTodasLasLigas
+
+Método: archivar
+
+Firma exacta:
+Future<void> archivar(String id) async
+Descripción: Archiva una liga por ID.
+Dependencias: ServicioLigas.archivarLiga, ServicioLog.advertencia
+
+Método: activar
+
+Firma exacta:
+Future<void> activar(String id) async
+Descripción: Activa una liga previamente archivada.
+Dependencias: ServicioLigas.activarLiga, ServicioLog.informacion
+
+Método: eliminar
+
+Firma exacta:
+Future<void> eliminar(String id) async
+Descripción: Elimina una liga permanentemente.
+Dependencias: ServicioLigas.eliminarLiga, ServicioLog.error
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+ControladorParticipaciones
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Método: crearParticipacionSiNoExiste
+
+Firma exacta:
+Future<ParticipacionLiga> crearParticipacionSiNoExiste(String idLiga, String idUsuario, String nombreEquipoFantasy) async
+Descripción: Valida existencia previa y crea una participación nueva.
+Dependencias:
+ServicioParticipaciones.usuarioYaParticipa
+ServicioParticipaciones.crearParticipacion
+ServicioLog.informacion
+ServicioLog.advertencia
+
+Método: obtenerPorLiga
+
+Firma exacta:
+Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async
+Descripción: Lista todas las participaciones asociadas a una liga.
+Dependencias: ServicioParticipaciones.obtenerPorLiga, ServicioLog.informacion
+
+Método: obtenerPorUsuario
+
+Firma exacta:
+Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async
+Descripción: Lista todas las participaciones asociadas a un usuario.
+Dependencias: ServicioParticipaciones.obtenerPorUsuario, ServicioLog.informacion
+
+Método: archivar
+
+Firma exacta:
+Future<void> archivar(String idParticipacion) async
+Descripción: Archiva una participación.
+Dependencias: ServicioParticipaciones.archivarParticipacion, ServicioLog.advertencia
+
+Método: activar
+
+Firma exacta:
+Future<void> activar(String idParticipacion) async
+Descripción: Activa una participación archivada.
+Dependencias: ServicioParticipaciones.activarParticipacion, ServicioLog.informacion
+
+Método: eliminar
+
+Firma exacta:
+Future<void> eliminar(String idParticipacion) async
+Descripción: Elimina una participación.
+Dependencias: ServicioParticipaciones.eliminarParticipacion, ServicioLog.error
+
+Método: editar
+
+Firma exacta:
+Future<void> editar(ParticipacionLiga participacion) async
+Descripción: Edita una participación existente.
+Dependencias: ServicioParticipaciones.editarParticipacion, ServicioLog.informacion
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+ControladorEquipos
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Método: crearEquipoInicial
+
+Firma exacta:
+Future<Equipo> crearEquipoInicial(String idUsuario, String idLiga, String nombre) async
+Descripción: Crea un equipo inicial vacío asociado a usuario y liga.
+Dependencias: ServicioEquipos.crearEquipoInicial, ServicioLog.informacion
+
+Método: obtenerPorLiga
+
+Firma exacta:
+Future<List<Equipo>> obtenerPorLiga(String idLiga) async
+Descripción: Obtiene equipos pertenecientes a una liga.
+Dependencias: ServicioEquipos.obtenerEquiposDeLiga
+
+Método: archivar
+
+Firma exacta:
+Future<void> archivar(String idEquipo) async
+Descripción: Archiva un equipo.
+Dependencias: ServicioEquipos.archivarEquipo, ServicioLog.advertencia
+
+Método: activar
+
+Firma exacta:
+Future<void> activar(String idEquipo) async
+Descripción: Activa un equipo archivado.
+Dependencias: ServicioEquipos.activarEquipo, ServicioLog.informacion
+
+Método: eliminar
+
+Firma exacta:
+Future<void> eliminar(String idEquipo) async
+Descripción: Elimina un equipo.
+Dependencias: ServicioEquipos.eliminarEquipo, ServicioLog.error
+
+Método: editar
+
+Firma exacta:
+Future<void> editar(Equipo equipo) async
+Descripción: Edita datos de un equipo existente.
+Dependencias: ServicioEquipos.editarEquipo, ServicioLog.informacion
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+ControladorJugadores
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Método: crearJugador
+
+Firma exacta:
+
+Future<Jugador> crearJugador(String idEquipo, String nombre, String posicion, {String nacionalidad = TextosApp.JUGADOR_NACIONALIDAD_POR_DEFECTO, int dorsal = TextosApp.JUGADOR_DORSAL_POR_DEFECTO}) async
+
+
+Descripción: Crea un jugador con validaciones básicas.
+Dependencias: ServicioJugadores.crearJugador, ServicioLog.informacion
+
+Método: obtenerPorEquipo
+
+Firma exacta:
+Future<List<Jugador>> obtenerPorEquipo(String idEquipo) async
+Descripción: Lista jugadores asociados a un equipo.
+Dependencias: ServicioJugadores.obtenerJugadoresDeEquipo, ServicioLog.informacion
+
+Método: archivar
+
+Firma exacta:
+Future<void> archivar(String idJugador) async
+Descripción: Archiva un jugador.
+Dependencias: ServicioJugadores.archivarJugador, ServicioLog.advertencia
+
+Método: activar
+
+Firma exacta:
+Future<void> activar(String idJugador) async
+Descripción: Activa un jugador archivado.
+Dependencias: ServicioJugadores.activarJugador, ServicioLog.informacion
+
+Método: eliminar
+
+Firma exacta:
+Future<void> eliminar(String idJugador) async
+Descripción: Elimina un jugador.
+Dependencias: ServicioJugadores.eliminarJugador, ServicioLog.error
+
+Método: editar
+
+Firma exacta:
+Future<void> editar(Jugador jugador) async
+Descripción: Edita los datos de un jugador.
+Dependencias: ServicioJugadores.editarJugador, ServicioLog.informacion
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+
+ControladorAlineaciones
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Método: crearAlineacion
+
+Firma exacta:
+
+Future<Alineacion> crearAlineacion(String idLiga, String idUsuario, List<String> jugadoresSeleccionados, {String formacion = "4-4-2", int puntosTotales = 0}) async
+
+
+Descripción: Crea una alineación con formaciones válidas y validaciones de selección mínima.
+Dependencias: ServicioAlineaciones.crearAlineacion, ServicioLog.informacion
+
+Método: obtenerPorUsuarioEnLiga
+
+Firma exacta:
+Future<List<Alineacion>> obtenerPorUsuarioEnLiga(String idLiga, String idUsuario) async
+Descripción: Obtiene todas las alineaciones de un usuario en una liga.
+Dependencias: ServicioAlineaciones.obtenerPorUsuarioEnLiga, ServicioLog.informacion
+
+Método: archivar
+
+Firma exacta:
+Future<void> archivar(String idAlineacion) async
+Descripción: Archiva una alineación.
+Dependencias: ServicioAlineaciones.archivarAlineacion, ServicioLog.advertencia
+
+Método: activar
+
+Firma exacta:
+Future<void> activar(String idAlineacion) async
+Descripción: Activa una alineación archivada.
+Dependencias: ServicioAlineaciones.activarAlineacion, ServicioLog.informacion
+
+Método: eliminar
+
+Firma exacta:
+Future<void> eliminar(String idAlineacion) async
+Descripción: Elimina una alineación.
+Dependencias: ServicioAlineaciones.eliminarAlineacion, ServicioLog.error
+
+Método: editar
+
+Firma exacta:
+Future<void> editar(Alineacion alineacion) async
+Descripción: Edita una alineación verificando formación válida y selección mínima.
+Dependencias: ServicioAlineaciones.editarAlineacion, ServicioLog.informacion
