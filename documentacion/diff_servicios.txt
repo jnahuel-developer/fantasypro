@@ -1,37 +1,22 @@
-diff_servicios_mod0013.txt
-DIFF FUNCIONAL mod0012 → mod0013  
-Módulo: Servicios
+/// ---------------------------------------------------------------------------
+/// Diferencias funcionales reales mod0014 → mod0015
+/// ---------------------------------------------------------------------------
 
-+ Agregado: servicio_equipos_reales.dart
-  - Nuevo servicio para equipos reales.
-  - Nuevos métodos:
-      crearEquipoReal
-      obtenerEquiposDeLiga
-      editarEquipoReal
-      archivarEquipoReal
-      activarEquipoReal
-      eliminarEquipoReal
++ Archivo agregado: servicio_fechas.dart
+  Métodos públicos agregados:
+    - Future<FechaLiga> crearFecha(FechaLiga fecha)
+    - Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
+    - Future<void> cerrarFecha(String idFecha)
 
-+ Agregado: servicio_equipos_fantasy.dart
-  - Nuevo servicio para equipos fantasy.
-  - Nuevos métodos:
-      crearEquipoFantasy
-      obtenerPorUsuarioYLiga
-      editarEquipoFantasy
-      archivarEquipoFantasy
-      activarEquipoFantasy
-      eliminarEquipoFantasy
-
-~ Modificado: servicio_equipos.dart
-  - Ahora marcado como DEPRECATED.
-  - Sin cambios en firmas o comportamiento.
-
-= Sin cambios:
-  servicio_ligas.dart
-  servicio_participaciones.dart
-  servicio_jugadores.dart
-  servicio_alineaciones.dart
-  servicio_autenticacion.dart
-  servicio_base_de_datos.dart
-  servicio_inicializacion.dart
-  servicio_reglas_de_seguridad.dart
+= Archivos sin cambios:
+  - servicio_autenticacion.dart
+  - servicio_base_de_datos.dart
+  - servicio_alineaciones.dart
+  - servicio_equipos_fantasy.dart
+  - servicio_equipos_reales.dart
+  - servicio_inicializacion.dart
+  - servicio_jugadores.dart
+  - servicio_jugadores_reales.dart
+  - servicio_ligas.dart
+  - servicio_participaciones.dart
+  - servicio_reglas_de_seguridad.dart

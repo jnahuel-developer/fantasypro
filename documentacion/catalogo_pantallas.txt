@@ -1,11 +1,28 @@
-/*
-  Archivo: catalogo_pantallas.txt
-  Módulo: UI (Pantallas)
-  Mod actual: mod0013
-  Propósito:
-    Catálogo completo de las pantallas del proyecto tras la estandarización
-    de nombres y separación EquipoReal / EquipoFantasy.
-*/
+========================================
+catalogo_pantallas.txt
+========================================
+
+CATÁLOGO DEL MÓDULO Pantallas — mod0014
+Descripción:
+Catálogo completo de las pantallas del proyecto tras la estandarización de nombres y la integración de JugadorReal, ControladorJugadoresReales y ServicioJugadoresReales.
+
+Modelos incluidos:
+ - ui__admin__alineacion__editar__desktop.dart
+ - ui__admin__alineacion__lista__desktop.dart
+ - ui__admin__equipo_real__editar__desktop.dart
+ - ui__admin__equipo_real__lista__desktop.dart
+ - ui__admin__jugador__editar__desktop.dart
+ - ui__admin__jugador__lista__desktop.dart
+ - ui__admin__liga__lista__desktop.dart
+ - ui__admin__panel__dashboard__desktop.dart
+ - ui__admin__participacion__editar__desktop.dart
+ - ui__admin__participacion__lista__desktop.dart
+ - ui__comun__autenticacion__login__desktop.dart
+ - ui__comun__autenticacion__registro__desktop.dart
+ - ui__usuario__equipo_fantasy__crear__desktop.dart
+ - ui__usuario__inicio__lista__desktop.dart
+ - ui__usuario__liga__detalle__desktop.dart
+
 
 ===============================================================================
 PANTALLA: ui__admin__alineacion__editar__desktop.dart
@@ -41,7 +58,7 @@ PANTALLA: ui__admin__alineacion__editar__desktop.dart
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Ajustada documentación interna según estándar PM.
+- Documentación interna alineada al estándar.
 
 
 ===============================================================================
@@ -67,21 +84,18 @@ PANTALLA: ui__admin__alineacion__lista__desktop.dart
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__admin__alineacion__editar__desktop.dart
-- Vuelve desde: ui__admin__panel__dashboard__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Listar alineaciones
-- Crear
-- Editar
-- Archivar / activar
-- Eliminar
+- Activar / archivar
+- Editar alineación
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Sin cambios funcionales en mod0013.
+- Mantiene estructura previa con documentación ordenada.
 
 
 ===============================================================================
@@ -112,13 +126,13 @@ PANTALLA: ui__admin__equipo_real__editar__desktop.dart
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Editar equipo real
-- Validar campos
-- Guardar cambios
+- Validar cambios
+- Guardar datos en controlador
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Modelo antiguo “Equipo” reemplazado por EquipoReal.
+- Migrada desde Equipo → EquipoReal (mod0013).
 
 
 ===============================================================================
@@ -128,8 +142,8 @@ PANTALLA: ui__admin__equipo_real__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- equipo_real.dart
 - liga.dart
+- equipo_real.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
@@ -146,21 +160,21 @@ PANTALLA: ui__admin__equipo_real__lista__desktop.dart
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__admin__equipo_real__editar__desktop.dart
 - Navega hacia: ui__admin__jugador__lista__desktop.dart
-- Vuelve desde: ui__admin__liga__lista__desktop.dart
+- Viene desde: ui__admin__liga__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Listar equipos reales
 - Crear equipo real
-- Editar
-- Archivar / activar
-- Eliminar
+- Archivar / activar equipo
+- Eliminar equipo
+- Acceder a gestión de jugadores reales
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Reemplazo completo del modelo antiguo Equipo.
+- Gestión de jugadores restaurada (mod0014).
 
 
 ===============================================================================
@@ -170,7 +184,7 @@ PANTALLA: ui__admin__jugador__editar__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- jugador.dart
+- jugador_real.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
@@ -180,24 +194,26 @@ PANTALLA: ui__admin__jugador__editar__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- controlador_jugadores.dart
+- controlador_jugadores_reales.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Vuelve hacia: ui__admin__jugador__lista__desktop.dart
+- Viene desde: ui__admin__jugador__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Editar jugador
-- Validar datos
-- Guardar cambios
+- Editar jugador real
+- Validar campos (posición restringida, valorMercado)
+- Guardar cambios en el controlador
+- Confirmación de salida con cambios pendientes
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Textos hardcodeados permitidos.
+- Campo posición implementado como Dropdown restringido.
+- Campo valorMercado con validación estricta.
 
 
 ===============================================================================
@@ -207,7 +223,7 @@ PANTALLA: ui__admin__jugador__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- jugador.dart
+- jugador_real.dart
 - equipo_real.dart
 
 // ---------------------------------------------------------------------------
@@ -218,7 +234,7 @@ PANTALLA: ui__admin__jugador__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- controlador_jugadores.dart
+- controlador_jugadores_reales.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
@@ -229,16 +245,16 @@ PANTALLA: ui__admin__jugador__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Listar jugadores del equipo real
-- Crear jugador
-- Editar jugador
+- Listar jugadores reales
+- Crear jugador real (formulario actualizado)
+- Editar jugador real
 - Archivar / activar jugador
 - Eliminar jugador
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Convertido a EquipoReal sin afectar lógica.
+- Creación actualizada con Dropdown de posición y campo valorMercado.
 
 
 ===============================================================================
@@ -269,15 +285,17 @@ PANTALLA: ui__admin__liga__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Listar ligas (activas y archivadas)
+- Listar ligas
 - Crear liga
-- Archivar / activar liga
+- Activar / archivar
 - Eliminar liga
+- Acceder a equipos reales
+- Acceder a participaciones
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Navegación actualizada a equipo_real.
+- Navegación hacia equipos reales ajustada para flujo correcto.
 
 
 ===============================================================================
@@ -292,7 +310,7 @@ PANTALLA: ui__admin__panel__dashboard__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- servicio_autenticacion.dart
+(no usa servicios)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
@@ -303,18 +321,16 @@ PANTALLA: ui__admin__panel__dashboard__desktop.dart
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__admin__liga__lista__desktop.dart
-- Navega hacia: ui__comun__autenticacion__login__desktop.dart (logout)
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Cerrar sesión
-- Navegar a administración de ligas
+- Acceso a secciones del panel administrativo
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Sin cambios en mod0013.
+- Mantiene estructura original.
 
 
 ===============================================================================
@@ -339,19 +355,19 @@ PANTALLA: ui__admin__participacion__editar__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Vuelve hacia: ui__admin__participacion__lista__desktop.dart
+- Viene desde: ui__admin__participacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Editar nombreEquipoFantasy
-- Editar puntos
+- Editar participación
 - Guardar cambios
+- Validar campos
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Compatibilidad completa con EquipoFantasy.
+- No se relaciona con JugadorReal.
 
 
 ===============================================================================
@@ -367,7 +383,7 @@ PANTALLA: ui__admin__participacion__lista__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- servicio_participaciones.dart
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
@@ -378,21 +394,18 @@ PANTALLA: ui__admin__participacion__lista__desktop.dart
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__admin__participacion__editar__desktop.dart
-- Navega hacia: ui__admin__alineacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Listar participaciones
-- Crear participación
 - Editar participación
-- Archivar / activar participación
-- Eliminar participación
+- Activar / archivar / eliminar
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Integración sin cambios respecto a equipo fantasy.
+- Flujo administrativo estándar.
 
 
 ===============================================================================
@@ -417,20 +430,20 @@ PANTALLA: ui__comun__autenticacion__login__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: ui__comun__autenticacion__registro__desktop.dart
-- Navega hacia: ui__admin__panel__dashboard__desktop.dart
 - Navega hacia: ui__usuario__inicio__lista__desktop.dart
+- Navega hacia: ui__admin__panel__dashboard__desktop.dart
+- Navega hacia: ui__comun__autenticacion__registro__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Autenticación de usuario
+- Inicio de sesión
 - Validación de credenciales
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Sin cambios funcionales en mod0013.
+- Mantiene estructura original.
 
 
 ===============================================================================
@@ -440,13 +453,12 @@ PANTALLA: ui__comun__autenticacion__registro__desktop.dart
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- roles.dart
+(no usa modelos)
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
 - servicio_autenticacion.dart
-- servicio_log.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
@@ -461,14 +473,13 @@ PANTALLA: ui__comun__autenticacion__registro__desktop.dart
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Alta de usuario
-- Validación básica
-- Registro en Firebase
+- Registro de usuario
+- Validaciones básicas
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Sin cambios funcionales.
+- Flujo estándar de autenticación.
 
 
 ===============================================================================
@@ -479,7 +490,6 @@ PANTALLA: ui__usuario__equipo_fantasy__crear__desktop.dart
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
 - equipo_fantasy.dart
-- liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
@@ -501,14 +511,12 @@ PANTALLA: ui__usuario__equipo_fantasy__crear__desktop.dart
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Crear equipo fantasy
-- Validar nombre
-- Guardar equipo fantasy
-- Volver a inicio
+- Guardar equipo en controlador
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Modelo reemplazado correctamente.
+- Funciona con EquipoFantasy según mod0013.
 
 
 ===============================================================================
@@ -519,35 +527,35 @@ PANTALLA: ui__usuario__inicio__lista__desktop.dart
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
 - liga.dart
+- participacion_liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- servicio_autenticacion.dart
-- servicio_ligas.dart
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
 - controlador_ligas.dart
+- controlador_participaciones.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__usuario__liga__detalle__desktop.dart
-- Navega hacia: ui__comun__autenticacion__login__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Listar ligas activas
-- Cerrar sesión
-- Ir al detalle de liga
+- Seleccionar liga
+- Comprobar participación del usuario
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Sin cambios de mod0013.
+- Incluye opción de cerrar sesión.
 
 
 ===============================================================================
@@ -558,12 +566,12 @@ PANTALLA: ui__usuario__liga__detalle__desktop.dart
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
 - liga.dart
+- participacion_liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- servicio_autenticacion.dart
-- servicio_participaciones.dart
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
@@ -574,16 +582,15 @@ PANTALLA: ui__usuario__liga__detalle__desktop.dart
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
 - Navega hacia: ui__usuario__equipo_fantasy__crear__desktop.dart
-- Vuelve hacia: ui__usuario__inicio__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Validar si participa
-- Crear participación
-- Navegar a creación de equipo
+- Ver detalles de la liga
+- Crear participación si no existe
+- Navegar hacia creación de equipo fantasy
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Lógica conservada sin cambios.
+- Flujo corregido para retornar correctamente a selección de ligas.
