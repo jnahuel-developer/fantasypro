@@ -1,19 +1,35 @@
-================================================================================
-diff_controladores_mod0013.txt
-================================================================================
+========================================
+diff_controladores.txt
+========================================
 
-DIFF FUNCIONAL mod0012 → mod0013
-Módulo: Controladores
+/// ---------------------------------------------------------------------------
+/// Diferencias funcionales reales mod0013 → mod0014
+/// Módulo: Controladores
+/// ---------------------------------------------------------------------------
 
-+ Agregado: controlador_equipos_reales.dart
-+ Agregado: controlador_equipo_fantasy.dart
++ Archivo agregado: controlador_jugadores_reales.dart
+  Métodos públicos agregados:
+    - Future<JugadorReal> crearJugadorReal(String idEquipoReal, String nombre, String posicion, {String nacionalidad, int dorsal, int valorMercado})
+    - Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal)
+    - Future<void> editar(JugadorReal jugador)
+    - Future<void> archivar(String idJugador)
+    - Future<void> activar(String idJugador)
+    - Future<void> eliminar(String idJugador)
 
-~ Modificado: controlador_equipos.dart  
-  - Archivo marcado como deprecated  
-  - No se modificaron firmas ni comportamiento  
-  - Se mantiene operativo para compatibilidad
+  Responsabilidades nuevas:
+    - Administración de jugadores reales
+    - Validaciones específicas de jugadores reales:
+        * nombre no vacío
+        * posición válida (POR, DEF, MED, DEL)
+        * dorsal entre 1 y 99
+        * valorMercado entre 1 y 1000
+        * idEquipoReal obligatorio
 
-= Sin cambios: controlador_ligas.dart
-= Sin cambios: controlador_participaciones.dart
-= Sin cambios: controlador_jugadores.dart
-= Sin cambios: controlador_alineaciones.dart
+= Archivos sin cambios funcionales:
+  - controlador_ligas.dart
+  - controlador_participaciones.dart
+  - controlador_jugadores.dart
+  - controlador_equipo_fantasy.dart
+  - controlador_equipos_reales.dart
+  - controlador_alineaciones.dart
+  - controlador_router.dart

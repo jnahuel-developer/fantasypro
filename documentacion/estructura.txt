@@ -4,36 +4,49 @@ fantasypro
 │   └── configuracion
 │       └── entorno
 │           └── firebase_desarrollo.json
+├── documentacion
+│   ├── catalogo_controladores.txt
+│   ├── catalogo_modelos.txt
+│   ├── catalogo_pantallas.txt
+│   ├── catalogo_servicios.txt
+│   ├── diff_controladores.txt
+│   ├── diff_modelos.txt
+│   ├── diff_servicios.txt
+│   └── estructura.txt
 ├── lib
 │   ├── configuracion
 │   │   └── entorno
 │   │       └── firebase_desarrollo.example.json
 │   ├── controladores
-│   │   ├── controlador_alineaciones.dart
-│   │   ├── controlador_equipos.dart
-│   │   ├── controlador_jugadores.dart
-│   │   ├── controlador_ligas.dart
-│   │   ├── controlador_participaciones.dart
-│   │   └── controlador_router.dart
+│   │   ├── controlador_alineaciones.dart
+│   │   ├── controlador_equipo_fantasy.dart
+│   │   ├── controlador_equipos_reales.dart
+│   │   ├── controlador_jugadores_reales
+│   │   ├── controlador_jugadores.dart
+│   │   ├── controlador_ligas.dart
+│   │   ├── controlador_participaciones.dart
+│   │   └── controlador_router.dart
 │   ├── main.dart
 │   ├── modelos
-│   │   ├── alineacion.dart
-│   │   ├── equipo.dart
-│   │   ├── jugador.dart
-│   │   ├── liga.dart
-│   │   ├── participacion_liga.dart
-│   │   └── roles.dart
+│   │   ├── alineacion.dart
+│   │   ├── equipo_fantasy.dart
+│   │   ├── equipo_real.dart
+│   │   ├── jugador.dart
+│   │   ├── liga.dart
+│   │   ├── participacion_liga.dart
+│   │   └── roles.dart
 │   ├── servicios
 │   │   ├── firebase
-│   │   │   ├── servicio_alineaciones.dart
-│   │   │   ├── servicio_autenticacion.dart
-│   │   │   ├── servicio_base_de_datos.dart
-│   │   │   ├── servicio_equipos.dart
-│   │   │   ├── servicio_inicializacion.dart
-│   │   │   ├── servicio_jugadores.dart
-│   │   │   ├── servicio_ligas.dart
-│   │   │   ├── servicio_participaciones.dart
-│   │   │   └── servicio_reglas_de_seguridad.dart
+│   │   │   ├── servicio_alineaciones.dart
+│   │   │   ├── servicio_autenticacion.dart
+│   │   │   ├── servicio_base_de_datos.dart
+│   │   │   ├── servicio_equipos_fantasy.dart
+│   │   │   ├── servicio_equipos_reales.dart
+│   │   │   ├── servicio_inicializacion.dart
+│   │   │   ├── servicio_jugadores.dart
+│   │   │   ├── servicio_ligas.dart
+│   │   │   ├── servicio_participaciones.dart
+│   │   │   └── servicio_reglas_de_seguridad.dart
 │   │   └── utilidades
 │   │       ├── servicio_detector_plataforma.dart
 │   │       ├── servicio_log.dart
@@ -46,19 +59,21 @@ fantasypro
 │   └── vistas
 │       └── web
 │           ├── desktop
-│           │   ├── pagina_alineacion_editar_desktop.dart
-│           │   ├── pagina_alineaciones_admin_desktop.dart
-│           │   ├── pagina_equipo_editar_desktop.dart
-│           │   ├── pagina_equipos_admin_desktop.dart
-│           │   ├── pagina_inicio_desktop.dart
-│           │   ├── pagina_jugador_editar_desktop.dart
-│           │   ├── pagina_jugadores_admin_desktop.dart
-│           │   ├── pagina_ligas_admin_desktop.dart
-│           │   ├── pagina_login_desktop.dart
-│           │   ├── pagina_panel_admin_desktop.dart
-│           │   ├── pagina_participacion_editar_desktop.dart
-│           │   ├── pagina_participaciones_admin_desktop.dart
-│           │   └── pagina_registro_desktop.dart
+│           │   ├── ui__admin__alineacion__editar__desktop.dart
+│           │   ├── ui__admin__alineacion__lista__desktop.dart
+│           │   ├── ui__admin__equipo_real__editar__desktop.dart
+│           │   ├── ui__admin__equipo_real__lista__desktop.dart
+│           │   ├── ui__admin__jugador__editar__desktop.dart
+│           │   ├── ui__admin__jugador__lista__desktop.dart
+│           │   ├── ui__admin__liga__lista__desktop.dart
+│           │   ├── ui__admin__panel__dashboard__desktop.dart
+│           │   ├── ui__admin__participacion__editar__desktop.dart
+│           │   ├── ui__admin__participacion__lista__desktop.dart
+│           │   ├── ui__comun__autenticacion__login__desktop.dart
+│           │   ├── ui__comun__autenticacion__registro__desktop.dart
+│           │   ├── ui__usuario__equipo_fantasy__crear__desktop.dart
+│           │   ├── ui__usuario__inicio__lista__desktop.dart
+│           │   └── ui__usuario__liga__detalle__desktop.dart
 │           └── mobile
 │               └── pagina_inicio_mobile.dart
 ├── test

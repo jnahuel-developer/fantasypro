@@ -4,9 +4,9 @@
     Lista y administración de jugadores de un equipo real.
     Permite crear, editar, archivar, activar y eliminar jugadores.
   Dependencias:
-    - modelos/jugador.dart
+    - modelos/jugador_real.dart
     - modelos/equipo_real.dart
-    - controladores/controlador_jugadores.dart
+    - controladores/controlador_jugadores_reales.dart
     - ui__admin__jugador__editar__desktop.dart
   Pantallas que navegan hacia esta:
     - ui__admin__equipo_real__lista__desktop.dart
@@ -15,9 +15,10 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/jugador.dart';
+import 'package:flutter/services.dart';
+import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/modelos/equipo_real.dart';
-import 'package:fantasypro/controladores/controlador_jugadores.dart';
+import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 
 import 'ui__admin__jugador__editar__desktop.dart';
@@ -34,12 +35,12 @@ class UiAdminJugadorListaDesktop extends StatefulWidget {
 
 class _UiAdminJugadorListaDesktopEstado
     extends State<UiAdminJugadorListaDesktop> {
-  /// Controlador de jugadores.
-  final ControladorJugadores _controlador = ControladorJugadores();
+  /// Controlador de jugadores reales.
+  final ControladorJugadoresReales _controlador = ControladorJugadoresReales();
 
   bool cargando = true;
-  List<Jugador> activos = [];
-  List<Jugador> archivados = [];
+  List<JugadorReal> activos = [];
+  List<JugadorReal> archivados = [];
 
   @override
   void initState() {
@@ -50,14 +51,14 @@ class _UiAdminJugadorListaDesktopEstado
   /*
     Nombre: cargar
     Descripción:
-      Recupera jugadores por equipo y separa activos/archivados.
+      Recupera jugadores reales por equipo y separa activos/archivados.
     Entradas: ninguna
     Salidas: Future<void>
   */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
-    final todos = await _controlador.obtenerPorEquipo(widget.equipo.id);
+    final todos = await _controlador.obtenerPorEquipoReal(widget.equipo.id);
 
     activos = todos.where((j) => j.activo).toList()
       ..sort(
@@ -75,97 +76,112 @@ class _UiAdminJugadorListaDesktopEstado
   /*
     Nombre: crearJugador
     Descripción:
-      Crea un jugador dentro del equipo real.
+      Crea un jugador real dentro del equipo real.
     Entradas: ninguna
     Salidas: Future<void>
   */
   Future<void> crearJugador() async {
     final ctrlNombre = TextEditingController();
-    final ctrlPosicion = TextEditingController();
     final ctrlNacionalidad = TextEditingController();
     final ctrlDorsal = TextEditingController();
+    final ctrlValor = TextEditingController();
+
+    String posicionSeleccionada = "POR";
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(
-          TextosApp.JUGADORES_ADMIN_CREAR_TITULO.replaceAll(
-            "{EQUIPO}",
-            widget.equipo.nombre,
-          ),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: ctrlNombre,
-                decoration: const InputDecoration(
-                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NOMBRE,
-                ),
-              ),
-              TextField(
-                controller: ctrlPosicion,
-                decoration: const InputDecoration(
-                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_POSICION,
-                ),
-              ),
-              TextField(
-                controller: ctrlNacionalidad,
-                decoration: const InputDecoration(
-                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD,
-                ),
-              ),
-              TextField(
-                controller: ctrlDorsal,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_DORSAL,
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CANCELAR),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CREAR),
-            onPressed: () async {
-              final nombre = ctrlNombre.text.trim();
-              final posicion = ctrlPosicion.text.trim();
-              final nacionalidad = ctrlNacionalidad.text.trim();
-              final dorsalText = ctrlDorsal.text.trim();
-              final dorsal = dorsalText.isEmpty
-                  ? 0
-                  : int.tryParse(dorsalText) ?? 0;
-
-              if (nombre.isEmpty || posicion.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      TextosApp.JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            title: Text("Crear jugador en ${widget.equipo.nombre}"),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: ctrlNombre,
+                    decoration: const InputDecoration(labelText: "Nombre"),
+                  ),
+                  DropdownButtonFormField<String>(
+                    initialValue: posicionSeleccionada,
+                    decoration: const InputDecoration(labelText: "Posición"),
+                    items: const [
+                      DropdownMenuItem(value: "POR", child: Text("POR")),
+                      DropdownMenuItem(value: "DEF", child: Text("DEF")),
+                      DropdownMenuItem(value: "MED", child: Text("MED")),
+                      DropdownMenuItem(value: "DEL", child: Text("DEL")),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) {
+                        setStateDialog(() => posicionSeleccionada = v);
+                      }
+                    },
+                  ),
+                  TextField(
+                    controller: ctrlNacionalidad,
+                    decoration: const InputDecoration(
+                      labelText: "Nacionalidad",
                     ),
                   ),
-                );
-                return;
-              }
+                  TextField(
+                    controller: ctrlDorsal,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Dorsal (opcional)",
+                    ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  TextField(
+                    controller: ctrlValor,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Valor de mercado",
+                    ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("Cancelar"),
+                onPressed: () => Navigator.pop(context),
+              ),
+              ElevatedButton(
+                child: const Text("Crear"),
+                onPressed: () async {
+                  final nombre = ctrlNombre.text.trim();
+                  final nacionalidad = ctrlNacionalidad.text.trim();
+                  final dorsal = int.tryParse(ctrlDorsal.text.trim()) ?? 0;
+                  final valor = int.tryParse(ctrlValor.text.trim()) ?? 0;
 
-              await _controlador.crearJugador(
-                widget.equipo.id,
-                nombre,
-                posicion,
-                nacionalidad: nacionalidad,
-                dorsal: dorsal,
-              );
+                  if (nombre.isEmpty || valor < 1 || valor > 1000) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Los campos obligatorios deben ser válidos.",
+                        ),
+                      ),
+                    );
+                    return;
+                  }
 
-              Navigator.pop(context);
-              cargar();
-            },
-          ),
-        ],
+                  await _controlador.crearJugadorReal(
+                    widget.equipo.id,
+                    nombre,
+                    posicionSeleccionada,
+                    nacionalidad: nacionalidad,
+                    dorsal: dorsal,
+                    valorMercado: valor,
+                  );
+
+                  Navigator.pop(context);
+                  cargar();
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -173,7 +189,7 @@ class _UiAdminJugadorListaDesktopEstado
   /*
     Nombre: confirmar
     Descripción:
-      Diálogo genérico de confirmación.
+      Solicita confirmación al usuario mediante un diálogo.
     Entradas: mensaje
     Salidas: Future<bool>
   */
@@ -203,10 +219,10 @@ class _UiAdminJugadorListaDesktopEstado
     Nombre: itemJugador
     Descripción:
       Renderiza un jugador dentro del listado.
-    Entradas: Jugador j
+    Entradas: JugadorReal j
     Salidas: Widget
   */
-  Widget itemJugador(Jugador j) {
+  Widget itemJugador(JugadorReal j) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -224,31 +240,27 @@ class _UiAdminJugadorListaDesktopEstado
           j.nombre,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text("${j.posicion} • ${j.nacionalidad}"),
+        subtitle: Text("${j.posicion} • ${j.nacionalidad} • ${j.valorMercado}"),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Editar
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_EDITAR,
               onPressed: () async {
-                final resultado = await Navigator.push(
+                final res = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => UiAdminJugadorEditarDesktop(jugador: j),
+                    builder: (_) => UiAdminJugadorEditarDesktop(jugadorReal: j),
                   ),
                 );
-                if (resultado == true) cargar();
+                if (res == true) cargar();
               },
             ),
 
             // Archivar / activar
             IconButton(
               icon: Icon(j.activo ? Icons.archive : Icons.unarchive),
-              tooltip: j.activo
-                  ? TextosApp.JUGADORES_ADMIN_TOOLTIP_ARCHIVAR
-                  : TextosApp.JUGADORES_ADMIN_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 final ok = await confirmar(
                   j.activo
@@ -270,7 +282,6 @@ class _UiAdminJugadorListaDesktopEstado
             // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 final ok = await confirmar(
                   TextosApp.JUGADORES_ADMIN_CONFIRMAR_ELIMINAR,
