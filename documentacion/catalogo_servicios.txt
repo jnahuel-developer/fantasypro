@@ -1,349 +1,221 @@
-📘 CATÁLOGO DE SERVICIOS — mod0013 (Actualizado)
-
-Formato solicitado:
-
-Firma exacta
-
-Descripción breve
-
-Parámetros
-
-Retorno
-
-Errores que puede lanzar
-
-Notas de deprecated cuando aplica
-
-Organizado por archivo.
-
-🟦 1) servicio_ligas.dart
-crearLiga(Liga liga) → Future<Liga>
-
-Crea una liga nueva en Firestore.
-Parámetros: liga: Liga
-Retorno: Liga creada con ID asignado
-Errores: excepciones de Firestore
-
-obtenerLiga(String id) → Future<Liga?>
-
-Obtiene una liga por ID.
-Parámetros: id: String
-Retorno: Liga | null
-Errores: Firestore
-
-obtenerLigasActivas() → Future<List<Liga>>
-
-Lista ligas donde activa == true.
-Parámetros: ninguno
-Retorno: lista de Liga
-Errores: Firestore
-
-buscarLigasPorNombre(String texto) → Future<List<Liga>>
-
-Busca ligas aplicando prefijo en nombreBusqueda.
-Parámetros: texto: String
-Retorno: lista de Liga
-Errores: Firestore
-
-obtenerTodasLasLigas() → Future<List<Liga>>
-
-Retorna todas las ligas.
-Retorno: lista de Liga
-Errores: Firestore
-
-editarLiga(Liga liga) → Future<void>
-
-Actualiza campos de una liga.
-Parámetros: liga: Liga
-Errores: Firestore
-
-archivarLiga(String id) → Future<void>
-
-Set activa=false.
-Parámetros: id: String
-Errores: Firestore
-
-activarLiga(String id) → Future<void>
-
-Set activa=true.
-Parámetros: id: String
-Errores: Firestore
-
-eliminarLiga(String id) → Future<void>
-
-Elimina documento.
-Parámetros: id: String
-Errores: Firestore
-
-🟦 2) servicio_participaciones.dart
-crearParticipacion(ParticipacionLiga p) → Future<ParticipacionLiga>
-
-Crea participación.
-Parámetros: p: ParticipacionLiga
-Retorno: participación creada
-Errores: Firestore
-
-usuarioYaParticipa(String idUsuario, String idLiga) → Future<bool>
-
-Verifica existencia activa.
-Errores: Firestore
-
-obtenerPorLiga(String idLiga) → Future<List<ParticipacionLiga>>
-
-Lista por liga.
-Errores: Firestore
-
-obtenerPorUsuario(String idUsuario) → Future<List<ParticipacionLiga>>
-
-Lista por usuario.
-Errores: Firestore
-
-editarParticipacion(ParticipacionLiga p) → Future<void>
-
-Actualiza participación.
-Errores: Firestore
-
-archivarParticipacion(String id) → Future<void>
-
-activo=false.
-Errores: Firestore
-
-activarParticipacion(String id) → Future<void>
-
-activo=true.
-Errores: Firestore
-
-eliminarParticipacion(String id) → Future<void>
-
-Elimina doc.
-Errores: Firestore
-
-🟦 3) servicio_equipos.dart
-
-DEPRECATED mod0013 — reemplazado por:
-
-servicio_equipos_reales.dart
-
-servicio_equipos_fantasy.dart
-
-crearEquipo(Equipo eq) → Future<Equipo>
-
-Crea equipo (modelo antiguo).
-Errores: Firestore
-
-crearEquipoInicial(String idUsuario, String idLiga, String nombre) → Future<Equipo>
-
-Crea un equipo inicial (modelo deprecated).
-Errores: Firestore
-
-obtenerEquiposDeLiga(String idLiga) → Future<List<Equipo>>
-
-Lista equipos.
-Errores: Firestore
-
-editarEquipo(Equipo eq) → Future<void>
-
-Actualiza.
-Errores: Firestore
-
-archivarEquipo(String id) → Future<void>
-
-activo=false
-Errores: Firestore
-
-activarEquipo(String id) → Future<void>
-
-activo=true
-Errores: Firestore
-
-eliminarEquipo(String id) → Future<void>
-
-Elimina
-Errores: Firestore
-
-🟩 4) servicio_equipos_reales.dart (nuevo en mod0013)
-crearEquipoReal(EquipoReal eq) → Future<EquipoReal>
-
-Crea equipo real.
-Errores: Firestore
-
-obtenerEquiposDeLiga(String idLiga) → Future<List<EquipoReal>>
-
-Lista equipos reales de liga.
-Errores: Firestore
-
-editarEquipoReal(EquipoReal eq) → Future<void>
-
-Actualiza real.
-Errores: Firestore
-
-archivarEquipoReal(String id) → Future<void>
-
-activo=false
-Errores: Firestore
-
-activarEquipoReal(String id) → Future<void>
-
-activo=true
-Errores: Firestore
-
-eliminarEquipoReal(String id) → Future<void>
-
-Elimina
-Errores: Firestore
-
-🟩 5) servicio_equipos_fantasy.dart (nuevo en mod0013)
-crearEquipoFantasy(String idUsuario, String idLiga, String nombre) → Future<EquipoFantasy>
-
-Crea equipo fantasy.
-Errores: Firestore
-
-obtenerPorUsuarioYLiga(String idUsuario, String idLiga) → Future<List<EquipoFantasy>>
-
-Lista equipos fantasy.
-Errores: Firestore
-
-editarEquipoFantasy(EquipoFantasy eq) → Future<void>
-
-Actualiza.
-Errores: Firestore
-
-archivarEquipoFantasy(String id) → Future<void>
-
-activo=false
-Errores: Firestore
-
-activarEquipoFantasy(String id) → Future<void>
-
-activo=true
-Errores: Firestore
-
-eliminarEquipoFantasy(String id) → Future<void>
-
-Elimina
-Errores: Firestore
-
-🟦 6) servicio_jugadores.dart
-crearJugador(Jugador j) → Future<Jugador>
-
-Crea jugador.
-Errores: Firestore
-
-obtenerJugadoresDeEquipo(String idEquipo) → Future<List<Jugador>>
-
-Lista jugadores.
-Errores: Firestore
-
-editarJugador(Jugador j) → Future<void>
-
-Actualiza.
-Errores: Firestore
-
-archivarJugador(String id) → Future<void>
-
-activo=false
-Errores: Firestore
-
-activarJugador(String id) → Future<void>
-
-activo=true
-Errores: Firestore
-
-eliminarJugador(String id) → Future<void>
-
-Elimina
-Errores: Firestore
-
-🟦 7) servicio_alineaciones.dart
-crearAlineacion(Alineacion a) → Future<Alineacion>
-
-Crea alineación.
-Errores: Firestore
-
-obtenerPorUsuarioEnLiga(String idLiga, String idUsuario) → Future<List<Alineacion>>
-
-Lista alineaciones.
-Errores: Firestore
-
-editarAlineacion(Alineacion a) → Future<void>
-
-Actualiza
-Errores: Firestore
-
-archivarAlineacion(String id) → Future<void>
-
-activo=false
-Errores: Firestore
-
-activarAlineacion(String id) → Future<void>
-
-activo=true
-Errores: Firestore
-
-eliminarAlineacion(String id) → Future<void>
-
-Elimina
-Errores: Firestore
-
-🟦 8) servicio_base_de_datos.dart
-guardarUsuario(String uid, Map<String,dynamic> datos) → Future<void>
-
-Crea/actualiza doc usuario.
-Errores: Firestore
-
-obtenerUsuario(String uid) → Future<DocumentSnapshot<Map<String,dynamic>>>
-
-Obtiene usuario.
-Errores: Firestore
-
-crearLiga(Map<String,dynamic> datos) → Future<String>
-
-Crea liga mínima.
-Errores: Firestore
-
-listarLigasStream() → Stream<QuerySnapshot<Map<String, dynamic>>>
-
-Stream de ligas.
-Errores: Firestore (runtime)
-
-🟦 9) servicio_autenticacion.dart
-registrarUsuario(String email, String password, String nombre, String rolDB) → Future<String?>
-
-Registra usuario Auth + Firestore.
-Errores: FirebaseAuth / Firestore (devueltos como null)
-
-iniciarSesion(String email, String password) → Future<User?>
-
-Login.
-Errores: FirebaseAuth (devueltos como null)
-
-cerrarSesion() → Future<void>
-
-Sign out.
-Errores: FirebaseAuth
-
-obtenerUsuarioActual() → User?
-
-Retorna currentUser
-Errores: ninguno
-
-esAdmin(String uid) → Future<bool>
-
-Valida rol en Firestore.
-Errores: Firestore (capturado → false)
-
-🟦 10) servicio_inicializacion.dart
-inicializarDesdeArchivo(String rutaConfig) → Future<FirebaseApp>
-
-Inicializa Firebase con JSON.
-Errores: lectura archivo / FirebaseCore / Firestore
-
-app → FirebaseApp? (getter)
-
-Última app inicializada.
-
-🟦 11) servicio_reglas_de_seguridad.dart
-reglasEjemplo() → String
-
-Retorna texto de reglas Firestore.
-Errores: ninguno
+catalogo_servicios_mod0013.txt
+-------------------------------------------------------------------------------
+CATÁLOGO DE SERVICIOS — FantasyPro
+Módulo: Servicios
+Versión: mod0013
+Descripción:
+Conjunto de servicios encargados de la comunicación con Firebase Firestore y
+Firebase Auth. Esta versión incorpora los servicios separados de equipos reales
+y equipos fantasy, manteniendo compatibilidad con los servicios anteriores.
+-------------------------------------------------------------------------------
+
+ // ---------------------------------------------------------------------------
+ // Archivo: lib/servicios/firebase/servicio_equipos_reales.dart
+ // ---------------------------------------------------------------------------
+ Descripción:
+   Servicio para administrar equipos reales en Firestore.
+ Responsabilidades:
+   - Crear, listar, editar, activar, archivar y eliminar equipos reales.
+ Dependencias directas:
+   - cloud_firestore
+   - modelos/equipo_real.dart
+   - servicio_log.dart
+
+ Método: crearEquipoReal
+ Firma: Future<EquipoReal> crearEquipoReal(EquipoReal equipo)
+ Descripción:
+   Crea un documento de equipo real en Firestore.
+ Ejemplo:
+   final r = await servicio.crearEquipoReal(equipo);
+
+ Método: obtenerEquiposDeLiga
+ Firma: Future<List<EquipoReal>> obtenerEquiposDeLiga(String idLiga)
+ Descripción:
+   Devuelve los equipos reales asociados a una liga.
+ Ejemplo:
+   final lista = await servicio.obtenerEquiposDeLiga("L1");
+
+ Método: editarEquipoReal
+ Firma: Future<void> editarEquipoReal(EquipoReal equipo)
+ Descripción:
+   Actualiza un equipo real existente.
+ Ejemplo:
+   await servicio.editarEquipoReal(e);
+
+ Método: archivarEquipoReal
+ Firma: Future<void> archivarEquipoReal(String id)
+ Descripción:
+   Marca un equipo real como inactivo.
+ Ejemplo:
+   await servicio.archivarEquipoReal("ER1");
+
+ Método: activarEquipoReal
+ Firma: Future<void> activarEquipoReal(String id)
+ Descripción:
+   Marca un equipo real como activo.
+ Ejemplo:
+   await servicio.activarEquipoReal("ER1");
+
+ Método: eliminarEquipoReal
+ Firma: Future<void> eliminarEquipoReal(String id)
+ Descripción:
+   Elimina un equipo real.
+ Ejemplo:
+   await servicio.eliminarEquipoReal("ER1");
+
+ // ---------------------------------------------------------------------------
+ // Archivo: lib/servicios/firebase/servicio_equipos_fantasy.dart
+ // ---------------------------------------------------------------------------
+ Descripción:
+   Servicio para administrar equipos fantasy de usuarios.
+ Responsabilidades:
+   - Crear, listar por usuario y liga, editar, activar, archivar, eliminar.
+ Dependencias directas:
+   - cloud_firestore
+   - modelos/equipo_fantasy.dart
+   - servicio_log.dart
+
+ Método: crearEquipoFantasy
+ Firma: Future<EquipoFantasy> crearEquipoFantasy(String idUsuario, String idLiga, String nombre)
+ Descripción:
+   Crea un equipo fantasy vacío.
+ Ejemplo:
+   final ef = await servicio.crearEquipoFantasy("U1", "L1", "Mi Equipo");
+
+ Método: obtenerPorUsuarioYLiga
+ Firma: Future<List<EquipoFantasy>> obtenerPorUsuarioYLiga(String idUsuario, String idLiga)
+ Descripción:
+   Obtiene todos los equipos fantasy del usuario en una liga.
+ Ejemplo:
+   final list = await servicio.obtenerPorUsuarioYLiga("U1", "L1");
+
+ Método: editarEquipoFantasy
+ Firma: Future<void> editarEquipoFantasy(EquipoFantasy equipo)
+ Descripción:
+   Actualiza los datos del equipo fantasy.
+ Ejemplo:
+   await servicio.editarEquipoFantasy(e);
+
+ Método: archivarEquipoFantasy
+ Firma: Future<void> archivarEquipoFantasy(String id)
+ Descripción:
+   Marca un equipo fantasy como inactivo.
+ Ejemplo:
+   await servicio.archivarEquipoFantasy("EF1");
+
+ Método: activarEquipoFantasy
+ Firma: Future<void> activarEquipoFantasy(String id)
+ Descripción:
+   Marca un equipo fantasy como activo.
+ Ejemplo:
+   await servicio.activarEquipoFantasy("EF1");
+
+ Método: eliminarEquipoFantasy
+ Firma: Future<void> eliminarEquipoFantasy(String id)
+ Descripción:
+   Elimina un equipo fantasy.
+ Ejemplo:
+   await servicio.eliminarEquipoFantasy("EF1");
+
+ // ---------------------------------------------------------------------------
+ // Archivo: lib/servicios/firebase/servicio_equipos.dart
+ // ---------------------------------------------------------------------------
+ Descripción:
+   Servicio original de equipos. Ahora marcado como DEPRECATED.
+ Responsabilidades:
+   - Mantener compatibilidad retroactiva.
+ Dependencias directas:
+   - cloud_firestore
+   - modelos/equipo.dart
+   - servicio_log.dart
+
+ Método: crearEquipo
+ Firma: Future<Equipo> crearEquipo(Equipo equipo)
+
+ Método: crearEquipoInicial
+ Firma: Future<Equipo> crearEquipoInicial(String idUsuario, String idLiga, String nombre)
+
+ Método: obtenerEquiposDeLiga
+ Firma: Future<List<Equipo>> obtenerEquiposDeLiga(String idLiga)
+
+ Método: editarEquipo
+ Firma: Future<void> editarEquipo(Equipo equipo)
+
+ Método: archivarEquipo
+ Firma: Future<void> archivarEquipo(String id)
+
+ Método: activarEquipo
+ Firma: Future<void> activarEquipo(String id)
+
+ Método: eliminarEquipo
+ Firma: Future<void> eliminarEquipo(String id)
+
+ // ---------------------------------------------------------------------------
+ // Archivos restantes del módulo de servicios
+ // (No modificados en esta versión — solo se catalogan)
+ // ---------------------------------------------------------------------------
+
+ Archivo: servicio_ligas.dart  
+ Métodos públicos:
+   - crearLiga(Liga liga)
+   - obtenerLiga(String id)
+   - obtenerLigasActivas()
+   - buscarLigasPorNombre(String texto)
+   - obtenerTodasLasLigas()
+   - editarLiga(Liga liga)
+   - archivarLiga(String id)
+   - activarLiga(String id)
+   - eliminarLiga(String id)
+
+ Archivo: servicio_participaciones.dart  
+ Métodos públicos:
+   - crearParticipacion(ParticipacionLiga participacion)
+   - usuarioYaParticipa(String idUsuario, String idLiga)
+   - obtenerPorLiga(String idLiga)
+   - obtenerPorUsuario(String idUsuario)
+   - editarParticipacion(ParticipacionLiga participacion)
+   - archivarParticipacion(String id)
+   - activarParticipacion(String id)
+   - eliminarParticipacion(String id)
+
+ Archivo: servicio_jugadores.dart  
+ Métodos públicos:
+   - crearJugador(Jugador jugador)
+   - obtenerJugadoresDeEquipo(String idEquipo)
+   - editarJugador(Jugador jugador)
+   - archivarJugador(String id)
+   - activarJugador(String id)
+   - eliminarJugador(String id)
+
+ Archivo: servicio_alineaciones.dart  
+ Métodos públicos:
+   - crearAlineacion(Alineacion alineacion)
+   - obtenerPorUsuarioEnLiga(String idLiga, String idUsuario)
+   - editarAlineacion(Alineacion alineacion)
+   - archivarAlineacion(String id)
+   - activarAlineacion(String id)
+   - eliminarAlineacion(String id)
+
+ Archivo: servicio_autenticacion.dart  
+ Métodos públicos:
+   - registrarUsuario(String email, String password, String nombre, String rolDB)
+   - iniciarSesion(String email, String password)
+   - cerrarSesion()
+   - obtenerUsuarioActual()
+   - esAdmin(String uid)
+
+ Archivo: servicio_base_de_datos.dart  
+ Métodos públicos:
+   - guardarUsuario(String uid, Map<String, dynamic> datos)
+   - obtenerUsuario(String uid)
+   - crearLiga(Map<String, dynamic> datos)
+   - listarLigasStream()
+
+ Archivo: servicio_inicializacion.dart  
+ Métodos públicos:
+   - inicializarDesdeArchivo(String rutaConfig)
+   - app (getter)
+
+ Archivo: servicio_reglas_de_seguridad.dart  
+ Métodos públicos:
+   - reglasEjemplo()

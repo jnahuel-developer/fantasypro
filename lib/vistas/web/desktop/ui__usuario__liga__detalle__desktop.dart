@@ -1,34 +1,40 @@
 /*
-  Archivo: pagina_liga_detalle_desktop.dart
+  Archivo: ui__usuario__liga__detalle__desktop.dart
   Descripción:
-    Detalle mínimo de liga + opción de unirse.
-    Flujo aprobado por PM:
-      1) Obtener usuario actual
-      2) usuarioYaParticipa(idUsuario, idLiga)
-      3) Si participa → error
-      4) Si no → crearParticipacionSiNoExiste
-      5) Navegar a creación de equipo
+    Pantalla de detalle de una liga para el usuario final.
+    Permite unirse a la liga si aún no participa.
+  Dependencias:
+    - modelos/liga.dart
+    - servicios/servicio_autenticacion.dart
+    - servicios/servicio_participaciones.dart
+    - controladores/controlador_participaciones.dart
+  Pantallas que navegan hacia esta:
+    - ui__usuario__inicio__lista__desktop.dart
+  Pantallas destino:
+    - ui__usuario__equipo_fantasy__crear__desktop.dart
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
-import 'package:fantasypro/controladores/controlador_participaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
+import 'package:fantasypro/controladores/controlador_participaciones.dart';
 
-import 'pagina_equipo_crear_desktop.dart';
+import 'ui__usuario__equipo_fantasy__crear__desktop.dart';
 
-class PaginaLigaDetalleDesktop extends StatefulWidget {
+class UiUsuarioLigaDetalleDesktop extends StatefulWidget {
   final Liga liga;
 
-  const PaginaLigaDetalleDesktop({super.key, required this.liga});
+  const UiUsuarioLigaDetalleDesktop({super.key, required this.liga});
 
   @override
-  State<PaginaLigaDetalleDesktop> createState() =>
-      _PaginaLigaDetalleDesktopEstado();
+  State<UiUsuarioLigaDetalleDesktop> createState() =>
+      _UiUsuarioLigaDetalleDesktopEstado();
 }
 
-class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
+class _UiUsuarioLigaDetalleDesktopEstado
+    extends State<UiUsuarioLigaDetalleDesktop> {
+  /// Controlador de participaciones.
   final ControladorParticipaciones controladorParticipaciones =
       ControladorParticipaciones();
 
@@ -39,6 +45,13 @@ class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
   bool cargando = false;
   String? mensajeError;
 
+  /*
+    Nombre: unirse
+    Descripción:
+      Valida si el usuario ya participa y crea la participación en caso afirmativo.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
   Future<void> unirse() async {
     setState(() {
       cargando = true;
@@ -46,7 +59,6 @@ class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
     });
 
     try {
-      // 1) Usuario actual
       final usuario = servicioAuth.obtenerUsuarioActual();
       if (usuario == null) {
         setState(() {
@@ -58,7 +70,6 @@ class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
 
       final idUsuario = usuario.uid;
 
-      // 2) Verificar si ya participa
       final ya = await servicioParticipaciones.usuarioYaParticipa(
         idUsuario,
         widget.liga.id,
@@ -72,29 +83,23 @@ class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
         return;
       }
 
-      // 3) Crear participación
-      final participacion = await controladorParticipaciones
-          .crearParticipacionSiNoExiste(
-            widget.liga.id,
-            idUsuario,
-            "Mi Equipo", // nombre temporal inicial (Etapa 1)
-          );
+      await controladorParticipaciones.crearParticipacionSiNoExiste(
+        widget.liga.id,
+        idUsuario,
+        "Mi Equipo",
+      );
 
-      // 4) Navegar a crear equipo
-      // Cerrar esta pantalla ANTES de ir a crear el equipo
       Navigator.pop(context);
 
-      // Ir a la pantalla de creación de equipo
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => PaginaEquipoCrearDesktop(liga: widget.liga),
+          builder: (_) => UiUsuarioEquipoFantasyCrearDesktop(liga: widget.liga),
         ),
       );
     } catch (e) {
-      debugPrint("ERROR unirse a liga: $e");
       setState(() {
-        mensajeError = "Error desconocido al unirse.";
+        mensajeError = "Error al unirse.";
         cargando = false;
       });
     }
@@ -114,16 +119,9 @@ class _PaginaLigaDetalleDesktopEstado extends State<PaginaLigaDetalleDesktop> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-
             if (mensajeError != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
-                  mensajeError!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-
+              Text(mensajeError!, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 10),
             cargando
                 ? const CircularProgressIndicator()
                 : ElevatedButton(

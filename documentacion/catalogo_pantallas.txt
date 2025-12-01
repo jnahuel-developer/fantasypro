@@ -1,592 +1,589 @@
-📘 catalogo_pantallas.txt – Completo (mod0012)
-
 /*
   Archivo: catalogo_pantallas.txt
   Módulo: UI (Pantallas)
-  Mod actual: mod0012
+  Mod actual: mod0013
   Propósito:
-    Catálogo completo de las pantallas del proyecto en su estado actual.
+    Catálogo completo de las pantallas del proyecto tras la estandarización
+    de nombres y separación EquipoReal / EquipoFantasy.
 */
 
 ===============================================================================
-PANTALLA: pagina_alineacion_editar_desktop.dart
+PANTALLA: ui__admin__alineacion__editar__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Alineacion
+- alineacion.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorAlineaciones
+- controlador_alineaciones.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Vuelve hacia: pagina_alineaciones_admin_desktop.dart
-- Navega hacia: (ninguna)
+- Vuelve desde: ui__admin__alineacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Editar alineación (formación, jugadores, puntos)
-- Confirmar salida sin guardar
+- Editar alineación
+- Validar cambios
+- Guardar en controlador
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Ajustada documentación interna según estándar PM.
+
+
+===============================================================================
+PANTALLA: ui__admin__alineacion__lista__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- alineacion.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+(no usa servicios directamente)
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_alineaciones.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Navega hacia: ui__admin__alineacion__editar__desktop.dart
+- Vuelve desde: ui__admin__panel__dashboard__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Listar alineaciones
+- Crear
+- Editar
+- Archivar / activar
+- Eliminar
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Sin cambios funcionales en mod0013.
+
+
+===============================================================================
+PANTALLA: ui__admin__equipo_real__editar__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- equipo_real.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+(no usa servicios directamente)
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_equipos_reales.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Vuelve hacia: ui__admin__equipo_real__lista__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Editar equipo real
+- Validar campos
 - Guardar cambios
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Utiliza copiarCon() para crear instancia actualizada
-- Uso explícito de WillPopScope
-- Campos sensibles con validación básica
+- Modelo antiguo “Equipo” reemplazado por EquipoReal.
 
 
 ===============================================================================
-PANTALLA: pagina_alineaciones_admin_desktop.dart
+PANTALLA: ui__admin__equipo_real__lista__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Alineacion
+- equipo_real.dart
+- liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorAlineaciones
+- controlador_equipos_reales.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_alineacion_editar_desktop.dart
-- Vuelve desde: (Back)
+- Navega hacia: ui__admin__equipo_real__editar__desktop.dart
+- Navega hacia: ui__admin__jugador__lista__desktop.dart
+- Vuelve desde: ui__admin__liga__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Crear alineación
+- Listar equipos reales
+- Crear equipo real
 - Editar
-- Archivar / Activar
-- Eliminar
-- Listado Activas / Archivadas
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Admin maneja CRUD completo
-- Ordenamiento por fecha de creación
-- Formaciones soportadas: 4-4-2 y 4-3-3
-
-
-===============================================================================
-PANTALLA: pagina_equipo_crear_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- Liga
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- ServicioAutenticacion
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorEquipos
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Vuelve a: pagina_inicio_desktop.dart
-- Navega desde: pagina_liga_detalle_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Crear equipo inicial para usuario final
-- Validación de nombre obligatorio
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Flujo aprobado por PM (mod0012): obtener usuario con ServicioAutenticacion
-- Navega con pushReplacement hacia home
-
-
-===============================================================================
-PANTALLA: pagina_equipo_editar_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- Equipo
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- Ninguno
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorEquipos
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Vuelve hacia: pagina_equipos_admin_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Editar datos de un equipo oficial (Admin)
-- Confirmar salida si hay cambios
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Usa TextosApp para labels
-- CRUD administrativo
-
-
-===============================================================================
-PANTALLA: pagina_equipos_admin_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- Liga
-- Equipo
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- ServicioEquipos
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorEquipos
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Navega hacia: pagina_equipo_editar_desktop.dart
-- Navega hacia: pagina_jugadores_admin_desktop.dart
-- Vuelve desde: pagina_ligas_admin_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Crear equipo oficial
-- Editar equipo
 - Archivar / activar
 - Eliminar
-- Gestionar jugadores del equipo
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Admin crea equipos usando ServicioEquipos directamente (decisión PM)
-- idUsuario="" para equipos oficiales (mod0012)
+- Reemplazo completo del modelo antiguo Equipo.
 
 
 ===============================================================================
-PANTALLA: pagina_inicio_desktop.dart
+PANTALLA: ui__admin__jugador__editar__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Liga
+- jugador.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- ServicioAutenticacion
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorLigas
+- controlador_jugadores.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_liga_detalle_desktop.dart
-- Navega a login: pagina_login_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Listado de ligas activas
-- Búsqueda
-- Logout de usuario final
-- Acceso al detalle de liga
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Menú superior incluye logout actual
-- Recarga de ligas al volver
-
-
-===============================================================================
-PANTALLA: pagina_jugador_editar_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- Jugador
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- Ninguno
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorJugadores
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Vuelve hacia: pagina_jugadores_admin_desktop.dart
+- Vuelve hacia: ui__admin__jugador__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Editar jugador
-- Validación de campos obligatorios
-- Confirmación de salida
+- Validar datos
+- Guardar cambios
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Campos: nombre, posición, nacionalidad, dorsal
+- Textos hardcodeados permitidos.
 
 
 ===============================================================================
-PANTALLA: pagina_jugadores_admin_desktop.dart
+PANTALLA: ui__admin__jugador__lista__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Jugador
-- Equipo
+- jugador.dart
+- equipo_real.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorJugadores
+- controlador_jugadores.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_jugador_editar_desktop.dart
+- Navega hacia: ui__admin__jugador__editar__desktop.dart
+- Viene desde: ui__admin__equipo_real__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
+- Listar jugadores del equipo real
 - Crear jugador
 - Editar jugador
-- Archivar / activar
+- Archivar / activar jugador
 - Eliminar jugador
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- CRUD administrativo completo de jugadores
+- Convertido a EquipoReal sin afectar lógica.
 
 
 ===============================================================================
-PANTALLA: pagina_liga_detalle_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- Liga
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- ServicioAutenticacion
-- ServicioParticipaciones
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorParticipaciones
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Navega hacia: pagina_equipo_crear_desktop.dart
-- Vuelve hacia: pagina_inicio_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Validar participación existente
-- Crear participación inicial
-- Navegar a creación de equipo
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Implementa flujo PM: usuarioYaParticipa → crearParticipacionSiNoExiste
-
-
-===============================================================================
-PANTALLA: pagina_ligas_admin_desktop.dart
+PANTALLA: ui__admin__liga__lista__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Liga
+- liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorLigas
+- controlador_ligas.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_equipos_admin_desktop.dart
-- Navega hacia: pagina_participaciones_admin_desktop.dart
+- Navega hacia: ui__admin__equipo_real__lista__desktop.dart
+- Navega hacia: ui__admin__participacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
+- Listar ligas (activas y archivadas)
 - Crear liga
-- Archivar / activar
-- Eliminar
-- Acceso a equipos y participaciones
+- Archivar / activar liga
+- Eliminar liga
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Ordenamiento alfabético
-- CRUD admin completo
+- Navegación actualizada a equipo_real.
 
 
 ===============================================================================
-PANTALLA: pagina_login_desktop.dart
+PANTALLA: ui__admin__panel__dashboard__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa modelos)
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- ServicioAutenticacion
+- servicio_autenticacion.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa controladores)
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_registro_desktop.dart
+- Navega hacia: ui__admin__liga__lista__desktop.dart
+- Navega hacia: ui__comun__autenticacion__login__desktop.dart (logout)
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Iniciar sesión
-- Mostrar mensaje de éxito o error
+- Cerrar sesión
+- Navegar a administración de ligas
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- No navega automáticamente al home tras login (comportamiento actual)
+- Sin cambios en mod0013.
 
 
 ===============================================================================
-PANTALLA: pagina_panel_admin_desktop.dart
+PANTALLA: ui__admin__participacion__editar__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- Ninguno
+- participacion_liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- FirebaseAuth (signOut)
+(no usa servicios directamente)
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- Ninguno
+- controlador_participaciones.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_ligas_admin_desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Logout admin
-- Acceso a gestión de ligas
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Punto de entrada del panel administrativo
-
-
-===============================================================================
-PANTALLA: pagina_participacion_editar_desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- ParticipacionLiga
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-- Ninguno
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- ControladorParticipaciones
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Vuelve hacia: pagina_participaciones_admin_desktop.dart
+- Vuelve hacia: ui__admin__participacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Editar nombreEquipoFantasy
 - Editar puntos
-- Validaciones
+- Guardar cambios
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- idUsuario es campo no editable
+- Compatibilidad completa con EquipoFantasy.
 
 
 ===============================================================================
-PANTALLA: pagina_participaciones_admin_desktop.dart
+PANTALLA: ui__admin__participacion__lista__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- ParticipacionLiga
-- Liga
+- participacion_liga.dart
+- liga.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- ServicioParticipaciones
+- servicio_participaciones.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- ControladorParticipaciones
+- controlador_participaciones.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Navega hacia: pagina_participacion_editar_desktop.dart
-- Navega hacia: pagina_alineaciones_admin_desktop.dart
+- Navega hacia: ui__admin__participacion__editar__desktop.dart
+- Navega hacia: ui__admin__alineacion__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
 - Listar participaciones
-- Crear participación admin
-- Editar
-- Archivar / Activar
-- Eliminar
+- Crear participación
+- Editar participación
+- Archivar / activar participación
+- Eliminar participación
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Admin crea participaciones directamente vía ServicioParticipaciones (decisión PM)
+- Integración sin cambios respecto a equipo fantasy.
 
 
 ===============================================================================
-PANTALLA: pagina_registro_desktop.dart
+PANTALLA: ui__comun__autenticacion__login__desktop.dart
 ===============================================================================
 
 // ---------------------------------------------------------------------------
 // Dependencias de modelos
 // ---------------------------------------------------------------------------
-- RolUsuario
+(no usa modelos)
 
 // ---------------------------------------------------------------------------
 // Dependencias de servicios
 // ---------------------------------------------------------------------------
-- ServicioAutenticacion
-- ServicioLog
+- servicio_autenticacion.dart
 
 // ---------------------------------------------------------------------------
 // Dependencias de controladores
 // ---------------------------------------------------------------------------
-- Ninguno
+(no usa controladores)
 
 // ---------------------------------------------------------------------------
 // Dependencias con otras pantallas (navegación)
 // ---------------------------------------------------------------------------
-- Vuelve hacia: pagina_login_desktop.dart
+- Navega hacia: ui__comun__autenticacion__registro__desktop.dart
+- Navega hacia: ui__admin__panel__dashboard__desktop.dart
+- Navega hacia: ui__usuario__inicio__lista__desktop.dart
 
 // ---------------------------------------------------------------------------
 // Eventos principales
 // ---------------------------------------------------------------------------
-- Registro de usuario
-- Selección de rol
-- Log de auditoría
+- Autenticación de usuario
+- Validación de credenciales
 
 // ---------------------------------------------------------------------------
 // Notas relevantes
 // ---------------------------------------------------------------------------
-- Validación mínima
-- No redirige automáticamente luego de registro
+- Sin cambios funcionales en mod0013.
+
+
+===============================================================================
+PANTALLA: ui__comun__autenticacion__registro__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- roles.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+- servicio_autenticacion.dart
+- servicio_log.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+(no usa controladores)
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Vuelve hacia: ui__comun__autenticacion__login__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Alta de usuario
+- Validación básica
+- Registro en Firebase
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Sin cambios funcionales.
+
+
+===============================================================================
+PANTALLA: ui__usuario__equipo_fantasy__crear__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- equipo_fantasy.dart
+- liga.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+(no usa servicios directamente)
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_equipo_fantasy.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Viene desde: ui__usuario__liga__detalle__desktop.dart
+- Navega hacia: ui__usuario__inicio__lista__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Crear equipo fantasy
+- Validar nombre
+- Guardar equipo fantasy
+- Volver a inicio
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Modelo reemplazado correctamente.
+
+
+===============================================================================
+PANTALLA: ui__usuario__inicio__lista__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- liga.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+- servicio_autenticacion.dart
+- servicio_ligas.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_ligas.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Navega hacia: ui__usuario__liga__detalle__desktop.dart
+- Navega hacia: ui__comun__autenticacion__login__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Listar ligas activas
+- Cerrar sesión
+- Ir al detalle de liga
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Sin cambios de mod0013.
+
+
+===============================================================================
+PANTALLA: ui__usuario__liga__detalle__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- liga.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+- servicio_autenticacion.dart
+- servicio_participaciones.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_participaciones.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- Navega hacia: ui__usuario__equipo_fantasy__crear__desktop.dart
+- Vuelve hacia: ui__usuario__inicio__lista__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Validar si participa
+- Crear participación
+- Navegar a creación de equipo
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Lógica conservada sin cambios.

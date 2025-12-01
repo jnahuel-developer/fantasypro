@@ -1,32 +1,40 @@
 /*
-  Archivo: pagina_jugadores_admin_desktop.dart
+  Archivo: ui__admin__jugador__lista__desktop.dart
   Descripción:
-    Administración de jugadores de un equipo (Web Desktop).
-    - Listado Activos / Archivados
-    - Crear jugador
-    - Editar jugador
-    - Archivar / Activar / Eliminar con confirmación
+    Lista y administración de jugadores de un equipo real.
+    Permite crear, editar, archivar, activar y eliminar jugadores.
+  Dependencias:
+    - modelos/jugador.dart
+    - modelos/equipo_real.dart
+    - controladores/controlador_jugadores.dart
+    - ui__admin__jugador__editar__desktop.dart
+  Pantallas que navegan hacia esta:
+    - ui__admin__equipo_real__lista__desktop.dart
+  Pantallas destino:
+    - ui__admin__jugador__editar__desktop.dart
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/jugador.dart';
-import 'package:fantasypro/modelos/equipo.dart';
+import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/controladores/controlador_jugadores.dart';
-import 'package:fantasypro/vistas/web/desktop/pagina_jugador_editar_desktop.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 
-class PaginaJugadoresAdminDesktop extends StatefulWidget {
-  final Equipo equipo;
+import 'ui__admin__jugador__editar__desktop.dart';
 
-  const PaginaJugadoresAdminDesktop({super.key, required this.equipo});
+class UiAdminJugadorListaDesktop extends StatefulWidget {
+  final EquipoReal equipo;
+
+  const UiAdminJugadorListaDesktop({super.key, required this.equipo});
 
   @override
-  State<PaginaJugadoresAdminDesktop> createState() =>
-      _PaginaJugadoresAdminDesktopEstado();
+  State<UiAdminJugadorListaDesktop> createState() =>
+      _UiAdminJugadorListaDesktopEstado();
 }
 
-class _PaginaJugadoresAdminDesktopEstado
-    extends State<PaginaJugadoresAdminDesktop> {
+class _UiAdminJugadorListaDesktopEstado
+    extends State<UiAdminJugadorListaDesktop> {
+  /// Controlador de jugadores.
   final ControladorJugadores _controlador = ControladorJugadores();
 
   bool cargando = true;
@@ -39,6 +47,13 @@ class _PaginaJugadoresAdminDesktopEstado
     cargar();
   }
 
+  /*
+    Nombre: cargar
+    Descripción:
+      Recupera jugadores por equipo y separa activos/archivados.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
@@ -57,6 +72,13 @@ class _PaginaJugadoresAdminDesktopEstado
     setState(() => cargando = false);
   }
 
+  /*
+    Nombre: crearJugador
+    Descripción:
+      Crea un jugador dentro del equipo real.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
   Future<void> crearJugador() async {
     final ctrlNombre = TextEditingController();
     final ctrlPosicion = TextEditingController();
@@ -65,97 +87,98 @@ class _PaginaJugadoresAdminDesktopEstado
 
     showDialog(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: Text(
-            TextosApp.JUGADORES_ADMIN_CREAR_TITULO.replaceAll(
-              "{EQUIPO}",
-              widget.equipo.nombre,
-            ),
+      builder: (_) => AlertDialog(
+        title: Text(
+          TextosApp.JUGADORES_ADMIN_CREAR_TITULO.replaceAll(
+            "{EQUIPO}",
+            widget.equipo.nombre,
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: ctrlNombre,
-                  decoration: const InputDecoration(
-                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NOMBRE,
-                  ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: ctrlNombre,
+                decoration: const InputDecoration(
+                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NOMBRE,
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: ctrlPosicion,
-                  decoration: const InputDecoration(
-                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_POSICION,
-                  ),
+              ),
+              TextField(
+                controller: ctrlPosicion,
+                decoration: const InputDecoration(
+                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_POSICION,
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: ctrlNacionalidad,
-                  decoration: const InputDecoration(
-                    labelText:
-                        TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD,
-                  ),
+              ),
+              TextField(
+                controller: ctrlNacionalidad,
+                decoration: const InputDecoration(
+                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD,
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: ctrlDorsal,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_DORSAL,
-                  ),
+              ),
+              TextField(
+                controller: ctrlDorsal,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_DORSAL,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CANCELAR),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CREAR),
-              onPressed: () async {
-                final nombre = ctrlNombre.text.trim();
-                final posicion = ctrlPosicion.text.trim();
-                final nacionalidad = ctrlNacionalidad.text.trim();
-                final dorsalText = ctrlDorsal.text.trim();
-                final dorsal = dorsalText.isEmpty
-                    ? 0
-                    : int.tryParse(dorsalText) ?? 0;
+        ),
+        actions: [
+          TextButton(
+            child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CANCELAR),
+            onPressed: () => Navigator.pop(context),
+          ),
+          ElevatedButton(
+            child: const Text(TextosApp.JUGADORES_ADMIN_CREAR_BOTON_CREAR),
+            onPressed: () async {
+              final nombre = ctrlNombre.text.trim();
+              final posicion = ctrlPosicion.text.trim();
+              final nacionalidad = ctrlNacionalidad.text.trim();
+              final dorsalText = ctrlDorsal.text.trim();
+              final dorsal = dorsalText.isEmpty
+                  ? 0
+                  : int.tryParse(dorsalText) ?? 0;
 
-                if (nombre.isEmpty || posicion.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        TextosApp.JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS,
-                      ),
+              if (nombre.isEmpty || posicion.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      TextosApp.JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS,
                     ),
-                  );
-                  return;
-                }
-
-                await _controlador.crearJugador(
-                  widget.equipo.id,
-                  nombre,
-                  posicion,
-                  nacionalidad: nacionalidad,
-                  dorsal: dorsal,
+                  ),
                 );
+                return;
+              }
 
-                Navigator.pop(context);
-                cargar();
-              },
-            ),
-          ],
-        );
-      },
+              await _controlador.crearJugador(
+                widget.equipo.id,
+                nombre,
+                posicion,
+                nacionalidad: nacionalidad,
+                dorsal: dorsal,
+              );
+
+              Navigator.pop(context);
+              cargar();
+            },
+          ),
+        ],
+      ),
     );
   }
 
+  /*
+    Nombre: confirmar
+    Descripción:
+      Diálogo genérico de confirmación.
+    Entradas: mensaje
+    Salidas: Future<bool>
+  */
   Future<bool> confirmar(String mensaje) async {
-    final res = await showDialog<bool>(
+    final r = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text(TextosApp.JUGADORES_ADMIN_CONFIRMAR_TITULO),
@@ -172,9 +195,17 @@ class _PaginaJugadoresAdminDesktopEstado
         ],
       ),
     );
-    return res ?? false;
+
+    return r ?? false;
   }
 
+  /*
+    Nombre: itemJugador
+    Descripción:
+      Renderiza un jugador dentro del listado.
+    Entradas: Jugador j
+    Salidas: Widget
+  */
   Widget itemJugador(Jugador j) {
     return Card(
       elevation: 2,
@@ -197,6 +228,7 @@ class _PaginaJugadoresAdminDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Editar
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_EDITAR,
@@ -204,12 +236,14 @@ class _PaginaJugadoresAdminDesktopEstado
                 final resultado = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PaginaJugadorEditarDesktop(jugador: j),
+                    builder: (_) => UiAdminJugadorEditarDesktop(jugador: j),
                   ),
                 );
                 if (resultado == true) cargar();
               },
             ),
+
+            // Archivar / activar
             IconButton(
               icon: Icon(j.activo ? Icons.archive : Icons.unarchive),
               tooltip: j.activo
@@ -228,9 +262,12 @@ class _PaginaJugadoresAdminDesktopEstado
                 } else {
                   await _controlador.activar(j.id);
                 }
+
                 cargar();
               },
             ),
+
+            // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
               tooltip: TextosApp.JUGADORES_ADMIN_TOOLTIP_ELIMINAR,

@@ -1,26 +1,41 @@
 /*
-  Archivo: pagina_ligas_admin_desktop.dart
+  Archivo: ui__admin__liga__lista__desktop.dart
   Descripción:
-    Administración de ligas para usuarios administradores.
+    Lista de ligas para administradores. Permite crear, activar, archivar y
+    eliminar ligas, además de navegar hacia la gestión de equipos reales y
+    participaciones.
+
+  Dependencias:
+    - modelos/liga.dart
+    - controladores/controlador_ligas.dart
+    - ui__admin__equipo_real__lista__desktop.dart
+    - ui__admin__participacion__lista__desktop.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__admin__panel__dashboard__desktop.dart
+
+  Pantallas destino:
+    - ui__admin__equipo_real__lista__desktop.dart
+    - ui__admin__participacion__lista__desktop.dart
 */
 
-import 'package:fantasypro/vistas/web/desktop/pagina_equipos_admin_desktop.dart';
-import 'package:fantasypro/vistas/web/desktop/pagina_participaciones_admin_desktop.dart';
 import 'package:flutter/material.dart';
-import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
-import 'package:fantasypro/textos/textos_app.dart';
+import 'package:fantasypro/controladores/controlador_ligas.dart';
+import 'ui__admin__equipo_real__lista__desktop.dart';
+import 'ui__admin__participacion__lista__desktop.dart';
 
-class PaginaLigasAdminDesktop extends StatefulWidget {
-  const PaginaLigasAdminDesktop({super.key});
+class UiAdminLigaListaDesktop extends StatefulWidget {
+  const UiAdminLigaListaDesktop({super.key});
 
   @override
-  State<PaginaLigasAdminDesktop> createState() =>
-      _PaginaLigasAdminDesktopEstado();
+  State<UiAdminLigaListaDesktop> createState() =>
+      _UiAdminLigaListaDesktopEstado();
 }
 
-class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
-  final ControladorLigas controlador = ControladorLigas();
+class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
+  /// Controlador de ligas.
+  final ControladorLigas _controlador = ControladorLigas();
 
   bool cargando = true;
   List<Liga> activas = [];
@@ -29,13 +44,22 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   @override
   void initState() {
     super.initState();
-    cargar();
+    _cargar();
   }
 
-  Future<void> cargar() async {
+  /*
+    Nombre: _cargar
+    Descripción:
+      Obtiene todas las ligas y las separa en activas y archivadas.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
+  Future<void> _cargar() async {
     setState(() => cargando = true);
 
-    final todas = await controlador.obtenerTodas();
+    final todas = await _controlador.obtenerTodas();
 
     activas = todas.where((l) => l.activa).toList()
       ..sort(
@@ -50,119 +74,113 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
     setState(() => cargando = false);
   }
 
-  Future<void> crearLiga() async {
+  /*
+    Nombre: _crearLiga
+    Descripción:
+      Muestra un diálogo para crear una liga nueva.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
+  Future<void> _crearLiga() async {
     final ctrlNombre = TextEditingController();
-    final ctrlDescripcion = TextEditingController();
+    final ctrlDesc = TextEditingController();
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_BOTON_CREAR),
+        title: const Text("Crear liga"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: ctrlNombre,
-              decoration: const InputDecoration(
-                labelText: TextosApp.LIGAS_ADMIN_DESKTOP_INPUT_NOMBRE,
-              ),
+              decoration: const InputDecoration(labelText: "Nombre"),
             ),
             TextField(
-              controller: ctrlDescripcion,
-              decoration: const InputDecoration(
-                labelText: TextosApp.LIGAS_ADMIN_DESKTOP_INPUT_DESCRIPCION,
-              ),
+              controller: ctrlDesc,
+              decoration: const InputDecoration(labelText: "Descripción"),
             ),
           ],
         ),
         actions: [
           TextButton(
+            child: const Text("Cancelar"),
             onPressed: () => Navigator.pop(context),
-            child: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_ACCION_CANCELAR),
           ),
           ElevatedButton(
+            child: const Text("Crear"),
             onPressed: () async {
               final nombre = ctrlNombre.text.trim();
-              final descripcion = ctrlDescripcion.text.trim();
-
+              final desc = ctrlDesc.text.trim();
               if (nombre.isEmpty) return;
 
-              await controlador.crearLiga(nombre, descripcion);
+              await _controlador.crearLiga(nombre, desc);
+
               Navigator.pop(context);
-              cargar();
+              _cargar();
             },
-            child: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_ACCION_CREAR),
           ),
         ],
       ),
     );
   }
 
-  Widget itemLiga(Liga liga) {
+  Widget _item(Liga l) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: ListTile(
-        title: Text(
-          liga.nombre,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(liga.temporada),
+        title: Text(l.nombre),
+        subtitle: Text(l.temporada),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Acceso a participaciones (navegación añadida)
+            // Participaciones
             IconButton(
               icon: const Icon(Icons.supervised_user_circle),
-              tooltip: "Participaciones",
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        PaginaParticipacionesAdminDesktop(liga: liga),
+                    builder: (_) => UiAdminParticipacionListaDesktop(liga: l),
                   ),
-                ).then((_) => cargar());
+                ).then((_) => _cargar());
               },
             ),
 
-            // Administrar equipos
+            // Equipos reales
             IconButton(
               icon: const Icon(Icons.groups),
-              tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ADMIN_EQUIPOS,
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PaginaEquiposAdminDesktop(liga: liga),
+                    builder: (_) => UiAdminEquipoRealListaDesktop(liga: l),
                   ),
                 );
               },
             ),
 
-            // Archivar / Activar
+            // Archivar / activar
             IconButton(
-              icon: Icon(liga.activa ? Icons.archive : Icons.unarchive),
-              tooltip: liga.activa
-                  ? TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ARCHIVAR
-                  : TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ACTIVAR,
+              icon: Icon(l.activa ? Icons.archive : Icons.unarchive),
               onPressed: () async {
-                if (liga.activa) {
-                  await controlador.archivar(liga.id);
+                if (l.activa) {
+                  await _controlador.archivar(l.id);
                 } else {
-                  await controlador.activar(liga.id);
+                  await _controlador.activar(l.id);
                 }
-                cargar();
+                _cargar();
               },
             ),
 
             // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_ELIMINAR,
               onPressed: () async {
-                await controlador.eliminar(liga.id);
-                cargar();
+                await _controlador.eliminar(l.id);
+                _cargar();
               },
             ),
           ],
@@ -175,10 +193,9 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(TextosApp.LIGAS_ADMIN_DESKTOP_APPBAR_TITULO),
+        title: const Text("Ligas"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: TextosApp.LIGAS_ADMIN_DESKTOP_TOOLTIP_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -186,53 +203,42 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                TextosApp.LIGAS_ADMIN_DESKTOP_APPBAR_INDICADOR,
+                "Gestión de ligas",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),
         ],
       ),
-
       floatingActionButton: FloatingActionButton(
-        onPressed: crearLiga,
+        onPressed: _crearLiga,
         child: const Icon(Icons.add),
       ),
-
       body: cargando
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Columna ACTIVO
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        TextosApp.LIGAS_ADMIN_DESKTOP_TITULO_ACTIVAS.replaceAll(
-                          "{CANT}",
-                          activas.length.toString(),
-                        ),
+                        "Activas (${activas.length})",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
                       Expanded(
-                        child: ListView(
-                          children: activas.map(itemLiga).toList(),
-                        ),
+                        child: ListView(children: activas.map(_item).toList()),
                       ),
                     ],
                   ),
                 ),
-
-                // Columna ARCHIVADO
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        TextosApp.LIGAS_ADMIN_DESKTOP_TITULO_ARCHIVADAS
-                            .replaceAll("{CANT}", archivadas.length.toString()),
+                        "Archivadas (${archivadas.length})",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -240,7 +246,7 @@ class _PaginaLigasAdminDesktopEstado extends State<PaginaLigasAdminDesktop> {
                       ),
                       Expanded(
                         child: ListView(
-                          children: archivadas.map(itemLiga).toList(),
+                          children: archivadas.map(_item).toList(),
                         ),
                       ),
                     ],

@@ -1,46 +1,37 @@
-📘 DIFF FUNCIONAL — mod0012 → mod0013 (Servicios)
-✔ Archivos nuevos agregados
+diff_servicios_mod0013.txt
+DIFF FUNCIONAL mod0012 → mod0013  
+Módulo: Servicios
 
-servicio_equipos_reales.dart
++ Agregado: servicio_equipos_reales.dart
+  - Nuevo servicio para equipos reales.
+  - Nuevos métodos:
+      crearEquipoReal
+      obtenerEquiposDeLiga
+      editarEquipoReal
+      archivarEquipoReal
+      activarEquipoReal
+      eliminarEquipoReal
 
-servicio_equipos_fantasy.dart
++ Agregado: servicio_equipos_fantasy.dart
+  - Nuevo servicio para equipos fantasy.
+  - Nuevos métodos:
+      crearEquipoFantasy
+      obtenerPorUsuarioYLiga
+      editarEquipoFantasy
+      archivarEquipoFantasy
+      activarEquipoFantasy
+      eliminarEquipoFantasy
 
-Ambos implementan CRUD mínimo, colecciones nuevas:
+~ Modificado: servicio_equipos.dart
+  - Ahora marcado como DEPRECATED.
+  - Sin cambios en firmas o comportamiento.
 
-equipos_reales
-
-equipos_fantasy
-
-✔ Servicio marcado como deprecated
-
-servicio_equipos.dart
-Comentario añadido:
-// DEPRECATED mod0013 — reemplazado por ServicioEquiposReales y ServicioEquiposFantasy
-
-Sin cambios de comportamiento, sin firmas alteradas.
-
-✔ Cambios permitidos
-
-Ningún método modificado en otros servicios.
-
-No se tocaron colecciones previas.
-
-No se agregó lógica de negocio.
-
-✖ Sin eliminaciones
-
-Ningún archivo ni método existente fue eliminado o renombrado.
-
-✖ Sin impacto en otros servicios
-
-Participaciones, Jugadores, Ligas, Alineaciones, Base de Datos y Autenticación permanecen sin cambios.
-
-📘 RESUMEN FINAL DEL DIFF
-
-mod0013 agrega dos servicios nuevos,
-marca uno como deprecated,
-y deja todo lo demás intacto.
-
-No altera firmas.
-No rompe compatibilidad.
-No introduce reglas nuevas.
+= Sin cambios:
+  servicio_ligas.dart
+  servicio_participaciones.dart
+  servicio_jugadores.dart
+  servicio_alineaciones.dart
+  servicio_autenticacion.dart
+  servicio_base_de_datos.dart
+  servicio_inicializacion.dart
+  servicio_reglas_de_seguridad.dart

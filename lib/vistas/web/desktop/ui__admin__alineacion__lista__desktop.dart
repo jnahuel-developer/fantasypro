@@ -1,37 +1,51 @@
 /*
-  Archivo: pagina_alineaciones_admin_desktop.dart
+  Archivo: ui__admin__alineacion__lista__desktop.dart
   Descripción:
     Administración de alineaciones de un usuario dentro de una liga.
     - Listado Activas / Archivadas
-    - Crear alineación (formación, jugadores, puntos iniciales)
+    - Crear alineación
     - Editar alineación
-    - Archivar / Activar / Eliminar con confirmación
-    - Conteos y ordenamiento por fecha
+    - Archivar / Activar / Eliminar
+
+  Dependencias:
+    - modelos/alineacion.dart
+    - controladores/controlador_alineaciones.dart
+    - ui__admin__alineacion__editar__desktop.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__admin__participacion__lista__desktop.dart
+
+  Pantallas destino:
+    - ui__admin__alineacion__editar__desktop.dart
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart'
     hide Alineacion;
-import 'package:fantasypro/vistas/web/desktop/pagina_alineacion_editar_desktop.dart';
+import 'ui__admin__alineacion__editar__desktop.dart';
 
-class PaginaAlineacionesAdminDesktop extends StatefulWidget {
+class UiAdminAlineacionListaDesktop extends StatefulWidget {
+  /// ID de la liga asociada a las alineaciones.
   final String idLiga;
+
+  /// ID del usuario dueño de las alineaciones.
   final String idUsuario;
 
-  const PaginaAlineacionesAdminDesktop({
+  const UiAdminAlineacionListaDesktop({
     super.key,
     required this.idLiga,
     required this.idUsuario,
   });
 
   @override
-  State<PaginaAlineacionesAdminDesktop> createState() =>
-      _PaginaAlineacionesAdminDesktopEstado();
+  State<UiAdminAlineacionListaDesktop> createState() =>
+      _UiAdminAlineacionListaDesktopEstado();
 }
 
-class _PaginaAlineacionesAdminDesktopEstado
-    extends State<PaginaAlineacionesAdminDesktop> {
+class _UiAdminAlineacionListaDesktopEstado
+    extends State<UiAdminAlineacionListaDesktop> {
+  /// Controlador de alineaciones.
   final ControladorAlineaciones _controlador = ControladorAlineaciones();
 
   bool cargando = true;
@@ -44,6 +58,16 @@ class _PaginaAlineacionesAdminDesktopEstado
     cargar();
   }
 
+  /*
+    Nombre: cargar
+    Descripción:
+      Obtiene las alineaciones del usuario en la liga y las separa
+      en activas / archivadas.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
@@ -53,9 +77,7 @@ class _PaginaAlineacionesAdminDesktopEstado
     );
 
     activas = todas.where((a) => a.activo).toList()
-      ..sort(
-        (a, b) => b.fechaCreacion.compareTo(a.fechaCreacion),
-      ); // más recientes primero
+      ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
 
     archivadas = todas.where((a) => !a.activo).toList()
       ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
@@ -63,9 +85,15 @@ class _PaginaAlineacionesAdminDesktopEstado
     setState(() => cargando = false);
   }
 
-  // ---------------------------
-  // Crear alineación
-  // ---------------------------
+  /*
+    Nombre: crearAlineacion
+    Descripción:
+      Abre un diálogo para crear una nueva alineación.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
   Future<void> crearAlineacion() async {
     final ctrlJugadores = TextEditingController();
     final ctrlPuntos = TextEditingController(text: "0");
@@ -93,8 +121,9 @@ class _PaginaAlineacionesAdminDesktopEstado
                       ],
                       onChanged: (v) {
                         if (v == null) return;
+                        // Nota: aquí no se fuerza rebuild del diálogo;
+                        // se mantiene el comportamiento original.
                         seleccionFormacion = v;
-                        // force rebuild of dialog - use setState on dialog via StatefulBuilder
                       },
                     ),
                   ],
@@ -162,16 +191,10 @@ class _PaginaAlineacionesAdminDesktopEstado
                   return;
                 }
 
-                // Llamada al controlador.
-                // Nota: el controlador debe aceptar el parámetro 'formacion'.
-                // Si el controlador aún no soporta 'formacion', ajustar su firma para:
-                // crearAlineacion(String idLiga, String idUsuario, List<String> jugadores, { String formacion = '4-4-2', int puntosTotales = 0 })
                 await _controlador.crearAlineacion(
                   widget.idLiga,
                   widget.idUsuario,
                   idsJugadores,
-                  // intento pasar formacion y puntosTotales por nombre (si el controlador los acepta)
-                  // si tu controlador no soporta 'formacion', remueve ese parámetro y añade la formacion en el modelo desde el servicio.
                   formacion: seleccionFormacion,
                   puntosTotales: puntos,
                 );
@@ -186,9 +209,15 @@ class _PaginaAlineacionesAdminDesktopEstado
     );
   }
 
-  // ---------------------------
-  // Confirmación genérica
-  // ---------------------------
+  /*
+    Nombre: confirmar
+    Descripción:
+      Diálogo genérico de confirmación para operaciones críticas.
+    Entradas:
+      - mensaje (String)
+    Salidas:
+      - Future<bool>
+  */
   Future<bool> confirmar(String mensaje) async {
     final res = await showDialog<bool>(
       context: context,
@@ -210,9 +239,15 @@ class _PaginaAlineacionesAdminDesktopEstado
     return res ?? false;
   }
 
-  // ---------------------------
-  // Item alineación
-  // ---------------------------
+  /*
+    Nombre: itemAlineacion
+    Descripción:
+      Construye la tarjeta de una alineación en la lista.
+    Entradas:
+      - a (Alineacion)
+    Salidas:
+      - Widget
+  */
   Widget itemAlineacion(Alineacion a) {
     return Card(
       elevation: 2,
@@ -238,7 +273,7 @@ class _PaginaAlineacionesAdminDesktopEstado
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        PaginaAlineacionEditarDesktop(alineacion: a),
+                        UiAdminAlineacionEditarDesktop(alineacion: a),
                   ),
                 );
                 if (resultado == true) cargar();
@@ -285,9 +320,6 @@ class _PaginaAlineacionesAdminDesktopEstado
     );
   }
 
-  // ---------------------------
-  // Build
-  // ---------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
