@@ -1,32 +1,81 @@
 /*
-  Archivo: pagina_registro_desktop.dart
+  Archivo: ui__comun__autenticacion__registro__desktop.dart
   Descripción:
-    Pantalla de alta de usuario.
+    Pantalla de registro de usuario en versión Desktop.
+    Permite:
+      - Ingresar nombre, email, password
+      - Seleccionar rol (usuario / admin)
+      - Crear usuario mediante ServicioAutenticacion
+
+  Dependencias:
+    - modelos/roles.dart
+    - textos/textos_app.dart
+    - servicios/firebase/servicio_autenticacion.dart
+    - servicios/utilidades/servicio_log.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__comun__autenticacion__login__desktop.dart
+  
+  Pantallas destino:
+    - ninguna
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 import 'package:fantasypro/modelos/roles.dart';
-import '../../../servicios/firebase/servicio_autenticacion.dart';
-import '../../../servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
+import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
-class PaginaRegistroDesktop extends StatefulWidget {
-  const PaginaRegistroDesktop({super.key});
+class UiComunAutenticacionRegistroDesktop extends StatefulWidget {
+  const UiComunAutenticacionRegistroDesktop({super.key});
 
   @override
-  State<PaginaRegistroDesktop> createState() => _PaginaRegistroDesktopEstado();
+  State<UiComunAutenticacionRegistroDesktop> createState() =>
+      _UiComunAutenticacionRegistroDesktopEstado();
 }
 
-class _PaginaRegistroDesktopEstado extends State<PaginaRegistroDesktop> {
+class _UiComunAutenticacionRegistroDesktopEstado
+    extends State<UiComunAutenticacionRegistroDesktop> {
+  /// Servicios
   final ServicioAutenticacion _auth = ServicioAutenticacion();
   final ServicioLog _log = ServicioLog();
 
+  /// Controllers
   final TextEditingController _nombre = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
   RolUsuario rolSeleccionado = RolUsuario.usuario;
+
   String mensaje = "";
+
+  /*
+    Nombre: _registrar
+    Descripción:
+      Ejecuta el registro usando el servicio de autenticación.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
+  Future<void> _registrar() async {
+    final uid = await _auth.registrarUsuario(
+      _email.text.trim(),
+      _password.text.trim(),
+      _nombre.text.trim(),
+      rolSeleccionado.valorDB,
+    );
+
+    if (uid != null) {
+      setState(() {
+        mensaje = TextosApp.REGISTRO_DESKTOP_MENSAJE_OK;
+      });
+
+      _log.informacion("${TextosApp.LOG_REGISTRO_USUARIO_CREADO} $uid");
+    } else {
+      setState(() {
+        mensaje = TextosApp.REGISTRO_DESKTOP_MENSAJE_ERROR;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +100,12 @@ class _PaginaRegistroDesktopEstado extends State<PaginaRegistroDesktop> {
                   labelText: TextosApp.REGISTRO_DESKTOP_INPUT_NOMBRE,
                 ),
               ),
-
               TextField(
                 controller: _email,
                 decoration: const InputDecoration(
                   labelText: TextosApp.REGISTRO_DESKTOP_INPUT_CORREO,
                 ),
               ),
-
               TextField(
                 controller: _password,
                 obscureText: true,
@@ -66,7 +113,6 @@ class _PaginaRegistroDesktopEstado extends State<PaginaRegistroDesktop> {
                   labelText: TextosApp.REGISTRO_DESKTOP_INPUT_PASSWORD,
                 ),
               ),
-
               const SizedBox(height: 20),
 
               DropdownButton<RolUsuario>(
@@ -82,40 +128,20 @@ class _PaginaRegistroDesktopEstado extends State<PaginaRegistroDesktop> {
                   ),
                 ],
                 onChanged: (v) {
-                  setState(() => rolSeleccionado = v!);
+                  if (v != null) {
+                    setState(() => rolSeleccionado = v);
+                  }
                 },
               ),
 
               const SizedBox(height: 20),
 
               ElevatedButton(
-                onPressed: () async {
-                  final uid = await _auth.registrarUsuario(
-                    _email.text.trim(),
-                    _password.text.trim(),
-                    _nombre.text.trim(),
-                    rolSeleccionado.valorDB,
-                  );
-
-                  if (uid != null) {
-                    setState(() {
-                      mensaje = TextosApp.REGISTRO_DESKTOP_MENSAJE_OK;
-                    });
-
-                    _log.informacion(
-                      "${TextosApp.LOG_REGISTRO_USUARIO_CREADO} $uid",
-                    );
-                  } else {
-                    setState(() {
-                      mensaje = TextosApp.REGISTRO_DESKTOP_MENSAJE_ERROR;
-                    });
-                  }
-                },
+                onPressed: _registrar,
                 child: const Text(TextosApp.REGISTRO_DESKTOP_BOTON_REGISTRAR),
               ),
 
               const SizedBox(height: 20),
-
               Text(mensaje),
             ],
           ),

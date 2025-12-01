@@ -46,7 +46,21 @@ class ControladorLigas {
   // Obtener activas
   // ---------------------------------------------------------------------------
   Future<List<Liga>> obtenerActivas() async {
+    _log.informacion("Obteniendo ligas activas");
     return await _servicio.obtenerLigasActivas();
+  }
+
+  // ---------------------------------------------------------------------------
+  // NUEVO: Buscar ligas por nombre (Etapa 1)
+  // ---------------------------------------------------------------------------
+  Future<List<Liga>> buscar(String texto) async {
+    if (texto.trim().isEmpty) {
+      _log.advertencia("Intento de búsqueda con texto vacío");
+      return [];
+    }
+
+    _log.informacion("Buscando ligas con texto: '$texto'");
+    return await _servicio.buscarLigasPorNombre(texto.trim());
   }
 
   // ---------------------------------------------------------------------------

@@ -1,0 +1,19 @@
+================================================================================
+diff_controladores_mod0013.txt
+================================================================================
+
+DIFF FUNCIONAL mod0012 → mod0013
+Módulo: Controladores
+
++ Agregado: controlador_equipos_reales.dart
++ Agregado: controlador_equipo_fantasy.dart
+
+~ Modificado: controlador_equipos.dart  
+  - Archivo marcado como deprecated  
+  - No se modificaron firmas ni comportamiento  
+  - Se mantiene operativo para compatibilidad
+
+= Sin cambios: controlador_ligas.dart
+= Sin cambios: controlador_participaciones.dart
+= Sin cambios: controlador_jugadores.dart
+= Sin cambios: controlador_alineaciones.dart

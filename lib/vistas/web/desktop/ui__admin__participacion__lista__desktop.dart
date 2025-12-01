@@ -1,35 +1,49 @@
 /*
-  Archivo: pagina_participaciones_admin_desktop.dart
+  Archivo: ui__admin__participacion__lista__desktop.dart
   Descripción:
-    Administración de participaciones de usuarios dentro de una liga (Web Desktop).
-    Permite:
-      - Ver participantes activos / archivados
-      - Crear participación (idUsuario + nombre equipo fantasy)
-      - Editar participación
-      - Archivar / Activar / Eliminar
-      - Acceder a la gestión de alineaciones del usuario
+    Administración de participaciones de usuarios dentro de una liga.
+    Permite crear, editar, archivar, activar y eliminar participaciones.
+  Dependencias:
+    - modelos/liga.dart
+    - modelos/participacion_liga.dart
+    - controladores/controlador_participaciones.dart
+    - servicio_participaciones.dart
+    - ui__admin__participacion__editar__desktop.dart
+    - ui__admin__alineacion__lista__desktop.dart
+  Pantallas que navegan hacia esta:
+    - ui__admin__liga__lista__desktop.dart
+  Pantallas destino:
+    - ui__admin__participacion__editar__desktop.dart
+    - ui__admin__alineacion__lista__desktop.dart
 */
 
-import 'package:fantasypro/vistas/web/desktop/pagina_alineaciones_admin_desktop.dart';
-import 'package:fantasypro/vistas/web/desktop/pagina_participacion_editar_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 
-class PaginaParticipacionesAdminDesktop extends StatefulWidget {
+import 'ui__admin__participacion__editar__desktop.dart';
+import 'ui__admin__alineacion__lista__desktop.dart';
+
+class UiAdminParticipacionListaDesktop extends StatefulWidget {
   final Liga liga;
 
-  const PaginaParticipacionesAdminDesktop({super.key, required this.liga});
+  const UiAdminParticipacionListaDesktop({super.key, required this.liga});
 
   @override
-  State<PaginaParticipacionesAdminDesktop> createState() =>
-      _PaginaParticipacionesAdminDesktopEstado();
+  State<UiAdminParticipacionListaDesktop> createState() =>
+      _UiAdminParticipacionListaDesktopEstado();
 }
 
-class _PaginaParticipacionesAdminDesktopEstado
-    extends State<PaginaParticipacionesAdminDesktop> {
+class _UiAdminParticipacionListaDesktopEstado
+    extends State<UiAdminParticipacionListaDesktop> {
+  /// Controlador de participaciones.
   final ControladorParticipaciones _controlador = ControladorParticipaciones();
+
+  /// Servicio directo de participaciones (creación manual).
+  final ServicioParticipaciones servicioParticipaciones =
+      ServicioParticipaciones();
 
   bool cargando = true;
   List<ParticipacionLiga> activos = [];
@@ -41,6 +55,13 @@ class _PaginaParticipacionesAdminDesktopEstado
     cargar();
   }
 
+  /*
+    Nombre: cargar
+    Descripción:
+      Recupera las participaciones por liga y las separa en activas/archivadas.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
   Future<void> cargar() async {
     setState(() => cargando = true);
 
@@ -63,6 +84,13 @@ class _PaginaParticipacionesAdminDesktopEstado
     setState(() => cargando = false);
   }
 
+  /*
+    Nombre: crearParticipacion
+    Descripción:
+      Crea una participación manualmente construyendo el modelo.
+    Entradas: ninguna
+    Salidas: Future<void>
+  */
   Future<void> crearParticipacion() async {
     final ctrlIdUsuario = TextEditingController();
     final ctrlNombreEquipo = TextEditingController();
@@ -90,10 +118,11 @@ class _PaginaParticipacionesAdminDesktopEstado
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
               child: const Text("Cancelar"),
+              onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
+              child: const Text("Crear"),
               onPressed: () async {
                 final idUsuario = ctrlIdUsuario.text.trim();
                 final nombre = ctrlNombreEquipo.text.trim();
@@ -109,16 +138,21 @@ class _PaginaParticipacionesAdminDesktopEstado
                   return;
                 }
 
-                await _controlador.crearParticipacion(
-                  widget.liga.id,
-                  idUsuario,
-                  nombre,
+                final model = ParticipacionLiga(
+                  id: "",
+                  idLiga: widget.liga.id,
+                  idUsuario: idUsuario,
+                  nombreEquipoFantasy: nombre,
+                  puntos: 0,
+                  fechaCreacion: DateTime.now().millisecondsSinceEpoch,
+                  activo: true,
                 );
+
+                await servicioParticipaciones.crearParticipacion(model);
 
                 Navigator.pop(context);
                 cargar();
               },
-              child: const Text("Crear"),
             ),
           ],
         );
@@ -126,6 +160,13 @@ class _PaginaParticipacionesAdminDesktopEstado
     );
   }
 
+  /*
+    Nombre: confirmar
+    Descripción:
+      Diálogo genérico para confirmar operaciones de riesgo.
+    Entradas: mensaje
+    Salidas: Future<bool>
+  */
   Future<bool> confirmar(String mensaje) async {
     final r = await showDialog<bool>(
       context: context,
@@ -134,12 +175,12 @@ class _PaginaParticipacionesAdminDesktopEstado
         content: Text(mensaje),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
             child: const Text("Cancelar"),
+            onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
             child: const Text("Aceptar"),
+            onPressed: () => Navigator.pop(context, true),
           ),
         ],
       ),
@@ -148,20 +189,23 @@ class _PaginaParticipacionesAdminDesktopEstado
     return r ?? false;
   }
 
-  Widget avatar(ParticipacionLiga p) {
+  /*
+    Nombre: itemParticipacion
+    Descripción:
+      Renderiza la tarjeta visual de una participación.
+    Entradas: ParticipacionLiga p
+    Salidas: Widget
+  */
+  Widget itemParticipacion(ParticipacionLiga p) {
     final inicial = p.nombreEquipoFantasy.isNotEmpty
         ? p.nombreEquipoFantasy[0].toUpperCase()
         : "?";
 
-    return CircleAvatar(child: Text(inicial));
-  }
-
-  Widget itemParticipacion(ParticipacionLiga p) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: ListTile(
-        leading: avatar(p),
+        leading: CircleAvatar(child: Text(inicial)),
         title: Text(
           p.nombreEquipoFantasy,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -170,7 +214,7 @@ class _PaginaParticipacionesAdminDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Botón: Alineaciones
+            // Gestionar alineaciones
             IconButton(
               icon: const Icon(Icons.sports_soccer),
               tooltip: "Gestionar alineaciones",
@@ -178,7 +222,7 @@ class _PaginaParticipacionesAdminDesktopEstado
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => PaginaAlineacionesAdminDesktop(
+                    builder: (_) => UiAdminAlineacionListaDesktop(
                       idLiga: widget.liga.id,
                       idUsuario: p.idUsuario,
                     ),
@@ -187,32 +231,31 @@ class _PaginaParticipacionesAdminDesktopEstado
               },
             ),
 
-            // Editar
+            // Editar participación
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: "Editar participación",
               onPressed: () async {
-                final resultado = await Navigator.push(
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        PaginaParticipacionEditarDesktop(participacion: p),
+                        UiAdminParticipacionEditarDesktop(participacion: p),
                   ),
                 );
-
-                if (resultado == true) cargar();
+                if (result == true) cargar();
               },
             ),
 
-            // Archivar / Activar
+            // Archivar / activar
             IconButton(
               icon: Icon(p.activo ? Icons.archive : Icons.unarchive),
               tooltip: p.activo ? "Archivar" : "Activar",
               onPressed: () async {
                 final ok = await confirmar(
                   p.activo
-                      ? "¿Desea archivar la participación?"
-                      : "¿Desea activar la participación?",
+                      ? "¿Archivar esta participación?"
+                      : "¿Activar esta participación?",
                 );
                 if (!ok) return;
 
@@ -232,7 +275,7 @@ class _PaginaParticipacionesAdminDesktopEstado
               tooltip: "Eliminar participación",
               onPressed: () async {
                 final ok = await confirmar(
-                  "¿Está seguro que desea eliminar esta participación?",
+                  "¿Eliminar esta participación definitivamente?",
                 );
                 if (!ok) return;
 
@@ -276,7 +319,7 @@ class _PaginaParticipacionesAdminDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Columna Activos
+                // Activos
                 Expanded(
                   child: Column(
                     children: [
@@ -296,7 +339,7 @@ class _PaginaParticipacionesAdminDesktopEstado
                   ),
                 ),
 
-                // Columna Archivados
+                // Archivados
                 Expanded(
                   child: Column(
                     children: [

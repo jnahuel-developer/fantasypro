@@ -1,0 +1,263 @@
+================================================================================
+catalogo_controladores_mod0013.txt
+================================================================================
+
+CATÁLOGO DEL MÓDULO: Controladores
+Versión: mod0013
+Descripción: Conjunto de controladores responsables de coordinar la lógica de negocio entre modelos y servicios para administrar ligas, participaciones, equipos reales, equipos fantasy, jugadores y alineaciones.
+
+================================================================================
+Archivo: lib/controladores/controlador_ligas.dart
+--------------------------------------------------------------------------------
+Descripción: Gestiona creación, búsqueda y administración general de ligas.
+Responsabilidades principales:
+ - Crear ligas nuevas
+ - Obtener ligas activas o todas
+ - Buscar ligas por nombre
+ - Archivar, activar y eliminar ligas
+Dependencias directas:
+ - servicio_ligas.dart
+ - servicio_log.dart
+ - liga.dart
+
+Método: crearLiga
+Firma: Future<Liga> crearLiga(String nombre, String descripcion) async
+Descripción: Crea una liga con validaciones y datos iniciales.
+Ejemplo:
+  await controlador.crearLiga("Liga Pro", "Descripción");
+
+Método: obtenerActivas
+Firma: Future<List<Liga>> obtenerActivas() async
+Descripción: Obtiene todas las ligas activas.
+Ejemplo:
+  final activas = await controlador.obtenerActivas();
+
+Método: buscar
+Firma: Future<List<Liga>> buscar(String texto) async
+Descripción: Busca ligas por coincidencia del nombre.
+Ejemplo:
+  final resultados = await controlador.buscar("pro");
+
+Método: obtenerTodas
+Firma: Future<List<Liga>> obtenerTodas() async
+Descripción: Retorna todas las ligas registradas.
+Ejemplo:
+  final todas = await controlador.obtenerTodas();
+
+Método: archivar
+Firma: Future<void> archivar(String id) async
+Descripción: Archiva una liga por ID.
+Ejemplo:
+  await controlador.archivar("L1");
+
+Método: activar
+Firma: Future<void> activar(String id) async
+Descripción: Activa una liga previamente archivada.
+Ejemplo:
+  await controlador.activar("L1");
+
+Método: eliminar
+Firma: Future<void> eliminar(String id) async
+Descripción: Elimina una liga definitivamente.
+Ejemplo:
+  await controlador.eliminar("L1");
+
+================================================================================
+Archivo: lib/controladores/controlador_participaciones.dart
+--------------------------------------------------------------------------------
+Descripción: Gestiona las participaciones de usuarios en ligas.
+Responsabilidades principales:
+ - Crear participación validando duplicados
+ - Listar por liga o usuario
+ - Archivar, activar, eliminar, editar participaciones
+Dependencias directas:
+ - servicio_participaciones.dart
+ - participacion_liga.dart
+ - servicio_log.dart
+
+Método: crearParticipacionSiNoExiste
+Firma: Future<ParticipacionLiga> crearParticipacionSiNoExiste(String idLiga, String idUsuario, String nombreEquipoFantasy) async
+Descripción: Crea una participación si el usuario no está inscrito previamente.
+Ejemplo:
+  await controlador.crearParticipacionSiNoExiste("L1","U1","Mi Equipo");
+
+Método: obtenerPorLiga
+Firma: Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async
+Descripción: Lista participaciones pertenecientes a una liga.
+Ejemplo:
+  await controlador.obtenerPorLiga("L1");
+
+Método: obtenerPorUsuario
+Firma: Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async
+Descripción: Lista participaciones asociadas a un usuario.
+Ejemplo:
+  await controlador.obtenerPorUsuario("U1");
+
+Método: archivar
+Firma: Future<void> archivar(String idParticipacion) async
+Descripción: Archiva la participación.
+Ejemplo:
+  await controlador.archivar("P1");
+
+Método: activar
+Firma: Future<void> activar(String idParticipacion) async
+Descripción: Activa una participación archivada.
+Ejemplo:
+  await controlador.activar("P1");
+
+Método: eliminar
+Firma: Future<void> eliminar(String idParticipacion) async
+Descripción: Elimina la participación permanentemente.
+Ejemplo:
+  await controlador.eliminar("P1");
+
+Método: editar
+Firma: Future<void> editar(ParticipacionLiga participacion) async
+Descripción: Edita campos de la participación.
+Ejemplo:
+  await controlador.editar(participacion);
+
+================================================================================
+Archivo: lib/controladores/controlador_equipos.dart
+--------------------------------------------------------------------------------
+Descripción: Controlador original de equipos (Deprecated). Mantiene operación anterior.
+Responsabilidades principales:
+ - Crear equipo inicial (modelo antiguo)
+ - Listar, editar, archivar, activar y eliminar equipos antiguos
+Dependencias directas:
+ - servicio_equipos.dart (deprecated)
+ - servicio_log.dart
+ - equipo.dart
+
+Método: crearEquipoInicial
+Firma: Future<Equipo> crearEquipoInicial(String idUsuario, String idLiga, String nombre) async
+Descripción: Crea un equipo inicial usando el modelo antiguo.
+Ejemplo:
+  await controlador.crearEquipoInicial("U1","L1","Mi Equipo");
+
+Método: obtenerPorLiga
+Firma: Future<List<Equipo>> obtenerPorLiga(String idLiga) async
+Descripción: Obtiene equipos antiguos por liga.
+Ejemplo:
+  await controlador.obtenerPorLiga("L1");
+
+Método: archivar
+Firma: Future<void> archivar(String idEquipo) async
+Descripción: Archiva el equipo.
+Ejemplo:
+  await controlador.archivar("E1");
+
+Método: activar
+Firma: Future<void> activar(String idEquipo) async
+Descripción: Activa el equipo.
+Ejemplo:
+  await controlador.activar("E1");
+
+Método: eliminar
+Firma: Future<void> eliminar(String idEquipo) async
+Descripción: Elimina el equipo.
+Ejemplo:
+  await controlador.eliminar("E1");
+
+Método: editar
+Firma: Future<void> editar(Equipo equipo) async
+Descripción: Edita el equipo.
+Ejemplo:
+  await controlador.editar(equipo);
+
+================================================================================
+Archivo: lib/controladores/controlador_equipos_reales.dart
+--------------------------------------------------------------------------------
+Descripción: Gestiona equipos reales para uso administrativo.
+Responsabilidades principales:
+ - CRUD completo de equipos reales
+Dependencias directas:
+ - servicio_equipos_reales.dart
+ - equipo_real.dart
+ - servicio_log.dart
+
+Método: crearEquipoReal
+Firma: Future<EquipoReal> crearEquipoReal(String idLiga, String nombre, String descripcion, {String escudoUrl = ""}) async
+Descripción: Crea un equipo real en una liga.
+Ejemplo:
+  await controlador.crearEquipoReal("L1","Boca","Descripción");
+
+Método: obtenerPorLiga
+Firma: Future<List<EquipoReal>> obtenerPorLiga(String idLiga) async
+Descripción: Lista equipos reales pertenecientes a una liga.
+Ejemplo:
+  await controlador.obtenerPorLiga("L1");
+
+Método: editarEquipoReal
+Firma: Future<void> editarEquipoReal(EquipoReal equipo) async
+Descripción: Edita los datos del equipo real.
+Ejemplo:
+  await controlador.editarEquipoReal(equipo);
+
+Método: activarEquipoReal
+Firma: Future<void> activarEquipoReal(String idEquipo) async
+Descripción: Activa un equipo real archivado.
+Ejemplo:
+  await controlador.activarEquipoReal("ER1");
+
+Método: archivarEquipoReal
+Firma: Future<void> archivarEquipoReal(String idEquipo) async
+Descripción: Archiva un equipo real.
+Ejemplo:
+  await controlador.archivarEquipoReal("ER1");
+
+Método: eliminarEquipoReal
+Firma: Future<void> eliminarEquipoReal(String idEquipo) async
+Descripción: Elimina un equipo real.
+Ejemplo:
+  await controlador.eliminarEquipoReal("ER1");
+
+================================================================================
+Archivo: lib/controladores/controlador_equipo_fantasy.dart
+--------------------------------------------------------------------------------
+Descripción: Gestiona equipos fantasy del usuario final.
+Responsabilidades principales:
+ - Crear equipo fantasy
+ - Listar por usuario y liga
+ - Editar nombre
+ - Archivar, activar y eliminar
+Dependencias directas:
+ - servicio_equipos_fantasy.dart
+ - equipo_fantasy.dart
+ - servicio_log.dart
+
+Método: crearEquipoFantasy
+Firma: Future<EquipoFantasy> crearEquipoFantasy(String idUsuario, String idLiga, String nombre) async
+Descripción: Crea equipo fantasy para un usuario.
+Ejemplo:
+  await controlador.crearEquipoFantasy("U1","L1","Mi Equipo");
+
+Método: obtenerPorUsuarioYLiga
+Firma: Future<List<EquipoFantasy>> obtenerPorUsuarioYLiga(String idUsuario, String idLiga) async
+Descripción: Lista equipos fantasy de un usuario en una liga.
+Ejemplo:
+  await controlador.obtenerPorUsuarioYLiga("U1","L1");
+
+Método: editarNombreEquipo
+Firma: Future<void> editarNombreEquipo(EquipoFantasy equipo, String nuevoNombre) async
+Descripción: Edita el nombre del equipo.
+Ejemplo:
+  await controlador.editarNombreEquipo(equipo,"Nuevo Nombre");
+
+Método: activarEquipoFantasy
+Firma: Future<void> activarEquipoFantasy(String idEquipo) async
+Descripción: Activa un equipo fantasy archivado.
+Ejemplo:
+  await controlador.activarEquipoFantasy("EF1");
+
+Método: archivarEquipoFantasy
+Firma: Future<void> archivarEquipoFantasy(String idEquipo) async
+Descripción: Archiva el equipo fantasy.
+Ejemplo:
+  await controlador.archivarEquipoFantasy("EF1");
+
+Método: eliminarEquipoFantasy
+Firma: Future<void> eliminarEquipoFantasy(String idEquipo) async
+Descripción: Elimina el equipo fantasy.
+Ejemplo:
+  await controlador.eliminarEquipoFantasy("EF1");

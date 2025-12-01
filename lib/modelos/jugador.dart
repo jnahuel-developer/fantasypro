@@ -4,7 +4,7 @@
     Modelo de datos que representa un Jugador dentro de un Equipo en FantasyPro.
     Incluye métodos de serialización y deserialización para Firestore.
   Dependencias:
-    - Ninguna directa (solo tipos básicos de Dart).
+    - Ninguna directa.
 */
 
 class Jugador {

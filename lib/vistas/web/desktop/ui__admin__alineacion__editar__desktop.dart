@@ -1,5 +1,5 @@
 /*
-  Archivo: pagina_alineacion_editar_desktop.dart
+  Archivo: ui__admin__alineacion__editar__desktop.dart
   Descripción:
     Edición de una alineación seleccionada por un usuario dentro de una liga.
     - Editar formación (4-4-2 / 4-3-3)
@@ -7,32 +7,51 @@
     - Editar puntos totales
     - Confirmación al salir si hay cambios
     - Retorna true si se guardaron cambios
+
+  Dependencias:
+    - modelos/alineacion.dart
+    - controladores/controlador_alineaciones.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__admin__alineacion__lista__desktop.dart
+
+  Pantallas destino:
+    - ninguna
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 
-class PaginaAlineacionEditarDesktop extends StatefulWidget {
+class UiAdminAlineacionEditarDesktop extends StatefulWidget {
+  /// Alineación a editar.
   final Alineacion alineacion;
 
-  const PaginaAlineacionEditarDesktop({super.key, required this.alineacion});
+  const UiAdminAlineacionEditarDesktop({super.key, required this.alineacion});
 
   @override
-  State<PaginaAlineacionEditarDesktop> createState() =>
-      _PaginaAlineacionEditarDesktopEstado();
+  State<UiAdminAlineacionEditarDesktop> createState() =>
+      _UiAdminAlineacionEditarDesktopEstado();
 }
 
-class _PaginaAlineacionEditarDesktopEstado
-    extends State<PaginaAlineacionEditarDesktop> {
+class _UiAdminAlineacionEditarDesktopEstado
+    extends State<UiAdminAlineacionEditarDesktop> {
+  /// Controlador de alineaciones.
   final ControladorAlineaciones _controlador = ControladorAlineaciones();
 
+  /// Controlador de texto para IDs de jugadores.
   late TextEditingController _ctrlJugadores;
+
+  /// Controlador de texto para puntos.
   late TextEditingController _ctrlPuntos;
 
+  /// Formación seleccionada.
   String formacion = "4-4-2";
 
+  /// Indica si se está guardando.
   bool guardando = false;
+
+  /// Indica si hay cambios sin guardar.
   bool hayCambios = false;
 
   @override
@@ -50,9 +69,16 @@ class _PaginaAlineacionEditarDesktopEstado
     )..addListener(() => setState(() => hayCambios = true));
   }
 
-  // -----------------------------------------------------
-  // Confirmación al salir sin guardar
-  // -----------------------------------------------------
+  /*
+    Nombre: confirmarSalida
+    Descripción:
+      Muestra un diálogo de confirmación si hay cambios sin guardar
+      antes de cerrar la pantalla.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<bool>: true si se permite salir, false en caso contrario.
+  */
   Future<bool> confirmarSalida() async {
     if (!hayCambios || guardando) return true;
 
@@ -79,9 +105,16 @@ class _PaginaAlineacionEditarDesktopEstado
     return salir ?? false;
   }
 
-  // -----------------------------------------------------
-  // Guardar cambios
-  // -----------------------------------------------------
+  /*
+    Nombre: guardarCambios
+    Descripción:
+      Valida los datos cargados, crea una copia actualizada de la alineación
+      e invoca al controlador para persistirla.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
   Future<void> guardarCambios() async {
     final jugadoresText = _ctrlJugadores.text.trim();
     final puntosText = _ctrlPuntos.text.trim();
@@ -127,9 +160,6 @@ class _PaginaAlineacionEditarDesktopEstado
     if (mounted) Navigator.pop(context, true);
   }
 
-  // -----------------------------------------------------
-  // Build
-  // -----------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -146,7 +176,6 @@ class _PaginaAlineacionEditarDesktopEstado
             },
           ),
         ),
-
         body: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Center(
@@ -155,7 +184,7 @@ class _PaginaAlineacionEditarDesktopEstado
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // FORMACION
+                  // Formación
                   Row(
                     children: [
                       const Text(
@@ -187,7 +216,7 @@ class _PaginaAlineacionEditarDesktopEstado
                   ),
                   const SizedBox(height: 16),
 
-                  // JUGADORES
+                  // Jugadores
                   TextField(
                     controller: _ctrlJugadores,
                     decoration: const InputDecoration(
@@ -198,7 +227,7 @@ class _PaginaAlineacionEditarDesktopEstado
                   ),
                   const SizedBox(height: 16),
 
-                  // PUNTOS
+                  // Puntos
                   TextField(
                     controller: _ctrlPuntos,
                     keyboardType: TextInputType.number,
@@ -209,7 +238,7 @@ class _PaginaAlineacionEditarDesktopEstado
                   ),
                   const SizedBox(height: 24),
 
-                  // BOTÓN GUARDAR
+                  // Botón guardar
                   ElevatedButton.icon(
                     onPressed: guardando ? null : guardarCambios,
                     icon: guardando

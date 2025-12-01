@@ -7,15 +7,14 @@
     - Redirige a la vista correspondiente (admin / usuario / login)
 */
 
+import 'package:fantasypro/vistas/web/desktop/ui__admin__panel__dashboard__desktop.dart';
+import 'package:fantasypro/vistas/web/desktop/ui__comun__autenticacion__login__desktop.dart';
+import 'package:fantasypro/vistas/web/desktop/ui__usuario__inicio__lista__desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../servicios/firebase/servicio_autenticacion.dart';
 import '../textos/textos_app.dart';
-
-import '../vistas/web/desktop/pagina_login_desktop.dart';
-import '../vistas/web/desktop/pagina_panel_admin_desktop.dart';
-import '../vistas/web/desktop/pagina_inicio_desktop.dart';
 
 class ControladorRouter extends StatelessWidget {
   const ControladorRouter({super.key});
@@ -42,7 +41,7 @@ class ControladorRouter extends StatelessWidget {
         // No hay usuario autenticado → ir al login
         // ---------------------------------------------------------------------
         if (usuario == null) {
-          return const PaginaLoginDesktop();
+          return const UiComunAutenticacionLoginDesktop();
         }
 
         // ---------------------------------------------------------------------
@@ -67,9 +66,9 @@ class ControladorRouter extends StatelessWidget {
             final bool esAdmin = adminSnap.data ?? false;
 
             if (esAdmin) {
-              return const PaginaPanelAdminDesktop();
+              return const UiAdminPanelDashboardDesktop();
             } else {
-              return const PaginaInicioDesktop();
+              return const UiUsuarioInicioListaDesktop();
             }
           },
         );
