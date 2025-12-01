@@ -1,33 +1,40 @@
 /*
-  Archivo: pagina_participacion_editar_desktop.dart
+  Archivo: ui__admin__participacion__editar__desktop.dart
   Descripción:
-    Pantalla de edición de una participación de usuario dentro de una liga.
-    Permite modificar:
-      - nombreEquipoFantasy
-      - puntos
-    Campos NO editables:
-      - idUsuario
+    Pantalla para editar una participación en una liga: nombre del equipo fantasy
+    y puntos. El modelo subyacente sigue siendo ParticipacionLiga.
+
+  Dependencias:
+    - modelos/participacion_liga.dart
+    - controladores/controlador_participaciones.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__admin__participacion__lista__desktop.dart
+
+  Pantallas destino:
+    - ninguna
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
 
-class PaginaParticipacionEditarDesktop extends StatefulWidget {
+class UiAdminParticipacionEditarDesktop extends StatefulWidget {
   final ParticipacionLiga participacion;
 
-  const PaginaParticipacionEditarDesktop({
+  const UiAdminParticipacionEditarDesktop({
     super.key,
     required this.participacion,
   });
 
   @override
-  State<PaginaParticipacionEditarDesktop> createState() =>
-      _PaginaParticipacionEditarDesktopEstado();
+  State<UiAdminParticipacionEditarDesktop> createState() =>
+      _UiAdminParticipacionEditarDesktopEstado();
 }
 
-class _PaginaParticipacionEditarDesktopEstado
-    extends State<PaginaParticipacionEditarDesktop> {
+class _UiAdminParticipacionEditarDesktopEstado
+    extends State<UiAdminParticipacionEditarDesktop> {
+  /// Controlador de participaciones.
   final ControladorParticipaciones _controlador = ControladorParticipaciones();
 
   late TextEditingController ctrlNombre;
@@ -38,25 +45,30 @@ class _PaginaParticipacionEditarDesktopEstado
   @override
   void initState() {
     super.initState();
-
     ctrlNombre = TextEditingController(
       text: widget.participacion.nombreEquipoFantasy,
     );
-
     ctrlPuntos = TextEditingController(
       text: widget.participacion.puntos.toString(),
     );
   }
 
-  Future<void> guardar() async {
+  /*
+    Nombre: _guardar
+    Descripción:
+      Valida entradas, actualiza la participación y vuelve indicando éxito.
+    Entradas:
+      - ninguna
+    Salidas:
+      - Future<void>
+  */
+  Future<void> _guardar() async {
     final nombre = ctrlNombre.text.trim();
     final puntos = int.tryParse(ctrlPuntos.text.trim()) ?? 0;
 
     if (nombre.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("El nombre del equipo no puede estar vacío."),
-        ),
+        const SnackBar(content: Text("El nombre no puede estar vacío.")),
       );
       return;
     }
@@ -78,7 +90,6 @@ class _PaginaParticipacionEditarDesktopEstado
     await _controlador.editar(actualizado);
 
     setState(() => cargando = false);
-
     Navigator.pop(context, true);
   }
 
@@ -95,26 +106,23 @@ class _PaginaParticipacionEditarDesktopEstado
       body: cargando
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               child: Center(
                 child: SizedBox(
                   width: 500,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // ID Usuario (NO editable)
                       TextField(
                         enabled: false,
                         controller: TextEditingController(
                           text: widget.participacion.idUsuario,
                         ),
                         decoration: const InputDecoration(
-                          labelText: "ID Usuario (no editable)",
+                          labelText: "ID Usuario",
                         ),
                       ),
                       const SizedBox(height: 16),
-
-                      // Nombre equipo fantasy
                       TextField(
                         controller: ctrlNombre,
                         decoration: const InputDecoration(
@@ -122,26 +130,23 @@ class _PaginaParticipacionEditarDesktopEstado
                         ),
                       ),
                       const SizedBox(height: 16),
-
-                      // Puntos
                       TextField(
                         controller: ctrlPuntos,
                         decoration: const InputDecoration(labelText: "Puntos"),
                         keyboardType: TextInputType.number,
                       ),
                       const SizedBox(height: 24),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: () => Navigator.pop(context, false),
                             child: const Text("Cancelar"),
+                            onPressed: () => Navigator.pop(context, false),
                           ),
                           const SizedBox(width: 12),
                           ElevatedButton(
-                            onPressed: guardar,
-                            child: const Text("Guardar cambios"),
+                            onPressed: _guardar,
+                            child: const Text("Guardar"),
                           ),
                         ],
                       ),

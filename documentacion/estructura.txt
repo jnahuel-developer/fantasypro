@@ -1,0 +1,85 @@
+fantasypro
+│
+├── assets
+│   └── configuracion
+│       └── entorno
+│           └── firebase_desarrollo.json
+├── lib
+│   ├── configuracion
+│   │   └── entorno
+│   │       └── firebase_desarrollo.example.json
+│   ├── controladores
+│   │   ├── controlador_alineaciones.dart
+│   │   ├── controlador_equipos.dart
+│   │   ├── controlador_jugadores.dart
+│   │   ├── controlador_ligas.dart
+│   │   ├── controlador_participaciones.dart
+│   │   └── controlador_router.dart
+│   ├── main.dart
+│   ├── modelos
+│   │   ├── alineacion.dart
+│   │   ├── equipo.dart
+│   │   ├── jugador.dart
+│   │   ├── liga.dart
+│   │   ├── participacion_liga.dart
+│   │   └── roles.dart
+│   ├── servicios
+│   │   ├── firebase
+│   │   │   ├── servicio_alineaciones.dart
+│   │   │   ├── servicio_autenticacion.dart
+│   │   │   ├── servicio_base_de_datos.dart
+│   │   │   ├── servicio_equipos.dart
+│   │   │   ├── servicio_inicializacion.dart
+│   │   │   ├── servicio_jugadores.dart
+│   │   │   ├── servicio_ligas.dart
+│   │   │   ├── servicio_participaciones.dart
+│   │   │   └── servicio_reglas_de_seguridad.dart
+│   │   └── utilidades
+│   │       ├── servicio_detector_plataforma.dart
+│   │       ├── servicio_log.dart
+│   │       └── servicio_traducciones.dart
+│   ├── temas
+│   │   ├── tema_web_desktop.dart
+│   │   └── tema_web_mobile.dart
+│   ├── textos
+│   │   └── textos_app.dart
+│   └── vistas
+│       └── web
+│           ├── desktop
+│           │   ├── pagina_alineacion_editar_desktop.dart
+│           │   ├── pagina_alineaciones_admin_desktop.dart
+│           │   ├── pagina_equipo_editar_desktop.dart
+│           │   ├── pagina_equipos_admin_desktop.dart
+│           │   ├── pagina_inicio_desktop.dart
+│           │   ├── pagina_jugador_editar_desktop.dart
+│           │   ├── pagina_jugadores_admin_desktop.dart
+│           │   ├── pagina_ligas_admin_desktop.dart
+│           │   ├── pagina_login_desktop.dart
+│           │   ├── pagina_panel_admin_desktop.dart
+│           │   ├── pagina_participacion_editar_desktop.dart
+│           │   ├── pagina_participaciones_admin_desktop.dart
+│           │   └── pagina_registro_desktop.dart
+│           └── mobile
+│               └── pagina_inicio_mobile.dart
+├── test
+│   ├── integracion
+│   │   ├── prueba_firebase_integracion_test.dart
+│   │   └── prueba_roles_test.dart
+│   └── unidad
+│       ├── prueba_detector_plataforma_test.dart
+│       ├── prueba_logs_test.dart
+│       ├── prueba_modelo_alineacion_test.dart
+│       ├── prueba_modelo_equipo_test.dart
+│       ├── prueba_modelo_jugador_test.dart
+│       ├── prueba_modelo_liga_test.dart
+│       ├── prueba_modelo_participacion_liga_test.dart
+│       ├── prueba_servicio_equipos_test.dart
+│       ├── prueba_servicio_ligas_test.dart
+│       ├── prueba_traducciones_test.dart
+│       └── prueba_validaciones_autenticacion_test.dart
+├── firebase.json
+├── firestore.indexes.json
+├── firestore.rules
+├── pubspec.lock
+├── pubspec.yaml
+└── README.md

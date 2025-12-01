@@ -1,0 +1,37 @@
+diff_servicios_mod0013.txt
+DIFF FUNCIONAL mod0012 → mod0013  
+Módulo: Servicios
+
++ Agregado: servicio_equipos_reales.dart
+  - Nuevo servicio para equipos reales.
+  - Nuevos métodos:
+      crearEquipoReal
+      obtenerEquiposDeLiga
+      editarEquipoReal
+      archivarEquipoReal
+      activarEquipoReal
+      eliminarEquipoReal
+
++ Agregado: servicio_equipos_fantasy.dart
+  - Nuevo servicio para equipos fantasy.
+  - Nuevos métodos:
+      crearEquipoFantasy
+      obtenerPorUsuarioYLiga
+      editarEquipoFantasy
+      archivarEquipoFantasy
+      activarEquipoFantasy
+      eliminarEquipoFantasy
+
+~ Modificado: servicio_equipos.dart
+  - Ahora marcado como DEPRECATED.
+  - Sin cambios en firmas o comportamiento.
+
+= Sin cambios:
+  servicio_ligas.dart
+  servicio_participaciones.dart
+  servicio_jugadores.dart
+  servicio_alineaciones.dart
+  servicio_autenticacion.dart
+  servicio_base_de_datos.dart
+  servicio_inicializacion.dart
+  servicio_reglas_de_seguridad.dart

@@ -2,9 +2,12 @@
   Archivo: participacion_liga.dart
   Descripción:
     Modelo de datos que representa la participación de un usuario dentro de una liga.
-    Incluye métodos de serialización/deserialización para Firestore.
+    Incluye métodos de serialización y deserialización para Firestore.
+
   Dependencias:
     - Ninguna directa.
+  Archivos que dependen de este archivo:
+    - Controladores y servicios de participaciones.
 */
 
 class ParticipacionLiga {
@@ -14,23 +17,33 @@ class ParticipacionLiga {
   /// Identificador de la liga asociada.
   final String idLiga;
 
-  /// Identificador del usuario propietario.
+  /// Identificador del usuario que participa en la liga.
   final String idUsuario;
 
-  /// Nombre del equipo fantasy (opcional).
+  /// Nombre del equipo fantasy asignado por el usuario.
   final String nombreEquipoFantasy;
 
-  /// Puntos acumulados por la participación (entero).
+  /// Puntos acumulados por la participación.
   final int puntos;
 
-  /// Fecha de creación como timestamp (milisegundos desde epoch).
+  /// Fecha de creación como timestamp (milisegundos desde época Unix).
   final int fechaCreacion;
 
-  /// Estado de la participación (true = activo, false = archivado).
+  /// Estado de la participación (true = activa, false = archivada).
   final bool activo;
 
   /*
     Constructor principal de ParticipacionLiga.
+    Entradas:
+      - id (String)
+      - idLiga (String)
+      - idUsuario (String)
+      - nombreEquipoFantasy (String)
+      - puntos (int)
+      - fechaCreacion (int)
+      - activo (bool)
+    Salida:
+      - Instancia de ParticipacionLiga.
   */
   const ParticipacionLiga({
     required this.id,
@@ -45,7 +58,12 @@ class ParticipacionLiga {
   /*
     Nombre: desdeMapa
     Descripción:
-      Crea una instancia a partir de un Map proveniente de Firestore.
+      Crea una instancia de ParticipacionLiga a partir de datos Firestore.
+    Entradas:
+      - id (String): id del documento.
+      - datos (Map<String, dynamic>): datos deserializados.
+    Salidas:
+      - Instancia de ParticipacionLiga.
   */
   factory ParticipacionLiga.desdeMapa(String id, Map<String, dynamic> datos) {
     return ParticipacionLiga(
@@ -64,7 +82,11 @@ class ParticipacionLiga {
   /*
     Nombre: aMapa
     Descripción:
-      Convierte la instancia en un Map para Firestore.
+      Convierte la instancia en un Map<String, dynamic> para almacenar en Firestore.
+    Entradas:
+      - Ninguna.
+    Salidas:
+      - Map<String, dynamic> representando la participación.
   */
   Map<String, dynamic> aMapa() {
     return {
@@ -80,7 +102,11 @@ class ParticipacionLiga {
   /*
     Nombre: copiarCon
     Descripción:
-      Crea copia con campos opcionales reemplazados.
+      Permite crear una copia de ParticipacionLiga modificando campos específicos.
+    Entradas:
+      - Campos opcionales para modificar.
+    Salidas:
+      - Nueva instancia con los cambios aplicados.
   */
   ParticipacionLiga copiarCon({
     String? id,

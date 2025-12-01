@@ -2,32 +2,45 @@
   Archivo: liga.dart
   Descripción:
     Modelo de datos que representa una Liga dentro del sistema FantasyPro.
-    Incluye métodos para serialización/deserialización desde Firestore.
+    Incluye métodos para serialización y deserialización desde Firestore.
+
+  Dependencias:
+    - Ninguna directa.
+  Archivos que dependen de este archivo:
+    - Servicios y controladores de ligas.
 */
 
 class Liga {
-  // ---------------------------------------------------------------------------
-  // Campos Firestore (centralizados)
-  // ---------------------------------------------------------------------------
-  static const String campoNombre = "nombre";
-  static const String campoTemporada = "temporada";
-  static const String campoDescripcion = "descripcion";
-  static const String campoFechaCreacion = "fechaCreacion";
-  static const String campoActiva = "activa";
+  /// Identificador único del documento en Firestore.
+  final String id;
 
-  // ---------------------------------------------------------------------------
-  // Atributos del modelo
-  // ---------------------------------------------------------------------------
-  final String id; // ID del documento en Firestore
-  final String nombre; // Nombre visible de la liga
-  final String temporada; // Temporada ej: "2024/2025"
-  final String descripcion; // Texto descriptivo
-  final int fechaCreacion; // Timestamp (milisegundos)
-  final bool activa; // true = activa, false = archivada
+  /// Nombre visible de la liga.
+  final String nombre;
 
-  // ---------------------------------------------------------------------------
-  // Constructor principal
-  // ---------------------------------------------------------------------------
+  /// Temporada a la que pertenece la liga (ej.: "2024/2025").
+  final String temporada;
+
+  /// Descripción general de la liga.
+  final String descripcion;
+
+  /// Fecha de creación expresada como timestamp (milisegundos desde época Unix).
+  final int fechaCreacion;
+
+  /// Estado de la liga (true = activa, false = archivada).
+  final bool activa;
+
+  /*
+    Constructor principal de Liga.
+    Entradas:
+      - id (String): identificador único.
+      - nombre (String): nombre visible de la liga.
+      - temporada (String): período de temporada.
+      - descripcion (String): texto descriptivo.
+      - fechaCreacion (int): timestamp de creación.
+      - activa (bool): indica si la liga está activa.
+    Salida:
+      - Instancia de Liga.
+  */
   const Liga({
     required this.id,
     required this.nombre,
@@ -37,36 +50,56 @@ class Liga {
     required this.activa,
   });
 
-  // ---------------------------------------------------------------------------
-  // Deserialización desde Firestore
-  // ---------------------------------------------------------------------------
+  /*
+    Nombre: desdeMapa
+    Descripción:
+      Crea una instancia de Liga a partir de un Map proveniente de Firestore.
+    Entradas:
+      - id (String): identificador del documento.
+      - datos (Map<String, dynamic>): mapa de datos de Firestore.
+    Salidas:
+      - Instancia de Liga.
+  */
   factory Liga.desdeMapa(String id, Map<String, dynamic> datos) {
     return Liga(
       id: id,
-      nombre: datos[campoNombre] ?? "",
-      temporada: datos[campoTemporada] ?? "",
-      descripcion: datos[campoDescripcion] ?? "",
-      fechaCreacion: datos[campoFechaCreacion] ?? 0,
-      activa: datos[campoActiva] ?? true,
+      nombre: datos['nombre'] ?? "",
+      temporada: datos['temporada'] ?? "",
+      descripcion: datos['descripcion'] ?? "",
+      fechaCreacion: datos['fechaCreacion'] ?? 0,
+      activa: datos['activa'] ?? true,
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Serialización hacia Firestore
-  // ---------------------------------------------------------------------------
+  /*
+    Nombre: aMapa
+    Descripción:
+      Convierte la instancia actual en un Map<String, dynamic> para almacenar en Firestore.
+    Entradas:
+      - Ninguna.
+    Salidas:
+      - Map<String, dynamic> representando la liga.
+  */
   Map<String, dynamic> aMapa() {
     return {
-      campoNombre: nombre,
-      campoTemporada: temporada,
-      campoDescripcion: descripcion,
-      campoFechaCreacion: fechaCreacion,
-      campoActiva: activa,
+      'nombre': nombre,
+      'temporada': temporada,
+      'descripcion': descripcion,
+      'fechaCreacion': fechaCreacion,
+      'activa': activa,
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Copia modificada
-  // ---------------------------------------------------------------------------
+  /*
+    Nombre: copiarCon
+    Descripción:
+      Permite crear una copia de Liga modificando los campos deseados.
+      Método útil para edición o actualización parcial.
+    Entradas:
+      - Campos opcionales para modificar.
+    Salidas:
+      - Nueva instancia de Liga con los cambios aplicados.
+  */
   Liga copiarCon({
     String? id,
     String? nombre,

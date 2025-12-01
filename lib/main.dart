@@ -8,7 +8,6 @@
 
 import 'package:fantasypro/controladores/controlador_router.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 // Servicios
 import 'servicios/utilidades/servicio_log.dart';
@@ -20,9 +19,6 @@ import 'temas/tema_web_desktop.dart';
 import 'temas/tema_web_mobile.dart';
 
 // Vistas
-import 'vistas/web/desktop/pagina_inicio_desktop.dart';
-import 'vistas/web/mobile/pagina_inicio_mobile.dart';
-import 'vistas/web/desktop/pagina_login_desktop.dart';
 
 // Firebase init
 import 'servicios/firebase/servicio_inicializacion.dart';

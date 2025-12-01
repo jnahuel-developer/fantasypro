@@ -1,0 +1,38 @@
+========================================
+diff_modelos.txt
+========================================
+
+DIFF FUNCIONAL mod0012 → mod0013
+Módulo: Modelos
+
+1) Archivos nuevos
++ agregado: lib/modelos/equipo_real.dart
+  Métodos expuestos:
+    - factory EquipoReal.desdeMapa(String id, Map<String, dynamic>)
+    - Map<String, dynamic> aMapa()
+    - EquipoReal copiarCon({ ... })
+
++ agregado: lib/modelos/equipo_fantasy.dart
+  Métodos expuestos:
+    - factory EquipoFantasy.desdeMapa(String id, Map<String, dynamic>)
+    - Map<String, dynamic> aMapa()
+    - EquipoFantasy copiarCon({ ... })
+
+
+2) Archivos modificados
+~ modificado: lib/modelos/equipo.dart
+  Cambios:
+    - Marcado como DEPRECATED (la API no cambia).
+
+
+3) Archivos eliminados
+(none)
+
+
+4) Archivos sin cambios
+= sin cambios:
+  - lib/modelos/liga.dart
+  - lib/modelos/participacion_liga.dart
+  - lib/modelos/jugador.dart
+  - lib/modelos/alineacion.dart
+  - lib/modelos/roles.dart

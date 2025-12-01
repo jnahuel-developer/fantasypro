@@ -1,0 +1,218 @@
+========================================
+catalogo_modelos.txt
+========================================
+
+CATÁLOGO DEL MÓDULO Modelos — mod0013
+Descripción:
+El módulo Modelos define las estructuras de datos utilizadas por FantasyPro. Cada archivo provee un modelo con sus propiedades públicas y métodos de serialización, deserialización y copia.
+
+Archivos incluidos:
+- lib/modelos/liga.dart
+- lib/modelos/participacion_liga.dart
+- lib/modelos/jugador.dart
+- lib/modelos/alineacion.dart
+- lib/modelos/roles.dart
+- lib/modelos/equipo_real.dart
+- lib/modelos/equipo_fantasy.dart
+- lib/modelos/equipo.dart
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/liga.dart
+// ---------------------------------------------------------------------------
+- Descripción: Representa una liga disponible para los usuarios.
+- Responsabilidades: Serialización, deserialización y copia controlada.
+- Dependencias: Ninguna directa.
+
+Método: desdeMapa
+Firma: factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Construye una instancia desde Firestore.
+Ejemplo:
+  final liga = Liga.desdeMapa("L1", datos);
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa la instancia.
+Ejemplo:
+  firestore.save(liga.aMapa());
+
+Método: copiarCon
+Firma: Liga copiarCon({String? id, String? nombre, String? temporada, String? descripcion, int? fechaCreacion, bool? activa})
+Descripción: Crea una copia modificada.
+Ejemplo:
+  final nueva = liga.copiarCon(nombre: "Nueva Liga");
+
+Propiedad: id / String — Identificador.
+Propiedad: nombre / String — Nombre de la liga.
+Propiedad: temporada / String — Temporada.
+Propiedad: descripcion / String — Descripción.
+Propiedad: fechaCreacion / int — Timestamp.
+Propiedad: activa / bool — Estado.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/participacion_liga.dart
+// ---------------------------------------------------------------------------
+- Descripción: Registra la participación de un usuario en una liga.
+- Responsabilidades: Persistencia básica del vínculo usuario-liga.
+- Dependencias: Ninguna directa.
+
+Método: desdeMapa
+Firma: factory ParticipacionLiga.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Deserializa la participación.
+Ejemplo:
+  final p = ParticipacionLiga.desdeMapa("P1", datos);
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa la instancia.
+Ejemplo:
+  guardar(p.aMapa());
+
+Método: copiarCon
+Firma: ParticipacionLiga copiarCon({String? id, String? idLiga, String? idUsuario, String? nombreEquipoFantasy, int? puntos, int? fechaCreacion, bool? activo})
+Descripción: Crea copia modificando parámetros opcionales.
+Ejemplo:
+  final editada = p.copiarCon(puntos: 10);
+
+Propiedad: id / String  
+Propiedad: idLiga / String  
+Propiedad: idUsuario / String  
+Propiedad: nombreEquipoFantasy / String  
+Propiedad: puntos / int  
+Propiedad: fechaCreacion / int  
+Propiedad: activo / bool  
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/jugador.dart
+// ---------------------------------------------------------------------------
+- Descripción: Representa un jugador perteneciente a un equipo real.
+- Responsabilidades: Serialización, deserialización, copia.
+- Dependencias: Ninguna.
+
+Método: desdeMapa
+Firma: factory Jugador.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Deserializa un jugador.
+Ejemplo:
+  final j = Jugador.desdeMapa("J1", datos);
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa el jugador.
+Ejemplo:
+  db.save(j.aMapa());
+
+Método: copiarCon
+Firma: Jugador copiarCon({String? id, String? idEquipo, String? nombre, String? posicion, String? nacionalidad, int? dorsal, int? fechaCreacion, bool? activo})
+Descripción: Copia modificada.
+Ejemplo:
+  final nuevo = j.copiarCon(nombre: "Nuevo Nombre");
+
+Propiedades públicas: id, idEquipo, nombre, posicion, nacionalidad, dorsal, fechaCreacion, activo.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/alineacion.dart
+// ---------------------------------------------------------------------------
+- Descripción: Representa una alineación del usuario para una jornada.
+- Responsabilidades: Persistencia de jugadores alineados y formación.
+- Dependencias: Ninguna.
+
+Método: desdeMapa
+Firma: factory Alineacion.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Deserializa alineación.
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa alineación.
+
+Método: copiarCon
+Firma: Alineacion copiarCon({String? id, String? idLiga, String? idUsuario, List<String>? jugadoresSeleccionados, String? formacion, int? puntosTotales, int? fechaCreacion, bool? activo})
+Descripción: Copia modificada.
+
+Propiedades públicas: id, idLiga, idUsuario, jugadoresSeleccionados, formacion, puntosTotales, fechaCreacion, activo.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/roles.dart
+// ---------------------------------------------------------------------------
+- Descripción: Enum con roles de usuario y accesores de texto.
+- Responsabilidades: Representación interna y externa del rol.
+- Dependencias: textos_app.dart
+
+Método: valorDB
+Firma: String get valorDB
+Descripción: Devuelve el valor almacenado en BD.
+
+Método: textoVisible
+Firma: String get textoVisible
+Descripción: Devuelve texto traducido.
+
+Método: desdeValorDB
+Firma: static RolUsuario desdeValorDB(String valor)
+Descripción: Convierte texto en rol.
+
+Propiedades: no aplica.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/equipo_real.dart
+// ---------------------------------------------------------------------------
+- Descripción: Representa un equipo real gestionado por administradores.
+- Responsabilidades: Persistir datos de equipos reales.
+- Dependencias: Ninguna.
+
+Método: desdeMapa
+Firma: factory EquipoReal.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Deserializa equipo real.
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa equipo real.
+
+Método: copiarCon
+Firma: EquipoReal copiarCon({String? id, String? idLiga, String? nombre, String? descripcion, String? escudoUrl, int? fechaCreacion, bool? activo})
+Descripción: Copia modificada.
+
+Propiedades públicas: id, idLiga, nombre, descripcion, escudoUrl, fechaCreacion, activo.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/equipo_fantasy.dart
+// ---------------------------------------------------------------------------
+- Descripción: Equipo fantasy creado por el usuario.
+- Responsabilidades: Representar el equipo del usuario en una liga.
+- Dependencias: Ninguna.
+
+Método: desdeMapa
+Firma: factory EquipoFantasy.desdeMapa(String id, Map<String, dynamic> datos)
+Descripción: Deserializa equipo fantasy.
+
+Método: aMapa
+Firma: Map<String, dynamic> aMapa()
+Descripción: Serializa equipo fantasy.
+
+Método: copiarCon
+Firma: EquipoFantasy copiarCon({String? id, String? idUsuario, String? idLiga, String? nombre, int? fechaCreacion, bool? activo})
+Descripción: Copia modificada.
+
+Propiedades públicas: id, idUsuario, idLiga, nombre, fechaCreacion, activo.
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/modelos/equipo.dart
+// ---------------------------------------------------------------------------
+- Descripción: Modelo original de Equipo (DEPRECATED).
+- Responsabilidades: Persistencia histórica de equipos (no debe usarse en nuevos desarrollos).
+- Dependencias: Ninguna.
+
+Métodos públicos: desdeMapa, aMapa, copiarCon (sin cambios).
+
+Propiedades: id, idLiga, nombre, descripcion, escudoUrl, fechaCreacion, activo.
+
+
+Notas de compatibilidad:
+- Archivos nuevos: equipo_real.dart, equipo_fantasy.dart
+- Archivo deprecated: equipo.dart
+- Archivos sin cambios funcionales: liga.dart, participacion_liga.dart, jugador.dart, alineacion.dart, roles.dart
