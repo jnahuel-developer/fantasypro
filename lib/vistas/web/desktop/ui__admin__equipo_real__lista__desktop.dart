@@ -2,8 +2,7 @@
   Archivo: ui__admin__equipo_real__lista__desktop.dart
   Descripción:
     Pantalla de administración para listar, crear, archivar, activar y eliminar
-    equipos reales de una liga (ADMIN). Reemplaza completamente el uso del
-    modelo Equipo (DEPRECATED) por EquipoReal según mod0013.
+    equipos reales de una liga (ADMIN)
 
   Dependencias:
     - modelos/equipo_real.dart
@@ -21,7 +20,9 @@ import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
+
 import 'ui__admin__equipo_real__editar__desktop.dart';
+import 'ui__admin__jugador__lista__desktop.dart';
 
 class UiAdminEquipoRealListaDesktop extends StatefulWidget {
   final Liga liga;
@@ -131,6 +132,19 @@ class _UiAdminEquipoRealListaDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: const Icon(Icons.people),
+              tooltip: "Gestionar jugadores",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UiAdminJugadorListaDesktop(equipo: e),
+                  ),
+                );
+              },
+            ),
+
             // Editar
             IconButton(
               icon: const Icon(Icons.edit),

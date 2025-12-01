@@ -2,37 +2,36 @@
 diff_modelos.txt
 ========================================
 
-DIFF FUNCIONAL mod0012 → mod0013
+DIFF FUNCIONAL mod0014 → mod0015
 Módulo: Modelos
 
 1) Archivos nuevos
-+ agregado: lib/modelos/equipo_real.dart
-  Métodos expuestos:
-    - factory EquipoReal.desdeMapa(String id, Map<String, dynamic>)
++ agregado: fecha_liga.dart
+  Métodos públicos expuestos:
+    - FechaLiga.desdeMapa(String id, Map<String, dynamic> datos)
     - Map<String, dynamic> aMapa()
-    - EquipoReal copiarCon({ ... })
-
-+ agregado: lib/modelos/equipo_fantasy.dart
-  Métodos expuestos:
-    - factory EquipoFantasy.desdeMapa(String id, Map<String, dynamic>)
-    - Map<String, dynamic> aMapa()
-    - EquipoFantasy copiarCon({ ... })
-
+    - FechaLiga copiarCon({String? id, String? idLiga, int? numeroFecha, String? nombre, bool? activa, bool? cerrada, int? fechaCreacion})
 
 2) Archivos modificados
-~ modificado: lib/modelos/equipo.dart
-  Cambios:
-    - Marcado como DEPRECATED (la API no cambia).
+~ modificado: liga.dart
+  Cambios funcionales:
+    - Campos públicos agregados:
+        int totalFechasTemporada   // nuevo
+        int fechasCreadas          // nuevo
+    - Se actualizaron firmas de métodos públicos:
+        factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
+          → ahora carga totalFechasTemporada y fechasCreadas con defaults (38 y 0)
+        Map<String, dynamic> aMapa()
+          → ahora serializa totalFechasTemporada y fechasCreadas
+        Liga copiarCon({ ... })
+          → ahora permite reemplazar totalFechasTemporada y fechasCreadas
 
-
-3) Archivos eliminados
-(none)
-
-
-4) Archivos sin cambios
+3) Archivos sin cambios
 = sin cambios:
-  - lib/modelos/liga.dart
-  - lib/modelos/participacion_liga.dart
-  - lib/modelos/jugador.dart
-  - lib/modelos/alineacion.dart
-  - lib/modelos/roles.dart
+  - participacion_liga.dart
+  - jugador.dart
+  - alineacion.dart
+  - roles.dart
+  - equipo_real.dart
+  - equipo_fantasy.dart
+  - jugador_real.dart

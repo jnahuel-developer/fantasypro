@@ -1,14 +1,14 @@
 /*
   Archivo: ui__admin__jugador__editar__desktop.dart
   Descripción:
-    Edición de los datos de un jugador.
-    Campos: nombre, posición, nacionalidad, dorsal.
+    Edición de los datos de un jugador real.
+    Campos: nombre, posición, nacionalidad, dorsal, valor de mercado.
     - Validación mínima
     - Confirmación al salir si hay cambios
     - Retorna true si hubo cambios guardados
   Dependencias:
-    - modelos/jugador.dart
-    - controladores/controlador_jugadores.dart
+    - modelos/jugador_real.dart
+    - controladores/controlador_jugadores_reales.dart
     - textos/textos_app.dart
   Pantallas que navegan hacia esta:
     - ui__admin__jugador__lista__desktop.dart
@@ -17,14 +17,16 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/jugador.dart';
-import 'package:fantasypro/controladores/controlador_jugadores.dart';
+import 'package:flutter/services.dart';
+import 'package:fantasypro/modelos/jugador_real.dart';
+import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 
 class UiAdminJugadorEditarDesktop extends StatefulWidget {
-  final Jugador jugador;
+  /// Jugador real que se está editando.
+  final JugadorReal jugadorReal;
 
-  const UiAdminJugadorEditarDesktop({super.key, required this.jugador});
+  const UiAdminJugadorEditarDesktop({super.key, required this.jugadorReal});
 
   @override
   State<UiAdminJugadorEditarDesktop> createState() =>
@@ -33,20 +35,23 @@ class UiAdminJugadorEditarDesktop extends StatefulWidget {
 
 class _UiAdminJugadorEditarDesktopEstado
     extends State<UiAdminJugadorEditarDesktop> {
-  /// Controlador de jugadores.
-  final ControladorJugadores _controlador = ControladorJugadores();
+  /// Controlador de jugadores reales.
+  final ControladorJugadoresReales _controlador = ControladorJugadoresReales();
 
-  /// Controller para el nombre del jugador.
+  /// Controller para el nombre del jugador real.
   late TextEditingController _ctrlNombre;
 
-  /// Controller para la posición del jugador.
-  late TextEditingController _ctrlPosicion;
+  /// Valor de la posición seleccionada.
+  late String _posicionSeleccionada;
 
-  /// Controller para la nacionalidad del jugador.
+  /// Controller para la nacionalidad.
   late TextEditingController _ctrlNacionalidad;
 
-  /// Controller para el dorsal del jugador.
+  /// Controller para el dorsal.
   late TextEditingController _ctrlDorsal;
+
+  /// Controller para el valor de mercado.
+  late TextEditingController _ctrlValorMercado;
 
   /// Indica si se está guardando la información.
   bool guardando = false;
@@ -58,17 +63,23 @@ class _UiAdminJugadorEditarDesktopEstado
   void initState() {
     super.initState();
 
-    _ctrlNombre = TextEditingController(text: widget.jugador.nombre)
+    _ctrlNombre = TextEditingController(text: widget.jugadorReal.nombre)
       ..addListener(() => setState(() => hayCambios = true));
 
-    _ctrlPosicion = TextEditingController(text: widget.jugador.posicion)
-      ..addListener(() => setState(() => hayCambios = true));
+    _posicionSeleccionada = widget.jugadorReal.posicion;
 
-    _ctrlNacionalidad = TextEditingController(text: widget.jugador.nacionalidad)
-      ..addListener(() => setState(() => hayCambios = true));
+    _ctrlNacionalidad = TextEditingController(
+      text: widget.jugadorReal.nacionalidad,
+    )..addListener(() => setState(() => hayCambios = true));
 
     _ctrlDorsal = TextEditingController(
-      text: widget.jugador.dorsal > 0 ? widget.jugador.dorsal.toString() : "",
+      text: widget.jugadorReal.dorsal > 0
+          ? widget.jugadorReal.dorsal.toString()
+          : "",
+    )..addListener(() => setState(() => hayCambios = true));
+
+    _ctrlValorMercado = TextEditingController(
+      text: widget.jugadorReal.valorMercado.toString(),
     )..addListener(() => setState(() => hayCambios = true));
   }
 
@@ -80,7 +91,7 @@ class _UiAdminJugadorEditarDesktopEstado
     Entradas:
       - ninguna
     Salidas:
-      - Future<bool>: true si se permite salir, false en caso contrario.
+      - Future<bool>
   */
   Future<bool> confirmarSalida() async {
     if (!hayCambios || guardando) return true;
@@ -113,8 +124,8 @@ class _UiAdminJugadorEditarDesktopEstado
   /*
     Nombre: guardarCambios
     Descripción:
-      Valida los campos, genera una copia actualizada del jugador y
-      solicita la edición al controlador.
+      Valida todos los campos, construye una copia del jugador real y
+      solicita su actualización al controlador.
     Entradas:
       - ninguna
     Salidas:
@@ -122,27 +133,32 @@ class _UiAdminJugadorEditarDesktopEstado
   */
   Future<void> guardarCambios() async {
     final nombre = _ctrlNombre.text.trim();
-    final posicion = _ctrlPosicion.text.trim();
     final nacionalidad = _ctrlNacionalidad.text.trim();
+
     final dorsalText = _ctrlDorsal.text.trim();
     final dorsal = dorsalText.isEmpty ? 0 : int.tryParse(dorsalText) ?? 0;
 
-    if (nombre.isEmpty || posicion.isEmpty) {
+    final valorText = _ctrlValorMercado.text.trim();
+    final valor = int.tryParse(valorText) ?? 0;
+
+    if (nombre.isEmpty ||
+        _posicionSeleccionada.isEmpty ||
+        valor < 1 ||
+        valor > 1000) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(TextosApp.JUGADOR_EDITAR_VALIDACION_OBLIGATORIOS),
-        ),
+        const SnackBar(content: Text("Verifique los campos obligatorios.")),
       );
       return;
     }
 
     setState(() => guardando = true);
 
-    final actualizado = widget.jugador.copiarCon(
+    final actualizado = widget.jugadorReal.copiarCon(
       nombre: nombre,
-      posicion: posicion,
+      posicion: _posicionSeleccionada,
       nacionalidad: nacionalidad,
       dorsal: dorsal,
+      valorMercado: valor,
     );
 
     await _controlador.editar(actualizado);
@@ -182,14 +198,30 @@ class _UiAdminJugadorEditarDesktopEstado
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextField(
-                    controller: _ctrlPosicion,
+
+                  /// Campo de posición (Dropdown).
+                  DropdownButtonFormField<String>(
+                    initialValue: _posicionSeleccionada,
                     decoration: const InputDecoration(
                       labelText: TextosApp.JUGADOR_EDITAR_LABEL_POSICION,
                       border: OutlineInputBorder(),
                     ),
+                    items: const [
+                      DropdownMenuItem(value: "POR", child: Text("POR")),
+                      DropdownMenuItem(value: "DEF", child: Text("DEF")),
+                      DropdownMenuItem(value: "MED", child: Text("MED")),
+                      DropdownMenuItem(value: "DEL", child: Text("DEL")),
+                    ],
+                    onChanged: (v) {
+                      if (v == null) return;
+                      setState(() {
+                        _posicionSeleccionada = v;
+                        hayCambios = true;
+                      });
+                    },
                   ),
                   const SizedBox(height: 12),
+
                   TextField(
                     controller: _ctrlNacionalidad,
                     decoration: const InputDecoration(
@@ -198,15 +230,30 @@ class _UiAdminJugadorEditarDesktopEstado
                     ),
                   ),
                   const SizedBox(height: 12),
+
                   TextField(
                     controller: _ctrlDorsal,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
                       labelText: TextosApp.JUGADOR_EDITAR_LABEL_DORSAL,
                       border: OutlineInputBorder(),
                     ),
                   ),
+                  const SizedBox(height: 12),
+
+                  /// Campo valor de mercado con validación por rango.
+                  TextFormField(
+                    controller: _ctrlValorMercado,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(
+                      labelText: "Valor de mercado (1 a 1000)",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                   const SizedBox(height: 20),
+
                   ElevatedButton.icon(
                     onPressed: guardando ? null : guardarCambios,
                     icon: guardando
