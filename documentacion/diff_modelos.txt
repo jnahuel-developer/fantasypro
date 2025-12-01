@@ -2,32 +2,36 @@
 diff_modelos.txt
 ========================================
 
-/// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0013 → mod0014
-/// ---------------------------------------------------------------------------
+DIFF FUNCIONAL mod0014 → mod0015
+Módulo: Modelos
 
-+ Archivo agregado: jugador_real.dart
-  Campos agregados (públicos):
-    - String id
-    - String idEquipoReal
-    - String nombre
-    - String posicion
-    - String nacionalidad
-    - int dorsal
-    - int valorMercado
-    - bool activo
-    - int fechaCreacion
-
-  Métodos públicos agregados:
-    - factory JugadorReal.desdeMapa(String id, Map<String, dynamic> datos)
+1) Archivos nuevos
++ agregado: fecha_liga.dart
+  Métodos públicos expuestos:
+    - FechaLiga.desdeMapa(String id, Map<String, dynamic> datos)
     - Map<String, dynamic> aMapa()
-    - JugadorReal copiarCon({String? id, String? idEquipoReal, String? nombre, String? posicion, String? nacionalidad, int? dorsal, int? valorMercado, bool? activo, int? fechaCreacion})
+    - FechaLiga copiarCon({String? id, String? idLiga, int? numeroFecha, String? nombre, bool? activa, bool? cerrada, int? fechaCreacion})
 
-= Archivos sin cambios:
-  - liga.dart
+2) Archivos modificados
+~ modificado: liga.dart
+  Cambios funcionales:
+    - Campos públicos agregados:
+        int totalFechasTemporada   // nuevo
+        int fechasCreadas          // nuevo
+    - Se actualizaron firmas de métodos públicos:
+        factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
+          → ahora carga totalFechasTemporada y fechasCreadas con defaults (38 y 0)
+        Map<String, dynamic> aMapa()
+          → ahora serializa totalFechasTemporada y fechasCreadas
+        Liga copiarCon({ ... })
+          → ahora permite reemplazar totalFechasTemporada y fechasCreadas
+
+3) Archivos sin cambios
+= sin cambios:
   - participacion_liga.dart
   - jugador.dart
   - alineacion.dart
   - roles.dart
   - equipo_real.dart
   - equipo_fantasy.dart
+  - jugador_real.dart

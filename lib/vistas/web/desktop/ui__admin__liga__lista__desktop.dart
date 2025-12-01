@@ -2,14 +2,15 @@
   Archivo: ui__admin__liga__lista__desktop.dart
   Descripción:
     Lista de ligas para administradores. Permite crear, activar, archivar y
-    eliminar ligas, además de navegar hacia la gestión de equipos reales y
-    participaciones.
+    eliminar ligas, además de navegar hacia la gestión de equipos reales,
+    participaciones y fechas.
 
   Dependencias:
     - modelos/liga.dart
     - controladores/controlador_ligas.dart
     - ui__admin__equipo_real__lista__desktop.dart
     - ui__admin__participacion__lista__desktop.dart
+    - ui__admin__fecha__lista__desktop.dart
 
   Pantallas que navegan hacia esta:
     - ui__admin__panel__dashboard__desktop.dart
@@ -17,14 +18,15 @@
   Pantallas destino:
     - ui__admin__equipo_real__lista__desktop.dart
     - ui__admin__participacion__lista__desktop.dart
+    - ui__admin__fecha__lista__desktop.dart
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
-
 import 'ui__admin__equipo_real__lista__desktop.dart';
 import 'ui__admin__participacion__lista__desktop.dart';
+import 'ui__admin__fecha__lista__desktop.dart';
 
 class UiAdminLigaListaDesktop extends StatefulWidget {
   const UiAdminLigaListaDesktop({super.key});
@@ -52,10 +54,8 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
     Nombre: _cargar
     Descripción:
       Obtiene todas las ligas y las separa en activas y archivadas.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
+    Entradas: ninguna
+    Salidas: Future<void>
   */
   Future<void> _cargar() async {
     setState(() => cargando = true);
@@ -78,62 +78,95 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
   /*
     Nombre: _crearLiga
     Descripción:
-      Muestra un diálogo para crear una liga nueva.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
+      Muestra diálogo para crear una liga nueva, incluyendo validación del
+      total de fechas de la temporada.
+    Entradas: ninguna
+    Salidas: Future<void>
   */
   Future<void> _crearLiga() async {
     final ctrlNombre = TextEditingController();
     final ctrlDesc = TextEditingController();
+    final ctrlTotalFechas = TextEditingController(text: "38");
 
-    showDialog(
+    String? error;
+
+    await showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Crear liga"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: ctrlNombre,
-              decoration: const InputDecoration(labelText: "Nombre"),
+      builder: (_) => StatefulBuilder(
+        builder: (_, actualizar) => AlertDialog(
+          title: const Text("Crear liga"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: ctrlNombre,
+                decoration: const InputDecoration(labelText: "Nombre"),
+              ),
+              TextField(
+                controller: ctrlDesc,
+                decoration: const InputDecoration(labelText: "Descripción"),
+              ),
+              TextField(
+                controller: ctrlTotalFechas,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Total de fechas (34–50)",
+                  errorText: error,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () => Navigator.pop(context),
             ),
-            TextField(
-              controller: ctrlDesc,
-              decoration: const InputDecoration(labelText: "Descripción"),
+            ElevatedButton(
+              child: const Text("Crear"),
+              onPressed: () async {
+                final nombre = ctrlNombre.text.trim();
+                final desc = ctrlDesc.text.trim();
+                final tf = int.tryParse(ctrlTotalFechas.text.trim()) ?? 0;
+
+                if (nombre.isEmpty) {
+                  actualizar(() => error = "El nombre es obligatorio");
+                  return;
+                }
+                if (tf < 34 || tf > 50) {
+                  actualizar(() => error = "Debe estar entre 34 y 50");
+                  return;
+                }
+
+                await _controlador.crearLiga(
+                  nombre,
+                  desc,
+                  totalFechasTemporada: tf,
+                );
+
+                if (context.mounted) Navigator.pop(context);
+                _cargar();
+              },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            child: const Text("Cancelar"),
-            onPressed: () => Navigator.pop(context),
-          ),
-          ElevatedButton(
-            child: const Text("Crear"),
-            onPressed: () async {
-              final nombre = ctrlNombre.text.trim();
-              final desc = ctrlDesc.text.trim();
-              if (nombre.isEmpty) return;
-
-              await _controlador.crearLiga(nombre, desc);
-
-              Navigator.pop(context);
-              _cargar();
-            },
-          ),
-        ],
       ),
     );
   }
 
+  /*
+    Nombre: _item
+    Descripción:
+      Renderiza una liga dentro de las listas activa/archivada.
+    Entradas:
+      - Liga l
+    Salidas: Widget
+  */
   Widget _item(Liga l) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: ListTile(
         title: Text(l.nombre),
-        subtitle: Text(l.temporada),
+        subtitle: Text("Fechas: ${l.fechasCreadas}/${l.totalFechasTemporada}"),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -158,6 +191,19 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => UiAdminEquipoRealListaDesktop(liga: l),
+                  ),
+                );
+              },
+            ),
+
+            // Gestionar fechas
+            IconButton(
+              icon: const Icon(Icons.calendar_month),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UiAdminFechaListaDesktop(liga: l),
                   ),
                 );
               },

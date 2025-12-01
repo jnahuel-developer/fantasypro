@@ -1,28 +1,22 @@
-========================================
-diff_servicios.txt
-========================================
-
 /// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0013 → mod0014
+/// Diferencias funcionales reales mod0014 → mod0015
 /// ---------------------------------------------------------------------------
 
-+ Archivo agregado: servicio_jugadores_reales.dart
-  Métodos públicos nuevos:
-    - Future<JugadorReal> crearJugadorReal(JugadorReal jugador)
-    - Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal)
-    - Future<void> editarJugadorReal(JugadorReal jugador)
-    - Future<void> archivarJugadorReal(String idJugador)
-    - Future<void> activarJugadorReal(String idJugador)
-    - Future<void> eliminarJugadorReal(String idJugador)
++ Archivo agregado: servicio_fechas.dart
+  Métodos públicos agregados:
+    - Future<FechaLiga> crearFecha(FechaLiga fecha)
+    - Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
+    - Future<void> cerrarFecha(String idFecha)
 
 = Archivos sin cambios:
-  - servicio_alineaciones.dart
   - servicio_autenticacion.dart
   - servicio_base_de_datos.dart
+  - servicio_alineaciones.dart
+  - servicio_equipos_fantasy.dart
+  - servicio_equipos_reales.dart
   - servicio_inicializacion.dart
   - servicio_jugadores.dart
+  - servicio_jugadores_reales.dart
   - servicio_ligas.dart
   - servicio_participaciones.dart
   - servicio_reglas_de_seguridad.dart
-  - servicio_equipos_reales.dart
-  - servicio_equipos_fantasy.dart

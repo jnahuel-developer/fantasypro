@@ -1,35 +1,60 @@
 ========================================
-diff_controladores.txt
+diff_controladores_mod0015.txt
 ========================================
 
-/// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0013 → mod0014
-/// Módulo: Controladores
-/// ---------------------------------------------------------------------------
+DIFF FUNCIONAL mod0014 → mod0015
+Módulo: Controladores
 
-+ Archivo agregado: controlador_jugadores_reales.dart
-  Métodos públicos agregados:
-    - Future<JugadorReal> crearJugadorReal(String idEquipoReal, String nombre, String posicion, {String nacionalidad, int dorsal, int valorMercado})
-    - Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal)
-    - Future<void> editar(JugadorReal jugador)
-    - Future<void> archivar(String idJugador)
-    - Future<void> activar(String idJugador)
-    - Future<void> eliminar(String idJugador)
++ Archivos agregados:
+  - controlador_fechas.dart
+    Métodos públicos expuestos:
+      • Future<FechaLiga> crearFecha(String idLiga)
+      • Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
+      • Future<void> cerrarFecha(FechaLiga fecha)
 
-  Responsabilidades nuevas:
-    - Administración de jugadores reales
-    - Validaciones específicas de jugadores reales:
-        * nombre no vacío
-        * posición válida (POR, DEF, MED, DEL)
-        * dorsal entre 1 y 99
-        * valorMercado entre 1 y 1000
-        * idEquipoReal obligatorio
+    Descripción funcional:
+      Controlador responsable de administrar las fechas de una liga. Aplica
+      validaciones de negocio (existencia de liga, límites de fechas, ausencia
+      de fechas activas duplicadas), delega la creación y cierre de fechas al
+      servicio de fechas y coordina el archivado de la liga cuando se cierra
+      la última fecha.
+
+    Responsabilidades principales:
+      - Crear fechas calculando numeroFecha y nombre automáticamente.
+      - Verificar que no exista otra fecha activa.
+      - Consultar fechas por liga.
+      - Cerrar fechas activas validando puntajes (stub _faltanPuntajes).
+      - Archivar la liga cuando se cierra la última fecha de la temporada.
+
+
+~ Archivos modificados:
+  - controlador_ligas.dart
+    Cambios funcionales:
+      * Método crearLiga:
+        - Ahora recibe un parámetro opcional totalFechasTemporada con valor
+          por defecto 38.
+        - Valida que totalFechasTemporada esté entre 34 y 50.
+        - Inicializa el campo fechasCreadas en 0 al crear una liga nueva.
+
+      * Método agregar: Future<void> editarLiga(Liga liga)
+        - Permite actualizar una liga completa, incluyendo los nuevos campos
+          totalFechasTemporada y fechasCreadas.
+        - Valida que totalFechasTemporada esté en el rango 34–50.
+        - Valida que fechasCreadas no sea negativa.
+        - Delegado a ServicioLigas.editarLiga(liga).
+
+      * Documentación:
+        - Se incorporó encabezado formal con dependencias y archivos que
+          dependen del controlador.
+        - Se añadieron bloques documentales antes de cada método.
+        - Se documentaron las propiedades internas del controlador.
+
 
 = Archivos sin cambios funcionales:
-  - controlador_ligas.dart
-  - controlador_participaciones.dart
   - controlador_jugadores.dart
+  - controlador_jugadores_reales.dart
   - controlador_equipo_fantasy.dart
   - controlador_equipos_reales.dart
+  - controlador_participaciones.dart
   - controlador_alineaciones.dart
   - controlador_router.dart

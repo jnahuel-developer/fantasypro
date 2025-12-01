@@ -2,11 +2,12 @@
 catalogo_modelos.txt
 ========================================
 
-CATÁLOGO DEL MÓDULO Modelos — mod0014
+CATÁLOGO DEL MÓDULO Modelos — mod0015
 Descripción:
 El módulo Modelos define las estructuras de datos utilizadas por FantasyPro para representar entidades del dominio, mantener consistencia en serialización/deserialización y proveer contratos estables entre Controladores y Servicios. No incluye lógica de negocio.
 
 Modelos incluidos:
+- fecha_liga.dart
 - liga.dart
 - participacion_liga.dart
 - jugador.dart
@@ -15,41 +16,6 @@ Modelos incluidos:
 - equipo_real.dart
 - equipo_fantasy.dart
 - jugador_real.dart
-
-
-/// ---------------------------------------------------------------------------
-/// Archivo: liga.dart
-/// ---------------------------------------------------------------------------
-/// Descripción: Representa una liga disponible en el sistema.
-/// Responsabilidades: Modelar datos de la liga y permitir persistencia.
-/// Dependencias: Ninguna.
-
-/// ---------------------------------------------------------------------------
-/// Método: factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
-/// Descripción: Construye una instancia a partir de datos de Firestore.
-/// Ejemplo:
-///   final liga = Liga.desdeMapa("L1", mapa);
-
-/// ---------------------------------------------------------------------------
-/// Método: Map<String, dynamic> aMapa()
-/// Descripción: Serializa la instancia para enviarla a Firestore.
-/// Ejemplo:
-///   db.save(liga.aMapa());
-
-/// ---------------------------------------------------------------------------
-/// Método: Liga copiarCon({String? id, String? nombre, String? temporada, String? descripcion, int? fechaCreacion, bool? activa})
-/// Descripción: Genera una nueva instancia reemplazando campos.
-/// Ejemplo:
-///   final nueva = liga.copiarCon(nombre: "Liga X");
-
-/// ---------------------------------------------------------------------------
-/// Propiedades públicas:
-/// id : String
-/// nombre : String
-/// temporada : String
-/// descripcion : String
-/// fechaCreacion : int
-/// activa : bool
 
 
 
@@ -266,3 +232,96 @@ Modelos incluidos:
 /// Propiedades públicas:
 /// id, idEquipoReal, nombre, posicion, nacionalidad, dorsal, valorMercado, activo, fechaCreacion
 
+
+
+// ---------------------------------------------------------------------------
+// Archivo: liga.dart
+// ---------------------------------------------------------------------------
+// Descripción:
+//   Representa una Liga del sistema con información general y contadores de
+//   fechas. Ahora incluye totalFechasTemporada y fechasCreadas.
+// Responsabilidades:
+//   - Serialización / deserialización.
+//   - Seguimiento del número total de fechas y cuántas fueron generadas.
+// Dependencias directas:
+//   - Ninguna.
+
+/// ---------------------------------------------------------------------------
+/// Método: Liga.desdeMapa
+/// Firma: factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
+/// Descripción:
+///   Construye instancia desde Firestore; ahora carga totalFechasTemporada
+///   (default 38) y fechasCreadas (default 0).
+/// Ejemplo:
+///   final liga = Liga.desdeMapa("L1", datos);
+
+/// ---------------------------------------------------------------------------
+/// Método: aMapa
+/// Firma: Map<String, dynamic> aMapa()
+/// Descripción:
+///   Serializa todos los campos modernos, incluyendo totalFechasTemporada
+///   y fechasCreadas.
+/// Ejemplo:
+///   db.set({...}, liga.aMapa());
+
+/// ---------------------------------------------------------------------------
+/// Método: copiarCon
+/// Firma: Liga copiarCon({String? id, String? nombre, String? temporada, String? descripcion, int? fechaCreacion, bool? activa, int? totalFechasTemporada, int? fechasCreadas})
+/// Descripción:
+///   Permite crear una copia modificada, ahora soportando los nuevos campos.
+/// Ejemplo:
+///   final liga2 = liga.copiarCon(fechasCreadas: liga.fechasCreadas + 1);
+
+/// ---------------------------------------------------------------------------
+/// Propiedades nuevas:
+/// totalFechasTemporada : int — Cantidad total de jornadas.
+/// fechasCreadas : int — Cuántas fechas fueron generadas.
+
+
+
+/// ---------------------------------------------------------------------------
+/// Archivo: fecha_liga.dart
+/// ---------------------------------------------------------------------------
+/// Descripción:
+///   Modelo que representa una Fecha perteneciente a una Liga. Define número
+///   de jornada, nombre visible, estado activo/cerrado y timestamp de creación.
+/// Responsabilidades:
+///   - Persistencia de fechas de liga.
+///   - Serialización / deserialización.
+///   - Generación de copias controladas.
+/// Dependencias directas:
+///   - Ninguna.
+
+/// ---------------------------------------------------------------------------
+/// Método: FechaLiga.desdeMapa
+/// Firma: factory FechaLiga.desdeMapa(String id, Map<String, dynamic> datos)
+/// Descripción:
+///   Construye una instancia recuperando datos desde Firestore.
+/// Ejemplo:
+///   final f = FechaLiga.desdeMapa("F1", datos);
+
+/// ---------------------------------------------------------------------------
+/// Método: aMapa
+/// Firma: Map<String, dynamic> aMapa()
+/// Descripción:
+///   Serializa la instancia para persistirla en Firestore.
+/// Ejemplo:
+///   db.set({...}, fecha.aMapa());
+
+/// ---------------------------------------------------------------------------
+/// Método: copiarCon
+/// Firma: FechaLiga copiarCon({String? id, String? idLiga, int? numeroFecha, String? nombre, bool? activa, bool? cerrada, int? fechaCreacion})
+/// Descripción:
+///   Devuelve nueva instancia aplicando solo los cambios requeridos.
+/// Ejemplo:
+///   final cerrada = fecha.copiarCon(cerrada: true);
+
+/// ---------------------------------------------------------------------------
+/// Propiedades:
+/// id : String — Identificador único.
+/// idLiga : String — Liga propietaria.
+/// numeroFecha : int — Número de jornada.
+/// nombre : String — Nombre visible.
+/// activa : bool — Si es la fecha activa.
+/// cerrada : bool — Si está cerrada.
+/// fechaCreacion : int — Timestamp.

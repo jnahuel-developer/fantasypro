@@ -470,3 +470,45 @@ Servicios incluidos:
 /// Descripción: Retorna reglas de ejemplo.
 /// Ejemplo:
 ///   final txt = servicio.reglasEjemplo();
+
+
+
+/// ---------------------------------------------------------------------------
+/// Archivo: servicio_fechas.dart
+/// ---------------------------------------------------------------------------
+/// Descripción:
+///   Servicio encargado de administrar las fechas asociadas a una liga.
+///   Permite crear fechas, listarlas y cerrarlas.
+/// Responsabilidades:
+///   - Persistir fechas de liga.
+///   - Gestionar su estado (activa / cerrada).
+///   - Serializar y deserializar datos.
+/// Dependencias:
+///   - cloud_firestore.dart
+///   - fecha_liga.dart
+///   - servicio_log.dart
+
+/// ---------------------------------------------------------------------------
+/// Método: crearFecha
+/// Firma: Future<FechaLiga> crearFecha(FechaLiga fecha)
+/// Descripción:
+///   Crea una nueva fecha en Firestore. Autogenera número de fecha,
+///   nombre visible y marca la fecha como activa y no cerrada.
+/// Ejemplo:
+///   final f = await servicio.crearFecha(fecha);
+
+/// ---------------------------------------------------------------------------
+/// Método: obtenerPorLiga
+/// Firma: Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
+/// Descripción:
+///   Obtiene todas las fechas correspondientes a una liga.
+/// Ejemplo:
+///   final fechas = await servicio.obtenerPorLiga("L1");
+
+/// ---------------------------------------------------------------------------
+/// Método: cerrarFecha
+/// Firma: Future<void> cerrarFecha(String idFecha)
+/// Descripción:
+///   Cierra una fecha marcándola como activa=false y cerrada=true.
+/// Ejemplo:
+///   await servicio.cerrarFecha("F1");

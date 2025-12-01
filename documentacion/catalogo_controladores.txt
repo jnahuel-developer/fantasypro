@@ -17,54 +17,92 @@ Controladores incluidos:
 - controlador_router.dart
 
 
-/// ---------------------------------------------------------------------------
-/// Archivo: controlador_ligas.dart
-/// ---------------------------------------------------------------------------
-/// Descripción: Gestiona la administración general de ligas.
-/// Responsabilidades: Crear, listar, buscar, archivar, activar y eliminar ligas.
-/// Dependencias: servicio_ligas.dart, servicio_log.dart, liga.dart
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<Liga> crearLiga(String nombre, String descripcion)
-/// Descripción: Crea una liga nueva con validaciones de nombre.
-/// Ejemplo:
-///   final liga = await ctrl.crearLiga("Liga Pro", "Descripción");
+// ---------------------------------------------------------------------------
+// Archivo: lib/controladores/controlador_ligas.dart
+// ---------------------------------------------------------------------------
+// Descripción:
+//   Controlador encargado de gestionar la lógica de administración de Ligas.
+//   Aplica validaciones, administra creación, edición, activación, archivado
+//   y eliminación. Desde mod0015 soporta los campos totalFechasTemporada
+//   y fechasCreadas del modelo Liga.
+// Responsabilidades principales:
+//   - Crear ligas con validaciones de nombre y cantidad total de fechas.
+//   - Editar ligas permitiendo actualización de totalFechasTemporada y
+//     fechasCreadas.
+//   - Administrar estados activo/inactivo.
+// Dependencias directas:
+//   - servicio_ligas.dart
+//   - liga.dart
+//   - servicio_log.dart
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<List<Liga>> obtenerActivas()
-/// Descripción: Retorna todas las ligas activas.
-/// Ejemplo:
-///   final activas = await ctrl.obtenerActivas();
+// ---------------------------------------------------------------------------
+// Método: crearLiga
+// Firma: Future<Liga> crearLiga(String nombre, String descripcion, {int totalFechasTemporada = 38})
+// Descripción:
+//   Crea una liga aplicando validaciones de nombre y rango válido de
+//   totalFechasTemporada. Inicializa fechasCreadas en cero y delega a
+//   ServicioLigas para persistencia.
+// Ejemplo:
+//   final liga = await controlador.crearLiga("Liga Pro", "Descripción");
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<List<Liga>> buscar(String texto)
-/// Descripción: Realiza búsqueda por prefijo del nombre.
-/// Ejemplo:
-///   final resultados = await ctrl.buscar("pro");
+// ---------------------------------------------------------------------------
+// Método: obtenerActivas
+// Firma: Future<List<Liga>> obtenerActivas()
+// Descripción:
+//   Obtiene todas las ligas activas utilizando el servicio correspondiente.
+// Ejemplo:
+//   final lista = await controlador.obtenerActivas();
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<List<Liga>> obtenerTodas()
-/// Descripción: Retorna todas las ligas.
-/// Ejemplo:
-///   final todas = await ctrl.obtenerTodas();
+// ---------------------------------------------------------------------------
+// Método: buscar
+// Firma: Future<List<Liga>> buscar(String texto)
+// Descripción:
+//   Ejecuta búsqueda de ligas por nombre, validando que el texto no sea vacío.
+// Ejemplo:
+//   final resultados = await controlador.buscar("Pro");
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<void> archivar(String id)
-/// Descripción: Archiva una liga.
-/// Ejemplo:
-///   await ctrl.archivar("L1");
+// ---------------------------------------------------------------------------
+// Método: obtenerTodas
+// Firma: Future<List<Liga>> obtenerTodas()
+// Descripción:
+//   Retorna todas las ligas sin filtrar estado.
+// Ejemplo:
+//   final todas = await controlador.obtenerTodas();
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<void> activar(String id)
-/// Descripción: Activa una liga.
-/// Ejemplo:
-///   await ctrl.activar("L1");
+// ---------------------------------------------------------------------------
+// Método: editarLiga
+// Firma: Future<void> editarLiga(Liga liga)
+// Descripción:
+//   Actualiza una liga completa, validando rangos de totalFechasTemporada
+//   y no permitir valores negativos en fechasCreadas. Delegado a ServicioLigas.
+// Ejemplo:
+//   await controlador.editarLiga(liga.copiarCon(fechasCreadas: 5));
 
-/// ---------------------------------------------------------------------------
-/// Método: Future<void> eliminar(String id)
-/// Descripción: Elimina una liga.
-/// Ejemplo:
-///   await ctrl.eliminar("L1");
+// ---------------------------------------------------------------------------
+// Método: archivar
+// Firma: Future<void> archivar(String id)
+// Descripción:
+//   Marca una liga como inactiva en Firestore.
+// Ejemplo:
+//   await controlador.archivar("L1");
+
+// ---------------------------------------------------------------------------
+// Método: activar
+// Firma: Future<void> activar(String id)
+// Descripción:
+//   Activa una liga previamente archivada.
+// Ejemplo:
+//   await controlador.activar("L1");
+
+// ---------------------------------------------------------------------------
+// Método: eliminar
+// Firma: Future<void> eliminar(String id)
+// Descripción:
+//   Elimina una liga de la base de datos utilizando el servicio.
+// Ejemplo:
+//   await controlador.eliminar("L1");
+
 
 
 
@@ -358,3 +396,62 @@ Controladores incluidos:
 /// Dependencias: servicio_autenticacion.dart, vistas del login y dashboards.
 
 /// (Este archivo no expone métodos públicos tradicionales, sino el método build de un Widget.)
+
+
+
+// ---------------------------------------------------------------------------
+// Archivo: lib/controladores/controlador_fechas.dart
+// ---------------------------------------------------------------------------
+// Descripción:
+//   Controlador responsable de administrar las Fechas de una Liga.
+//   Aplica validaciones, coordina cambios de estado y usa servicios para
+//   persistencia. Gestiona la creación, listado y cierre de fechas.
+// Responsabilidades principales:
+//   - Crear fechas con validaciones.
+//   - Consultar fechas por liga.
+//   - Cerrar fechas con lógica de negocio controlada.
+// Dependencias directas:
+//   - servicio_fechas.dart
+//   - servicio_ligas.dart
+//   - controlador_ligas.dart
+//   - fecha_liga.dart
+//   - servicio_log.dart
+
+// ---------------------------------------------------------------------------
+// Método: crearFecha
+// Firma: Future<FechaLiga> crearFecha(String idLiga)
+// Descripción:
+//   Crea una nueva fecha en una liga, validando límites, evitando duplicados
+//   activos y actualizando el contador de fechas creadas en la liga.
+// Ejemplo:
+//   final f = await controlador.crearFecha("L1");
+
+// ---------------------------------------------------------------------------
+// Método: obtenerPorLiga
+// Firma: Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
+// Descripción:
+//   Devuelve todas las fechas de una liga sin filtrar por estado.
+// Ejemplo:
+//   final fechas = await controlador.obtenerPorLiga("L1");
+
+// ---------------------------------------------------------------------------
+// Método: cerrarFecha
+// Firma: Future<void> cerrarFecha(FechaLiga fecha)
+// Descripción:
+//   Cierra una fecha activa, validando que no falten puntajes y archivando la
+//   liga si la fecha cerrada corresponde a la última jornada.
+// Ejemplo:
+//   await controlador.cerrarFecha(fecha);
+
+// ---------------------------------------------------------------------------
+// Método: _faltanPuntajes (privado)
+// Firma: bool _faltanPuntajes(String idFecha)
+// Descripción:
+//   Stub temporal que siempre retorna false.
+// Ejemplo:
+//   final ok = !_faltanPuntajes("F1");
+
+// ---------------------------------------------------------------------------
+// Propiedades públicas del controlador:
+// Ninguna — Todas las propiedades son internas y administradas por la clase.
+
