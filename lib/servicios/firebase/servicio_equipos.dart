@@ -1,3 +1,5 @@
+// DEPRECATED mod0013 — reemplazado por ServicioEquiposReales y ServicioEquiposFantasy
+
 /*
   Archivo: servicio_equipos.dart
   Descripción:

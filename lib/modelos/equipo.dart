@@ -1,3 +1,5 @@
+// DEPRECATED en mod0013 — reemplazado por EquipoReal y EquipoFantasy
+
 /*
   Archivo: equipo.dart
   Descripción:

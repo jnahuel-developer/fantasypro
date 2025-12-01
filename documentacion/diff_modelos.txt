@@ -1,0 +1,128 @@
+📘 DIFF FUNCIONAL ENTRE mod0012 → mod0013
+
+✔ 1) Nuevos modelos agregados
+
+Nuevo modelo: EquipoReal (equipo_real.dart)
+
+Campos nuevos expuestos públicamente:
+
+id
+
+idLiga
+
+nombre
+
+descripcion
+
+escudoUrl
+
+fechaCreacion
+
+activo
+
+Métodos nuevos:
+
+EquipoReal.desdeMapa(...)
+
+aMapa()
+
+copiarCon(...)
+
+Impacto:
+
+Se incorpora un modelo exclusivo para equipos reales administrados desde el panel Admin.
+Los controladores y servicios que antes manipulaban Equipo deberán migrar cuando corresponda.
+
+Nuevo modelo: EquipoFantasy (equipo_fantasy.dart)
+
+Campos nuevos expuestos públicicamente:
+
+id
+
+idUsuario
+
+idLiga
+
+nombre
+
+fechaCreacion
+
+activo
+
+Métodos nuevos:
+
+EquipoFantasy.desdeMapa(...)
+
+aMapa()
+
+copiarCon(...)
+
+Impacto:
+
+Representa el equipo fantasy del usuario final.
+Los procesos de creación de Participación y equipo inicial ahora dependen de este modelo.
+
+✔ 2) Modelo Equipo original → Deprecado
+En equipo.dart:
+
+Se agregó:
+
+// DEPRECATED en mod0013 — reemplazado por EquipoReal y EquipoFantasy
+
+
+Impacto:
+
+No se elimina ni modifica la API pública del modelo.
+Otros procesos deben prepararse para la futura migración a EquipoReal/EquipoFantasy.
+
+✔ 3) No se modificaron firmas, campos ni métodos públicos en:
+
+Liga
+
+ParticipacionLiga
+
+Jugador
+
+Alineacion
+
+Roles
+
+Impacto:
+
+Ninguno. La API pública queda intacta.
+
+❌ 4) NO hay:
+
+Campos eliminados
+
+Campos renombrados
+
+Métodos eliminados
+
+Métodos renombrados
+
+Cambios en firmas
+
+Cambios en comportamiento observable
+
+
+📘 RESUMEN FUNCIONAL DEL DIFF
+✔ Cambios reales:
+
+Se añadieron dos nuevos modelos completos
+
+EquipoReal
+
+EquipoFantasy
+
+El modelo Equipo queda deprecado (pero sin romper compatibilidad)
+
+✖ No hubo cambios en:
+
+Campos de modelos existentes
+
+Métodos de modelos existentes
+
+Firmas públicas
+
+Enums o extensiones

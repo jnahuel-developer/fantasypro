@@ -1,3 +1,5 @@
+// DEPRECATED mod0013 — reemplazado por controlador_equipos_reales.dart y controlador_equipo_fantasy.dart
+
 /*
   Archivo: controlador_equipos.dart
   Descripción:
