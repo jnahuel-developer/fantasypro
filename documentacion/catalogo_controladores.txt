@@ -2,19 +2,9 @@
 catalogo_controladores.txt
 ========================================
 
-CATÁLOGO DEL MÓDULO Controladores — mod0014
+CATÁLOGO DEL MÓDULO Controladores — mod0015
 Descripción:
 El módulo Controladores provee la capa de coordinación entre Servicios y Modelos. Su función es validar datos de entrada, aplicar reglas de negocio básicas, registrar eventos mediante logs y delegar operaciones a los servicios correspondientes. No interactúa con la UI ni realiza operaciones directas sobre Firebase.
-
-Controladores incluidos:
-- controlador_ligas.dart
-- controlador_participaciones.dart
-- controlador_jugadores.dart
-- controlador_jugadores_reales.dart
-- controlador_equipo_fantasy.dart
-- controlador_equipos_reales.dart
-- controlador_alineaciones.dart
-- controlador_router.dart
 
 
 
@@ -399,59 +389,93 @@ Controladores incluidos:
 
 
 
-// ---------------------------------------------------------------------------
-// Archivo: lib/controladores/controlador_fechas.dart
-// ---------------------------------------------------------------------------
-// Descripción:
-//   Controlador responsable de administrar las Fechas de una Liga.
-//   Aplica validaciones, coordina cambios de estado y usa servicios para
-//   persistencia. Gestiona la creación, listado y cierre de fechas.
-// Responsabilidades principales:
-//   - Crear fechas con validaciones.
-//   - Consultar fechas por liga.
-//   - Cerrar fechas con lógica de negocio controlada.
-// Dependencias directas:
-//   - servicio_fechas.dart
-//   - servicio_ligas.dart
-//   - controlador_ligas.dart
-//   - fecha_liga.dart
-//   - servicio_log.dart
 
-// ---------------------------------------------------------------------------
-// Método: crearFecha
-// Firma: Future<FechaLiga> crearFecha(String idLiga)
-// Descripción:
-//   Crea una nueva fecha en una liga, validando límites, evitando duplicados
-//   activos y actualizando el contador de fechas creadas en la liga.
-// Ejemplo:
-//   final f = await controlador.crearFecha("L1");
+/* ---------------------------------------------------------------------------
+   Archivo: controlador_puntajes_reales.dart
+--------------------------------------------------------------------------- */
+/*
+  Descripción:
+    Controlador encargado de administrar puntajes reales por jugador y por fecha.
+    Actúa como intermediario entre servicios, equipos reales y jugadores reales.
+  Responsabilidades:
+    - Obtener jugadores reales activos agrupados por equipo.
+    - Guardar o actualizar puntajes de jugadores por FechaLiga.
+    - Verificar si faltan puntajes para el cierre de una fecha.
+  Dependencias directas:
+    - servicio_puntajes_reales.dart
+    - controlador_equipos_reales.dart
+    - controlador_jugadores_reales.dart
+    - puntaje_jugador_fecha.dart
+    - jugador_real.dart
+    - servicio_log.dart
+*/
 
-// ---------------------------------------------------------------------------
-// Método: obtenerPorLiga
-// Firma: Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
-// Descripción:
-//   Devuelve todas las fechas de una liga sin filtrar por estado.
-// Ejemplo:
-//   final fechas = await controlador.obtenerPorLiga("L1");
+/* ---------------------------------------------------------------------------
+   Método: obtenerJugadoresPorEquipo
+   Firma: Future<Map<String, List<JugadorReal>>> obtenerJugadoresPorEquipo(String idLiga)
+   Descripción:
+     Reúne todos los equipos reales activos de una liga y, para cada uno,
+     obtiene sus jugadores reales activos. Retorna un mapa por idEquipoReal.
+--------------------------------------------------------------------------- */
 
-// ---------------------------------------------------------------------------
-// Método: cerrarFecha
-// Firma: Future<void> cerrarFecha(FechaLiga fecha)
-// Descripción:
-//   Cierra una fecha activa, validando que no falten puntajes y archivando la
-//   liga si la fecha cerrada corresponde a la última jornada.
-// Ejemplo:
-//   await controlador.cerrarFecha(fecha);
+/* ---------------------------------------------------------------------------
+   Método: guardarPuntajesDeFecha
+   Firma:
+     Future<void> guardarPuntajesDeFecha(
+       String idLiga,
+       String idFecha,
+       Map<String,int> puntajesPorJugador
+     )
+   Descripción:
+     Recibe un mapa idJugadorReal → puntaje. Para cada jugador:
+       - Valida rango [1..10].
+       - Obtiene puntaje previo usando el servicio.
+       - Si existe, actualiza con copiarCon().
+       - Si no existe, crea un objeto PuntajeJugadorFecha completo.
+     Finalmente persiste la lista consolidada mediante WriteBatch.
+--------------------------------------------------------------------------- */
 
-// ---------------------------------------------------------------------------
-// Método: _faltanPuntajes (privado)
-// Firma: bool _faltanPuntajes(String idFecha)
-// Descripción:
-//   Stub temporal que siempre retorna false.
-// Ejemplo:
-//   final ok = !_faltanPuntajes("F1");
+/* ---------------------------------------------------------------------------
+   Método: faltanPuntajes
+   Firma: Future<bool> faltanPuntajes(String idLiga, String idFecha)
+   Descripción:
+     Verifica si todos los jugadores reales activos de la liga poseen puntaje
+     en la fecha indicada. Si falta alguno retorna true.
+--------------------------------------------------------------------------- */
 
-// ---------------------------------------------------------------------------
-// Propiedades públicas del controlador:
-// Ninguna — Todas las propiedades son internas y administradas por la clase.
 
+
+/* ---------------------------------------------------------------------------
+   Archivo: controlador_fechas.dart
+--------------------------------------------------------------------------- */
+/*
+  Descripción:
+    Controlador responsable de administrar la creación, consulta y cierre
+    de fechas de una liga. Desde mod0016 integra validación de completitud
+    de puntajes mediante ControladorPuntajesReales.
+  Responsabilidades principales:
+    - Crear fechas con validaciones de negocio.
+    - Listar fechas de liga.
+    - Cerrar fechas validando que todos los jugadores reales tengan puntaje.
+  Dependencias directas:
+    - servicio_fechas.dart
+    - servicio_ligas.dart
+    - controlador_ligas.dart
+    - controlador_puntajes_reales.dart
+    - fecha_liga.dart
+    - servicio_log.dart
+*/
+
+/* ---------------------------------------------------------------------------
+   Método: cerrarFecha
+   Firma: Future<void> cerrarFecha(FechaLiga fecha)
+   Descripción:
+     Llama a ControladorPuntajesReales.faltanPuntajes(). Si faltan puntajes,
+     arroja excepción y no cierra la fecha. Si está completo:
+       - Cierra la fecha en servicio_fechas.
+       - Si la fecha cerrada es la última, archiva la liga con
+         ControladorLigas.archivar().
+   Cambios mod0016:
+     - Eliminado stub interno _faltanPuntajes.
+     - Se agregó integración real con controlador_puntajes_reales.dart.
+--------------------------------------------------------------------------- */

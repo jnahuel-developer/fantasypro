@@ -6,18 +6,6 @@ CATÁLOGO DEL MÓDULO Servicios — mod0014
 Descripción:
 El módulo Servicios provee acceso a Firestore, Firebase Auth y utilidades internas de persistencia. Define las operaciones CRUD y de autenticación utilizadas por los controladores. No contiene reglas de negocio, únicamente persistencia y queries.
 
-Servicios incluidos:
-- servicio_alineaciones.dart
-- servicio_autenticacion.dart
-- servicio_base_de_datos.dart
-- servicio_equipos_fantasy.dart
-- servicio_equipos_reales.dart
-- servicio_inicializacion.dart
-- servicio_jugadores.dart
-- servicio_jugadores_reales.dart
-- servicio_ligas.dart
-- servicio_participaciones.dart
-- servicio_reglas_de_seguridad.dart
 
 
 /// ---------------------------------------------------------------------------
@@ -512,3 +500,59 @@ Servicios incluidos:
 ///   Cierra una fecha marcándola como activa=false y cerrada=true.
 /// Ejemplo:
 ///   await servicio.cerrarFecha("F1");
+
+
+
+/// ---------------------------------------------------------------------------
+/// Archivo: servicio_puntajes_reales.dart
+/// ---------------------------------------------------------------------------
+/// Descripción:
+///   Administra la colección "puntajes_reales" de Firestore, permitiendo
+///   almacenar y recuperar puntajes reales de jugadores por fecha.
+/// Responsabilidades:
+///   - Guardar lotes de puntajes reales usando WriteBatch.
+///   - Garantizar un único puntaje por jugador y por fecha mediante ID determinístico.
+///   - Recuperar puntajes por fecha y por jugador.
+/// Dependencias directas:
+///   - cloud_firestore.dart
+///   - puntaje_jugador_fecha.dart
+///   - servicio_log.dart
+
+/// ---------------------------------------------------------------------------
+/// Método: guardarPuntajesDeFecha
+/// Firma:
+///   Future<void> guardarPuntajesDeFecha(
+///     String idLiga,
+///     String idFecha,
+///     List<PuntajeJugadorFecha> puntajes,
+///   )
+/// Descripción:
+///   Guarda o actualiza todos los puntajes de una fecha.
+///   Cada documento posee ID determinístico: "<idFecha>_<idJugadorReal>".
+/// Ejemplo:
+///   await servicio.guardarPuntajesDeFecha("L1", "F5", lista);
+
+/// ---------------------------------------------------------------------------
+/// Método: obtenerPuntajesPorFecha
+/// Firma:
+///   Future<List<PuntajeJugadorFecha>> obtenerPuntajesPorFecha(String idFecha)
+/// Descripción:
+///   Devuelve todos los puntajes registrados para una fecha.
+/// Ejemplo:
+///   final lista = await servicio.obtenerPuntajesPorFecha("F5");
+
+/// ---------------------------------------------------------------------------
+/// Método: obtenerPuntajeDeJugadorEnFecha
+/// Firma:
+///   Future<PuntajeJugadorFecha?> obtenerPuntajeDeJugadorEnFecha(
+///     String idFecha,
+///     String idJugadorReal,
+///   )
+/// Descripción:
+///   Obtiene el puntaje de un jugador real en una fecha específica.
+///   Devuelve null si no existe.
+/// Ejemplo:
+///   final p = await servicio.obtenerPuntajeDeJugadorEnFecha("F5", "JR10");
+
+/// ---------------------------------------------------------------------------
+/// Propiedades públicas: (ninguna)

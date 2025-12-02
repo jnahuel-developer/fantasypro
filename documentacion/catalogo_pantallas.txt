@@ -6,22 +6,6 @@ CATÁLOGO DEL MÓDULO Pantallas — mod0014
 Descripción:
 Catálogo completo de las pantallas del proyecto tras la estandarización de nombres y la integración de JugadorReal, ControladorJugadoresReales y ServicioJugadoresReales.
 
-Modelos incluidos:
- - ui__admin__alineacion__editar__desktop.dart
- - ui__admin__alineacion__lista__desktop.dart
- - ui__admin__equipo_real__editar__desktop.dart
- - ui__admin__equipo_real__lista__desktop.dart
- - ui__admin__jugador__editar__desktop.dart
- - ui__admin__jugador__lista__desktop.dart
- - ui__admin__liga__lista__desktop.dart
- - ui__admin__panel__dashboard__desktop.dart
- - ui__admin__participacion__editar__desktop.dart
- - ui__admin__participacion__lista__desktop.dart
- - ui__comun__autenticacion__login__desktop.dart
- - ui__comun__autenticacion__registro__desktop.dart
- - ui__usuario__equipo_fantasy__crear__desktop.dart
- - ui__usuario__inicio__lista__desktop.dart
- - ui__usuario__liga__detalle__desktop.dart
 
 
 ===============================================================================
@@ -256,46 +240,6 @@ PANTALLA: ui__admin__jugador__lista__desktop.dart
 // ---------------------------------------------------------------------------
 - Creación actualizada con Dropdown de posición y campo valorMercado.
 
-
-===============================================================================
-PANTALLA: ui__admin__liga__lista__desktop.dart
-===============================================================================
-
-// ---------------------------------------------------------------------------
-// Dependencias de modelos
-// ---------------------------------------------------------------------------
-- liga.dart
-
-// ---------------------------------------------------------------------------
-// Dependencias de servicios
-// ---------------------------------------------------------------------------
-(no usa servicios directamente)
-
-// ---------------------------------------------------------------------------
-// Dependencias de controladores
-// ---------------------------------------------------------------------------
-- controlador_ligas.dart
-
-// ---------------------------------------------------------------------------
-// Dependencias con otras pantallas (navegación)
-// ---------------------------------------------------------------------------
-- Navega hacia: ui__admin__equipo_real__lista__desktop.dart
-- Navega hacia: ui__admin__participacion__lista__desktop.dart
-
-// ---------------------------------------------------------------------------
-// Eventos principales
-// ---------------------------------------------------------------------------
-- Listar ligas
-- Crear liga
-- Activar / archivar
-- Eliminar liga
-- Acceder a equipos reales
-- Acceder a participaciones
-
-// ---------------------------------------------------------------------------
-// Notas relevantes
-// ---------------------------------------------------------------------------
-- Navegación hacia equipos reales ajustada para flujo correcto.
 
 
 ===============================================================================
@@ -594,3 +538,92 @@ PANTALLA: ui__usuario__liga__detalle__desktop.dart
 // Notas relevantes
 // ---------------------------------------------------------------------------
 - Flujo corregido para retornar correctamente a selección de ligas.
+
+
+
+
+
+===============================================================================
+PANTALLA: ui__admin__liga__lista__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- liga.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+(no usa servicios directamente)
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_ligas.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- ui__admin__equipo_real__lista__desktop.dart
+- ui__admin__participacion__lista__desktop.dart
+- ui__admin__fecha__lista__desktop.dart   (NUEVA)
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Crear liga con validación de totalFechasTemporada (34–50)
+- Editar descripción y totalFechasTemporada (implícito)
+- Activar / Archivar / Eliminar liga
+- Navegar a gestión de equipos reales
+- Navegar a gestión de participaciones
+- Navegar a gestión de fechas (botón añadido en mod0015)
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Integración con la nueva pantalla de Fechas.
+- Ajustado formulario de creación con campo numérico obligatorio.
+
+
+
+===============================================================================
+PANTALLA: ui__admin__fecha__lista__desktop.dart
+===============================================================================
+
+// ---------------------------------------------------------------------------
+// Dependencias de modelos
+// ---------------------------------------------------------------------------
+- fecha_liga.dart
+- liga.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias de servicios
+// ---------------------------------------------------------------------------
+(no usa servicios directamente)
+
+// ---------------------------------------------------------------------------
+// Dependencias de controladores
+// ---------------------------------------------------------------------------
+- controlador_fechas.dart
+
+// ---------------------------------------------------------------------------
+// Dependencias con otras pantallas (navegación)
+// ---------------------------------------------------------------------------
+- vuelve hacia: ui__admin__liga__lista__desktop.dart
+
+// ---------------------------------------------------------------------------
+// Eventos principales
+// ---------------------------------------------------------------------------
+- Listar fechas de la liga
+- Identificar fecha activa
+- Listar fechas cerradas
+- Crear nueva fecha (si no existe activa y no se alcanzó el máximo)
+- Cerrar la fecha activa
+- Actualizar listado dinámicamente
+
+// ---------------------------------------------------------------------------
+// Notas relevantes
+// ---------------------------------------------------------------------------
+- Pantalla nueva en mod0015.
+- No se incluye pantalla de edición de fecha por definición del alcance.

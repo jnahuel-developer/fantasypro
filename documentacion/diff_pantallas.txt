@@ -3,54 +3,70 @@ diff_pantallas.txt
 ========================================
 
 /// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0013 → mod0014 (Pantallas UI)
+/// Diferencias funcionales reales mod0014 → mod0015
 /// ---------------------------------------------------------------------------
 
-+ Archivo modificado: ui__admin__equipo_real__lista__desktop.dart
-  Cambios relevantes:
-    + Se agregó el botón “Gestionar jugadores” dentro de cada item de equipo real.
-    + Se añadió navegación hacia ui__admin__jugador__lista__desktop.dart
-      pasando el parámetro requerido: EquipoReal equipo.
-    + Se documentó nuevamente la sección del botón según estándar.
-    - Ningún cambio en lógica de creación/archivado/activación/eliminación.
+================================================================================
+Pantalla: ui__admin__liga__lista__desktop.dart
+================================================================================
 
-+ Archivo modificado: ui__admin__jugador__lista__desktop.dart
-  Cambios relevantes:
-    - Reemplazado completamente el modelo Jugador → JugadorReal.
-    - Reemplazado ControladorJugadores → ControladorJugadoresReales.
-    + Crear jugador:  
-        • Campo posición convertido a Dropdown (POR, DEF, MED, DEL).  
-        • Campo valorMercado agregado, con validación numérica (1–1000).  
-    + Editar/activar/archivar/eliminar ahora se ejecutan contra ControladorJugadoresReales.
-    + Ajustado constructor: recibe EquipoReal equipoReal.
-    + Actualizados imports, documentación y parámetros de navegación.
++ Se agrega campo numérico "totalFechasTemporada" en el formulario de creación:
+    - Validación: 34 ≤ totalFechasTemporada ≤ 50
+    - Asignación al crear la liga:
+        await _controlador.crearLiga(nombre, descripcion,
+            totalFechasTemporada: valorIngresado);
 
-+ Archivo modificado: ui__admin__jugador__editar__desktop.dart
-  Cambios relevantes:
-    - Reemplazado Jugador → JugadorReal en todas las referencias.
-    - Reemplazado ControladorJugadores → ControladorJugadoresReales.
-    + Campo posición ahora es DropdownButtonFormField con opciones fijas:
-        POR, DEF, MED, DEL.
-    + Campo valorMercado agregado como entero validado (1–1000).
-    + Validación estricta de posición y valorMercado.
-    + Documentación interna actualizada.
-    - Eliminados campos de texto libres incompatibles con JugadorReal.
++ Se agrega visualización del valor totalFechasTemporada en el listado.
 
-+ Archivo modificado: ui__admin__liga__lista__desktop.dart
-  Cambios relevantes:
-    + Ajustada navegación hacia UiAdminEquipoRealListaDesktop:
-        ahora se envía “liga: l” en lugar de parámetros antiguos.
-    - No se alteraron funciones de archivado, activación o borrado.
-    - Sin cambios en estructura.
++ Se agrega nuevo botón en cada tarjeta de liga:
+      IconButton(icon: Icon(Icons.calendar_month), ...)
+  Función:
+      Navegar hacia ui__admin__fecha__lista__desktop.dart
+      pasando Liga l como parámetro.
 
-= Archivos sin cambios funcionales mod0013 → mod0014:
-  - ui__admin__alineacion__editar__desktop.dart
-  - ui__admin__alineacion__lista__desktop.dart
-  - ui__admin__panel__dashboard__desktop.dart
-  - ui__admin__participacion__editar__desktop.dart
-  - ui__admin__participacion__lista__desktop.dart
-  - ui__comun__autenticacion__login__desktop.dart
-  - ui__comun__autenticacion__registro__desktop.dart
-  - ui__usuario__equipo_fantasy__crear__desktop.dart
-  - ui__usuario__inicio__lista__desktop.dart
-  - ui__usuario__liga__detalle__desktop.dart
+= No se modifican:
+  - Acciones de archivar, activar, eliminar.
+  - Estructura general de la UI.
+
+
+================================================================================
+Pantalla: ui__admin__fecha__lista__desktop.dart   (NUEVA)
+================================================================================
+
++ Archivo nuevo que implementa:
+    - Listado de fechas por liga.
+    - Separación visual:
+        * Fecha activa (0 o 1)
+        * Fechas cerradas
+    - Botón "Crear nueva fecha":
+        * Solo habilitado si:
+            - No existe fecha activa
+            - fechasCreadas < totalFechasTemporada
+        * Llama a controlador.crearFecha(idLiga)
+    - Botón "Cerrar fecha" visible únicamente en la fecha activa.
+        * Llama a controlador.cerrarFecha(fecha)
+    - Actualización automática del listado tras cada operación.
+
++ Documentación agregada:
+    - Encabezado completo según estándar
+    - Comentarios para variables internas
+    - Comentarios para cada método público/privado
+
+No existía en mod0014, por lo que toda la pantalla es un agregado.
+
+
+================================================================================
+Pantallas sin cambios en mod0015
+================================================================================
+- ui__admin__equipo_real__lista__desktop.dart
+- ui__admin__equipo_real__editar__desktop.dart
+- ui__admin__jugador__lista__desktop.dart
+- ui__admin__jugador__editar__desktop.dart
+- ui__admin__participacion__lista__desktop.dart
+- ui__admin__participacion__editar__desktop.dart
+- ui__admin__panel__dashboard__desktop.dart
+- ui__usuario__equipo_fantasy__crear__desktop.dart
+- ui__usuario__inicio__lista__desktop.dart
+- ui__usuario__liga__detalle__desktop.dart
+- ui__comun__autenticacion__login__desktop.dart
+- ui__comun__autenticacion__registro__desktop.dart
