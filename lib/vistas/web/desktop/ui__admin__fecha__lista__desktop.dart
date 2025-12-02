@@ -2,24 +2,21 @@
   Archivo: ui__admin__fecha__lista__desktop.dart
   Descripción:
     Lista de fechas asociadas a una liga. Permite crear nuevas fechas,
-    visualizar fecha activa, listar fechas cerradas y cerrar la fecha activa.
+    visualizar fecha activa, listar fechas cerradas, cerrar fecha activa,
+    y cargar puntajes reales (mod0016).
 
   Dependencias:
     - modelos/fecha_liga.dart
     - modelos/liga.dart
     - controladores/controlador_fechas.dart
-
-  Pantallas que navegan hacia esta:
-    - ui__admin__liga__lista__desktop.dart
-
-  Pantallas destino:
-    - ninguna
+    - ui__admin__puntajes_reales__lista__desktop.dart
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_fechas.dart';
+import 'ui__admin__puntajes_reales__lista__desktop.dart';
 
 class UiAdminFechaListaDesktop extends StatefulWidget {
   final Liga liga;
@@ -32,15 +29,11 @@ class UiAdminFechaListaDesktop extends StatefulWidget {
 }
 
 class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
-  /// Controlador encargado de administrar fechas de liga.
   final ControladorFechas _controlador = ControladorFechas();
 
   bool cargando = true;
 
-  /// Almacena la fecha activa (si existe).
   FechaLiga? fechaActiva;
-
-  /// Almacena la lista de fechas cerradas.
   List<FechaLiga> fechasCerradas = [];
 
   @override
@@ -52,23 +45,15 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
   /*
     Nombre: _cargar
     Descripción:
-      Recupera todas las fechas de la liga, separa la activa y las cerradas,
-      y refresca el estado visual.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
+      Recupera todas las fechas de la liga, separa activa y cerradas.
   */
   Future<void> _cargar() async {
     setState(() => cargando = true);
 
     final lista = await _controlador.obtenerPorLiga(widget.liga.id);
 
-    // Buscar fecha activa sin forzar un valor nulo en firstWhere.
-    final candidatasActiva = lista
-        .where((f) => f.activa && !f.cerrada)
-        .toList();
-    fechaActiva = candidatasActiva.isEmpty ? null : candidatasActiva.first;
+    final candidatas = lista.where((f) => f.activa && !f.cerrada).toList();
+    fechaActiva = candidatas.isEmpty ? null : candidatas.first;
 
     fechasCerradas = lista.where((f) => f.cerrada).toList()
       ..sort((a, b) => a.numeroFecha.compareTo(b.numeroFecha));
@@ -77,52 +62,14 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
   }
 
   /*
-    Nombre: _confirmarCrearFecha
-    Descripción:
-      Muestra un diálogo previo a la creación de una nueva fecha.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
-  */
-  Future<void> _confirmarCrearFecha() async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Crear nueva fecha"),
-        content: const Text("¿Desea abrir una nueva fecha para esta liga?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancelar"),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Crear"),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmar != true) return;
-
-    await _controlador.crearFecha(widget.liga.id);
-    _cargar();
-  }
-
-  /*
     Nombre: _cerrarFecha
     Descripción:
-      Cierra la fecha activa si existe, previa confirmación.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
+      Intenta cerrar la fecha activa. Muestra mensajes según resultado.
   */
   Future<void> _cerrarFecha() async {
     if (fechaActiva == null) return;
 
-    final confirmar = await showDialog<bool>(
+    final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Cerrar fecha"),
@@ -142,20 +89,75 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
       ),
     );
 
-    if (confirmar != true) return;
+    if (ok != true) return;
 
-    await _controlador.cerrarFecha(fechaActiva!);
+    try {
+      await _controlador.cerrarFecha(fechaActiva!);
+
+      // EXITO
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Fecha cerrada exitosamente")),
+        );
+      }
+
+      _cargar();
+    } catch (e) {
+      // ERROR: faltan puntajes
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("No se puede cerrar la fecha"),
+            content: const Text(
+              "Faltan puntajes por cargar. Complete los puntajes y vuelva a intentarlo.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Aceptar"),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  /*
+    Nombre: _confirmarCrearFecha
+    Descripción:
+      Diálogo de confirmación previo a crear una nueva fecha.
+  */
+  Future<void> _confirmarCrearFecha() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Crear nueva fecha"),
+        content: const Text("¿Desea abrir una nueva fecha para esta liga?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Crear"),
+          ),
+        ],
+      ),
+    );
+
+    if (ok != true) return;
+
+    await _controlador.crearFecha(widget.liga.id);
     _cargar();
   }
 
   /*
     Nombre: _itemFechaCerrada
     Descripción:
-      Renderiza una fecha cerrada dentro de la lista.
-    Entradas:
-      - FechaLiga f
-    Salidas:
-      - Widget
+      Renderiza un item de la lista de fechas cerradas.
   */
   Widget _itemFechaCerrada(FechaLiga f) {
     return Card(
@@ -171,7 +173,6 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
   Widget build(BuildContext context) {
     final total = widget.liga.totalFechasTemporada;
     final creadas = widget.liga.fechasCreadas;
-
     final puedeCrear = fechaActiva == null && creadas < total;
 
     return Scaffold(
@@ -209,15 +210,35 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text("Número: ${fechaActiva!.numeroFecha}"),
-                      trailing: ElevatedButton(
-                        onPressed: _cerrarFecha,
-                        child: const Text("Cerrar fecha"),
+                      trailing: Wrap(
+                        spacing: 8,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      UiAdminPuntajesRealesListaDesktop(
+                                        liga: widget.liga,
+                                        fecha: fechaActiva!,
+                                      ),
+                                ),
+                              );
+                            },
+                            child: const Text("Cargar puntajes"),
+                          ),
+                          ElevatedButton(
+                            onPressed: _cerrarFecha,
+                            child: const Text("Cerrar fecha"),
+                          ),
+                        ],
                       ),
                     ),
                   )
                 else
                   const Padding(
-                    padding: EdgeInsets.all(12.0),
+                    padding: EdgeInsets.all(12),
                     child: Text(
                       "No hay fecha activa",
                       style: TextStyle(fontSize: 16),
@@ -226,7 +247,6 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
 
                 const Divider(),
 
-                // Fechas cerradas
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Text(

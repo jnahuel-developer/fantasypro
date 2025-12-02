@@ -1,22 +1,30 @@
 /// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0014 → mod0015
+/// Diferencias funcionales reales mod0015 → mod0016
+/// Módulo: Servicios
 /// ---------------------------------------------------------------------------
 
-+ Archivo agregado: servicio_fechas.dart
++ Archivo agregado: servicio_puntajes_reales.dart
   Métodos públicos agregados:
-    - Future<FechaLiga> crearFecha(FechaLiga fecha)
-    - Future<List<FechaLiga>> obtenerPorLiga(String idLiga)
-    - Future<void> cerrarFecha(String idFecha)
+    - Future<void> guardarPuntajesDeFecha(String idLiga, String idFecha, List<PuntajeJugadorFecha> puntajes)
+    - Future<List<PuntajeJugadorFecha>> obtenerPuntajesPorFecha(String idFecha)
+    - Future<PuntajeJugadorFecha?> obtenerPuntajeDeJugadorEnFecha(String idFecha, String idJugadorReal)
+
+~ Archivo modificado: servicio_puntajes_reales.dart
+  Cambios funcionales:
+    - guardarPuntajesDeFecha ahora usa ID determinístico:
+        "<idFecha>_<idJugadorReal>"
+    - Se reemplazó la creación aleatoria de documentos por upserts con SetOptions(merge: true)
+    - obtenerPuntajeDeJugadorEnFecha ahora consulta directamente por ID determinístico
 
 = Archivos sin cambios:
   - servicio_autenticacion.dart
   - servicio_base_de_datos.dart
-  - servicio_alineaciones.dart
-  - servicio_equipos_fantasy.dart
-  - servicio_equipos_reales.dart
-  - servicio_inicializacion.dart
-  - servicio_jugadores.dart
-  - servicio_jugadores_reales.dart
   - servicio_ligas.dart
   - servicio_participaciones.dart
+  - servicio_equipos_reales.dart
+  - servicio_equipos_fantasy.dart
+  - servicio_jugadores_reales.dart
+  - servicio_jugadores.dart
+  - servicio_alineaciones.dart
+  - servicio_inicializacion.dart
   - servicio_reglas_de_seguridad.dart
