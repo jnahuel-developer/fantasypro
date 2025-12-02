@@ -9,6 +9,7 @@
     - fecha_liga.dart
     - servicio_ligas.dart
     - controlador_ligas.dart
+    - controlador_puntajes_reales.dart
     - servicio_log.dart
   Archivos que dependen de este:
     - Vistas administrativas que gestionan fechas por liga.
@@ -23,6 +24,7 @@ import 'package:fantasypro/servicios/firebase/servicio_ligas.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 import 'controlador_ligas.dart';
+import 'controlador_puntajes_reales.dart';
 
 class ControladorFechas {
   /// Servicio para persistir fechas de liga.
@@ -33,6 +35,10 @@ class ControladorFechas {
 
   /// Controlador de ligas para operaciones de estado.
   final ControladorLigas _controladorLigas = ControladorLigas();
+
+  /// Controlador encargado de gestionar puntajes reales.
+  final ControladorPuntajesReales _controladorPuntajesReales =
+      ControladorPuntajesReales();
 
   /// Servicio de logs.
   final ServicioLog _log = ServicioLog();
@@ -63,7 +69,6 @@ class ControladorFechas {
 
     _log.informacion("Creando nueva fecha para liga $idLiga");
 
-    // Obtener la liga para conocer contadores
     final Liga? liga = await _servicioLigas.obtenerLiga(idLiga);
     if (liga == null) {
       throw Exception("No se encontró la liga solicitada.");
@@ -78,7 +83,6 @@ class ControladorFechas {
       );
     }
 
-    // Verificar que no exista una fecha activa
     final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
     final existeActiva = fechas.any((f) => f.activa && !f.cerrada);
 
@@ -88,7 +92,6 @@ class ControladorFechas {
       );
     }
 
-    // Generación automática
     final int numeroFecha = creadas + 1;
     final String nombre = "Fecha $numeroFecha";
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -103,10 +106,8 @@ class ControladorFechas {
       fechaCreacion: timestamp,
     );
 
-    // Persistir fecha
     final FechaLiga creadaFecha = await _servicioFechas.crearFecha(nuevaFecha);
 
-    // Actualizar liga.fechasCreadas
     final Liga ligaActualizada = liga.copiarCon(fechasCreadas: creadas + 1);
 
     _log.informacion(
@@ -148,7 +149,7 @@ class ControladorFechas {
     Descripción:
       Permite cerrar una fecha si:
         - Está activa
-        - No faltan puntajes (stub siempre false)
+        - No faltan puntajes (se consulta al ControladorPuntajesReales)
       Luego:
         - ServicioFechas.cerrarFecha()
         - Si es la última fecha de la liga (numeroFecha == totalFechasTemporada)
@@ -165,16 +166,20 @@ class ControladorFechas {
       throw Exception("Solo se pueden cerrar fechas activas.");
     }
 
-    if (_faltanPuntajes(fecha.id)) {
-      throw Exception("No se puede cerrar la fecha: faltan puntajes.");
+    final bool faltan = await _controladorPuntajesReales.faltanPuntajes(
+      fecha.idLiga,
+      fecha.id,
+    );
+
+    if (faltan) {
+      throw Exception("Faltan puntajes para cerrar la fecha.");
     }
 
     await _servicioFechas.cerrarFecha(fecha.id);
 
-    // Obtener liga para validar si es la última fecha
     final Liga? liga = await _servicioLigas.obtenerLiga(fecha.idLiga);
     if (liga == null) {
-      throw Exception("No se encontró la liga asociada a la fecha.");
+      throw Exception("No se encontró la liga asociada.");
     }
 
     if (fecha.numeroFecha == liga.totalFechasTemporada) {
@@ -183,22 +188,5 @@ class ControladorFechas {
       );
       await _controladorLigas.archivar(liga.id);
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Stub: puntajes futuros
-  // ---------------------------------------------------------------------------
-  /*
-    Nombre: _faltanPuntajes
-    Descripción:
-      Determina si faltan puntajes para cerrar la fecha.
-      En esta versión siempre retorna false.
-    Entradas:
-      idFecha (String)
-    Salidas:
-      bool
-  */
-  bool _faltanPuntajes(String idFecha) {
-    return false;
   }
 }

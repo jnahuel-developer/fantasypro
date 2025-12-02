@@ -2,32 +2,31 @@
 diff_modelos.txt
 ========================================
 
-DIFF FUNCIONAL mod0014 → mod0015
+DIFF FUNCIONAL mod0015 → mod0016
 Módulo: Modelos
 
 1) Archivos nuevos
-+ agregado: fecha_liga.dart
++ agregado: puntaje_jugador_fecha.dart
   Métodos públicos expuestos:
-    - FechaLiga.desdeMapa(String id, Map<String, dynamic> datos)
+    - factory PuntajeJugadorFecha.desdeMapa(String id, Map<String, dynamic> datos)
     - Map<String, dynamic> aMapa()
-    - FechaLiga copiarCon({String? id, String? idLiga, int? numeroFecha, String? nombre, bool? activa, bool? cerrada, int? fechaCreacion})
+    - PuntajeJugadorFecha copiarCon({
+        String? id,
+        String? idFecha,
+        String? idLiga,
+        String? idEquipoReal,
+        String? idJugadorReal,
+        int? puntuacion,
+        int? fechaCreacion
+      })
 
 2) Archivos modificados
-~ modificado: liga.dart
-  Cambios funcionales:
-    - Campos públicos agregados:
-        int totalFechasTemporada   // nuevo
-        int fechasCreadas          // nuevo
-    - Se actualizaron firmas de métodos públicos:
-        factory Liga.desdeMapa(String id, Map<String, dynamic> datos)
-          → ahora carga totalFechasTemporada y fechasCreadas con defaults (38 y 0)
-        Map<String, dynamic> aMapa()
-          → ahora serializa totalFechasTemporada y fechasCreadas
-        Liga copiarCon({ ... })
-          → ahora permite reemplazar totalFechasTemporada y fechasCreadas
+~ Ninguno (no se modificaron modelos existentes)
 
 3) Archivos sin cambios
 = sin cambios:
+  - liga.dart
+  - fecha_liga.dart
   - participacion_liga.dart
   - jugador.dart
   - alineacion.dart
