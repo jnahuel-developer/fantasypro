@@ -84,7 +84,6 @@ Firmas agregadas:
 /// ---------------------------------------------------------------------------
 
 controlador_ligas.dart
-controlador_jugadores.dart
 controlador_jugadores_reales.dart
 controlador_equipos_reales.dart
 controlador_puntajes_reales.dart

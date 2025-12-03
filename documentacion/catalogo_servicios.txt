@@ -241,71 +241,6 @@ El módulo Servicios implementa el acceso a Firestore para lectura, escritura, e
 
 
 /// ---------------------------------------------------------------------------
-/// Archivo: servicio_jugadores.dart
-/// ---------------------------------------------------------------------------
-/// Descripción:
-///   Servicio dedicado a la gestión de la colección "jugadores", que representa
-///   los jugadores fantasy del sistema. Permite operaciones CRUD completas.
-/// Responsabilidades:
-///   - Crear, editar, activar, archivar y eliminar jugadores.
-///   - Listar jugadores de un equipo fantasy.
-/// Dependencias:
-///   - cloud_firestore
-///   - modelos/jugador.dart
-///   - servicio_log.dart
-///   - textos_app.dart
-
-/// ---------------------------------------------------------------------------
-/// Método: crearJugador
-/// Firma: Future<Jugador> crearJugador(Jugador jugador)
-/// Descripción:
-///   Crea un nuevo jugador fantasy en la colección correspondiente.
-/// Ejemplo:
-///   final jugador = await servicio.crearJugador(jugador);
-
-/// ---------------------------------------------------------------------------
-/// Método: obtenerJugadoresDeEquipo
-/// Firma: Future<List<Jugador>> obtenerJugadoresDeEquipo(String idEquipo)
-/// Descripción:
-///   Devuelve todos los jugadores fantasy pertenecientes a un equipo.
-/// Ejemplo:
-///   final lista = await servicio.obtenerJugadoresDeEquipo("EF001");
-
-/// ---------------------------------------------------------------------------
-/// Método: editarJugador
-/// Firma: Future<void> editarJugador(Jugador jugador)
-/// Descripción:
-///   Edita la información de un jugador existente.
-/// Ejemplo:
-///   await servicio.editarJugador(jugador);
-
-/// ---------------------------------------------------------------------------
-/// Método: archivarJugador
-/// Firma: Future<void> archivarJugador(String id)
-/// Descripción:
-///   Marca un jugador fantasy como inactivo (activo = false).
-/// Ejemplo:
-///   await servicio.archivarJugador("J001");
-
-/// ---------------------------------------------------------------------------
-/// Método: activarJugador
-/// Firma: Future<void> activarJugador(String id)
-/// Descripción:
-///   Activa un jugador fantasy previamente archivado.
-/// Ejemplo:
-///   await servicio.activarJugador("J001");
-
-/// ---------------------------------------------------------------------------
-/// Método: eliminarJugador
-/// Firma: Future<void> eliminarJugador(String id)
-/// Descripción:
-///   Elimina un jugador fantasy de la base de datos.
-/// Ejemplo:
-///   await servicio.eliminarJugador("J001");
-
-
-
-/// ---------------------------------------------------------------------------
 /// Archivo: servicio_jugadores_reales.dart
 /// ---------------------------------------------------------------------------
 /// Descripción:
@@ -627,24 +562,3 @@ El módulo Servicios implementa el acceso a Firestore para lectura, escritura, e
 ///   Busca el puntaje de un jugador real específico en una fecha dada.
 /// Ejemplo:
 ///   final puntaje = await servicio.obtenerPuntajeDeJugadorEnFecha("F1", "JR1");
-
-
-
-/// ---------------------------------------------------------------------------
-/// Archivo: servicio_reglas_de_seguridad.dart
-/// ---------------------------------------------------------------------------
-/// Descripción:
-///   Proporciona un texto de referencia con reglas de seguridad de Firestore
-///   para desarrollo. No aplica reglas en tiempo de ejecución.
-/// Responsabilidades:
-///   - Entregar texto base de reglas para copiar en la consola Firebase.
-/// Dependencias:
-///   - Ninguna
-
-/// ---------------------------------------------------------------------------
-/// Método: reglasEjemplo
-/// Firma: String reglasEjemplo()
-/// Descripción:
-///   Devuelve el bloque de texto con reglas de seguridad de ejemplo.
-/// Ejemplo:
-///   final reglas = servicio.reglasEjemplo();

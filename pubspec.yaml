@@ -67,7 +67,9 @@ flutter:
   uses-material-design: true
 
   assets:
-  - assets/configuracion/entorno/firebase_desarrollo.json
+    - assets/configuracion/entorno/firebase_produccion.json
+    - assets/data/carga_inicial/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

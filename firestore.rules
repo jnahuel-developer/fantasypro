@@ -1,19 +1,119 @@
-rules_version = '2';
+// Reglas MVP: seguras pero prácticas para demo.
+// NO usar estas reglas en producción.
 
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
+    // --------------------------
+    // Usuarios
+    // --------------------------
+    match /usuarios/{uid} {
+      allow read: if request.auth != null;              // un usuario autenticado puede ver cualquier usuario
+      allow write: if request.auth != null
+                    && request.auth.uid == uid;         // solo puede editarse a sí mismo
+    }
+
+    // --------------------------
+    // Ligas (lectura pública para demo)
+    // --------------------------
+    match /ligas/{idLiga} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete:
+        if request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    // --------------------------
+    // Equipos Reales
+    // --------------------------
+    match /equipos_reales/{idEquipo} {
+      allow read: if true;
+      allow write:
+        if request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    // --------------------------
+    // Jugadores Reales
+    // --------------------------
+    match /jugadores_reales/{idJugador} {
+      allow read: if true;
+      allow write:
+        if request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    // --------------------------
+    // Fechas de Liga
+    // --------------------------
+    match /fechas_liga/{idFecha} {
+      allow read: if true;
+      allow write:
+        if request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    // --------------------------
+    // Puntajes Reales por Fecha
+    // --------------------------
+    match /puntajes_reales/{idPuntaje} {
+      allow read: if true;
+      allow write:
+        if request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    // --------------------------
+    // Participaciones de usuario en ligas
+    // --------------------------
+    match /participaciones_liga/{idPart} {
+      allow read:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+
+      allow create:
+        if request.auth != null
+        && request.auth.uid == request.resource.data.idUsuario;
+
+      allow update, delete:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+    }
+
+    // --------------------------
+    // Equipos Fantasy
+    // --------------------------
+    match /equipos_fantasy/{idEq} {
+      allow read:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+
+      allow write:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+    }
+
+    // --------------------------
+    // Alineaciones Fantasy
+    // --------------------------
+    match /alineaciones/{idAli} {
+      allow read:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+
+      allow write:
+        if request.auth != null
+        && request.auth.uid == resource.data.idUsuario;
+    }
+
+    // --------------------------
+    // Regla por defecto
+    // --------------------------
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 12, 14);
+      allow read: if false;
+      allow write: if false;
     }
   }
 }

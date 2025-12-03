@@ -34,11 +34,9 @@
 = Archivos sin cambios (funcionales)
   - servicio_puntajes_reales.dart
   - servicio_equipos_reales.dart
-  - servicio_jugadores.dart
   - servicio_jugadores_reales.dart
   - servicio_ligas.dart
   - servicio_base_de_datos.dart
   - servicio_autenticacion.dart
   - servicio_inicializacion.dart
-  - servicio_reglas_de_seguridad.dart
-  - servicio_alineaciones.dart (solo agregó métodos, funciones previas sin cambios)
+  - servicio_alineaciones.dart
