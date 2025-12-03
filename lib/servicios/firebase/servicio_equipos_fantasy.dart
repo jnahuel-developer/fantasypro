@@ -29,6 +29,8 @@ class ServicioEquiposFantasy {
     Nombre: crearEquipoFantasy
     Descripción:
       Crea un equipo fantasy para el usuario dentro de una liga.
+      Mantiene compatibilidad con código existente delegando en
+      crearEquipoFantasyParaUsuario con presupuesto inicial por defecto.
     Entradas:
       - idUsuario (String): usuario propietario.
       - idLiga (String): liga asociada.
@@ -41,12 +43,38 @@ class ServicioEquiposFantasy {
     String idLiga,
     String nombre,
   ) async {
+    // Delegación al nuevo método extendido con presupuesto.
+    return crearEquipoFantasyParaUsuario(idUsuario, idLiga, nombre);
+  }
+
+  /*
+    Nombre: crearEquipoFantasyParaUsuario
+    Descripción:
+      Crea un equipo fantasy para un usuario en una liga, inicializando
+      presupuesto inicial, presupuesto restante y un plantel vacío.
+    Entradas:
+      - idUsuario (String): usuario propietario.
+      - idLiga (String): liga asociada.
+      - nombre (String): nombre del equipo.
+      - presupuestoInicial (int): presupuesto inicial asignado.
+    Salidas:
+      - Future<EquipoFantasy>: instancia creada.
+  */
+  Future<EquipoFantasy> crearEquipoFantasyParaUsuario(
+    String idUsuario,
+    String idLiga,
+    String nombre, {
+    int presupuestoInicial = 1000,
+  }) async {
     try {
       final equipo = EquipoFantasy(
         id: "",
         idUsuario: idUsuario,
         idLiga: idLiga,
         nombre: nombre,
+        presupuestoInicial: presupuestoInicial,
+        presupuestoRestante: presupuestoInicial,
+        idsJugadoresPlantel: const [],
         fechaCreacion: DateTime.now().millisecondsSinceEpoch,
         activo: true,
       );
@@ -61,6 +89,44 @@ class ServicioEquiposFantasy {
       return creado;
     } catch (e) {
       _log.error("Error creando EquipoFantasy: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: obtenerEquipoFantasyDeUsuario
+    Descripción:
+      Obtiene un único equipo fantasy de un usuario en una liga dada.
+      Devuelve null si no existe.
+    Entradas:
+      - idUsuario (String)
+      - idLiga (String)
+    Salidas:
+      - Future<EquipoFantasy?>
+  */
+  Future<EquipoFantasy?> obtenerEquipoFantasyDeUsuario(
+    String idUsuario,
+    String idLiga,
+  ) async {
+    try {
+      final query = await _db
+          .collection("equipos_fantasy")
+          .where('idUsuario', isEqualTo: idUsuario)
+          .where('idLiga', isEqualTo: idLiga)
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        _log.informacion(
+          "EquipoFantasy no encontrado: usuario=$idUsuario liga=$idLiga",
+        );
+        return null;
+      }
+
+      final d = query.docs.first;
+      return EquipoFantasy.desdeMapa(d.id, d.data());
+    } catch (e) {
+      _log.error("Error obteniendo EquipoFantasy de usuario: $e");
       rethrow;
     }
   }

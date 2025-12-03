@@ -25,9 +25,6 @@ class ServicioFechas {
   /// Servicio de logging interno.
   final ServicioLog _log = ServicioLog();
 
-  /// Nombre de la colección en Firestore.
-  final String _coleccion = "fechas_liga";
-
   /*
     Nombre: crearFecha
     Descripción:
@@ -45,7 +42,7 @@ class ServicioFechas {
 
       // Obtener cuántas fechas existen actualmente para asignar numeroFecha.
       final existentes = await _db
-          .collection(_coleccion)
+          .collection("fechas_liga")
           .where("idLiga", isEqualTo: fecha.idLiga)
           .get();
 
@@ -60,7 +57,7 @@ class ServicioFechas {
         fechaCreacion: DateTime.now().millisecondsSinceEpoch,
       );
 
-      final doc = await _db.collection(_coleccion).add(nuevaFecha.aMapa());
+      final doc = await _db.collection("fechas_liga").add(nuevaFecha.aMapa());
       final guardada = nuevaFecha.copiarCon(id: doc.id);
 
       _log.informacion(
@@ -88,7 +85,7 @@ class ServicioFechas {
       _log.informacion("Obteniendo fechas de la liga $idLiga");
 
       final query = await _db
-          .collection(_coleccion)
+          .collection("fechas_liga")
           .where("idLiga", isEqualTo: idLiga)
           .orderBy("numeroFecha")
           .get();
@@ -116,7 +113,7 @@ class ServicioFechas {
     try {
       _log.informacion("Cerrando fecha $idFecha");
 
-      await _db.collection(_coleccion).doc(idFecha).update({
+      await _db.collection("fechas_liga").doc(idFecha).update({
         "activa": false,
         "cerrada": true,
       });

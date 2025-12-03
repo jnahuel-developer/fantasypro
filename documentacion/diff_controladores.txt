@@ -1,49 +1,92 @@
 ========================================
-diff_controladores_mod0015.txt
+diff_controladores_mod0017.txt
 ========================================
 
 /// ---------------------------------------------------------------------------
-/// DIFERENCIAS FUNCIONALES REALES mod0015 → mod0016
+/// DIFERENCIAS FUNCIONALES REALES mod0016 → mod0017
 /// Módulo: Controladores
 /// ---------------------------------------------------------------------------
 
-1) Archivos nuevos
-
-+ agregado: controlador_puntajes_reales.dart
-  Métodos públicos expuestos:
-    - Future<Map<String, List<JugadorReal>>> obtenerJugadoresPorEquipo(String idLiga)
-    - Future<void> guardarPuntajesDeFecha(String idLiga, String idFecha, Map<String,int> puntajesPorJugador)
-    - Future<bool> faltanPuntajes(String idLiga, String idFecha)
-  Descripción funcional:
-    Controlador encargado de:
-      • Obtener jugadores reales activos agrupados por equipo.
-      • Crear o actualizar puntajes reales por fecha, evitando duplicados.
-      • Verificar completitud de puntajes para permitir cierre de fechas.
 
 
-2) Archivos modificados
+/// ---------------------------------------------------------------------------
+/// 1) Archivos nuevos
+/// ---------------------------------------------------------------------------
 
-~ modificado: controlador_fechas.dart
-  Cambios funcionales:
-    - Se agregó dependencia formal a ControladorPuntajesReales.
-    - Se eliminó completamente el método interno _faltanPuntajes (stub).
-    - Método cerrarFecha(FechaLiga fecha):
-        • Ahora delega la validación de completitud de puntajes a:
-            controladorPuntajesReales.faltanPuntajes(idLiga, idFecha)
-        • Si faltan puntajes lanza:
-            Exception("Faltan puntajes para cerrar la fecha.")
-        • Mantiene lógica existente:
-            - Cerrar la fecha mediante ServicioFechas.cerrarFecha()
-            - Archivar liga si fecha.numeroFecha == liga.totalFechasTemporada
-    - No se modificó ninguna otra firma pública.
+No se incorporaron archivos nuevos en esta mod.
 
-3) Archivos sin cambios
-= sin cambios:
-  - controlador_ligas.dart
-  - controlador_participaciones.dart
-  - controlador_jugadores.dart
-  - controlador_jugadores_reales.dart
-  - controlador_equipos_reales.dart
-  - controlador_equipo_fantasy.dart
-  - controlador_alineaciones.dart
-  - controlador_router.dart
+
+
+/// ---------------------------------------------------------------------------
+/// 2) Archivos modificados
+/// ---------------------------------------------------------------------------
+
+--- Archivo: controlador_equipo_fantasy.dart  
+Descripción de cambios:
+  Se incorporaron dos métodos nuevos para permitir la creación y consulta del
+  equipo fantasy del usuario dentro de una liga, como parte del flujo de armado
+  de plantel inicial.
+
+Firmas agregadas:
+  Future<EquipoFantasy> crearEquipoParaLiga(
+    String idUsuario,
+    String idLiga,
+    String nombreEquipo
+  )
+
+  Future<EquipoFantasy?> obtenerEquipoUsuarioEnLiga(
+    String idUsuario,
+    String idLiga
+  )
+
+
+--- Archivo: controlador_participaciones.dart  
+Descripción de cambios:
+  Se incorporó un nuevo método que registra la participación de un usuario en
+  una liga con `plantelCompleto = false`. Este método es utilizado al crear el
+  equipo fantasy inicial.
+
+Firmas agregadas:
+  Future<ParticipacionLiga> registrarParticipacionUsuario(
+    String idLiga,
+    String idUsuario,
+    String nombreEquipoFantasy
+  )
+
+
+--- Archivo: controlador_alineaciones.dart  
+Descripción de cambios:
+  Se agregaron dos métodos nuevos para guardar el plantel y la alineación inicial
+  del usuario, aplicando todas las validaciones de reglas fantasy (formación,
+  cantidad de jugadores por posición, presupuesto, etc.).
+
+Firmas agregadas:
+  Future<void> guardarPlantelInicial(
+    String idUsuario,
+    String idLiga,
+    String idEquipoFantasy,
+    List<String> idsJugadores,
+    String formacion
+  )
+
+  Future<Alineacion> guardarAlineacionInicial(
+    String idUsuario,
+    String idLiga,
+    String idEquipoFantasy,
+    List<String> idsTitulares,
+    List<String> idsSuplentes
+  )
+
+
+
+/// ---------------------------------------------------------------------------
+/// 3) Archivos no modificados
+/// ---------------------------------------------------------------------------
+
+controlador_ligas.dart
+controlador_jugadores.dart
+controlador_jugadores_reales.dart
+controlador_equipos_reales.dart
+controlador_puntajes_reales.dart
+controlador_fechas.dart
+controlador_router.dart

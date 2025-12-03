@@ -1,28 +1,24 @@
 /*
   Archivo: ui__admin__alineacion__lista__desktop.dart
   Descripción:
-    Administración de alineaciones de un usuario dentro de una liga.
-    - Listado Activas / Archivadas
-    - Crear alineación
-    - Editar alineación
-    - Archivar / Activar / Eliminar
+    Administración de alineaciones de un usuario dentro de una liga específica.
+    Permite:
+    - Visualizar listas separadas de alineaciones activas y archivadas
+    - Crear una nueva alineación fantasy manual
+    - Editar una alineación existente
+    - Archivar, activar o eliminar alineaciones
 
   Dependencias:
-    - modelos/alineacion.dart
-    - controladores/controlador_alineaciones.dart
-    - ui__admin__alineacion__editar__desktop.dart
-
-  Pantallas que navegan hacia esta:
-    - ui__admin__participacion__lista__desktop.dart
+    - modelos/alineacion.dart: para representar las alineaciones fantasy del usuario
+    - controladores/controlador_alineaciones.dart: para gestionar las operaciones de CRUD sobre las alineaciones
 
   Pantallas destino:
-    - ui__admin__alineacion__editar__desktop.dart
+    - ui__admin__alineacion__editar__desktop.dart: se navega hacia esta pantalla al presionar el botón de edición en una alineación, para modificar sus datos
 */
 
+import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
-import 'package:fantasypro/controladores/controlador_alineaciones.dart'
-    hide Alineacion;
 import 'ui__admin__alineacion__editar__desktop.dart';
 
 class UiAdminAlineacionListaDesktop extends StatefulWidget {
@@ -48,8 +44,13 @@ class _UiAdminAlineacionListaDesktopEstado
   /// Controlador de alineaciones.
   final ControladorAlineaciones _controlador = ControladorAlineaciones();
 
+  /// Estado de carga.
   bool cargando = true;
+
+  /// Alineaciones activas.
   List<Alineacion> activas = [];
+
+  /// Alineaciones archivadas.
   List<Alineacion> archivadas = [];
 
   @override
@@ -61,12 +62,10 @@ class _UiAdminAlineacionListaDesktopEstado
   /*
     Nombre: cargar
     Descripción:
-      Obtiene las alineaciones del usuario en la liga y las separa
-      en activas / archivadas.
-    Entradas:
-      - ninguna
+      Carga y separa alineaciones activas y archivadas del usuario en la liga.
+    Entradas: ninguna
     Salidas:
-      - Future<void>
+      - Future<void>: sin valor devuelto
   */
   Future<void> cargar() async {
     setState(() => cargando = true);
@@ -78,7 +77,6 @@ class _UiAdminAlineacionListaDesktopEstado
 
     activas = todas.where((a) => a.activo).toList()
       ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
-
     archivadas = todas.where((a) => !a.activo).toList()
       ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
 
@@ -88,15 +86,16 @@ class _UiAdminAlineacionListaDesktopEstado
   /*
     Nombre: crearAlineacion
     Descripción:
-      Abre un diálogo para crear una nueva alineación.
-    Entradas:
-      - ninguna
+      Abre un diálogo para crear una nueva alineación, solicitando formación,
+      IDs de jugadores y el ID del equipo fantasy.
+    Entradas: ninguna
     Salidas:
-      - Future<void>
+      - Future<void>: sin valor devuelto
   */
   Future<void> crearAlineacion() async {
     final ctrlJugadores = TextEditingController();
     final ctrlPuntos = TextEditingController(text: "0");
+    final ctrlIdEquipoFantasy = TextEditingController();
     String seleccionFormacion = "4-4-2";
 
     await showDialog(
@@ -121,8 +120,6 @@ class _UiAdminAlineacionListaDesktopEstado
                       ],
                       onChanged: (v) {
                         if (v == null) return;
-                        // Nota: aquí no se fuerza rebuild del diálogo;
-                        // se mantiene el comportamiento original.
                         seleccionFormacion = v;
                       },
                     ),
@@ -130,7 +127,16 @@ class _UiAdminAlineacionListaDesktopEstado
                 ),
                 const SizedBox(height: 12),
 
-                // Jugadores (IDs)
+                // ID equipo fantasy
+                TextField(
+                  controller: ctrlIdEquipoFantasy,
+                  decoration: const InputDecoration(
+                    labelText: "ID del equipo fantasy",
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Jugadores
                 TextField(
                   controller: ctrlJugadores,
                   decoration: const InputDecoration(
@@ -140,7 +146,7 @@ class _UiAdminAlineacionListaDesktopEstado
                 ),
                 const SizedBox(height: 12),
 
-                // Puntos iniciales (opcional)
+                // Puntos
                 TextField(
                   controller: ctrlPuntos,
                   keyboardType: TextInputType.number,
@@ -161,14 +167,15 @@ class _UiAdminAlineacionListaDesktopEstado
               onPressed: () async {
                 final textoJugadores = ctrlJugadores.text.trim();
                 final puntosText = ctrlPuntos.text.trim();
+                final idEquipoFantasy = ctrlIdEquipoFantasy.text.trim();
                 final puntos = puntosText.isEmpty
                     ? 0
                     : int.tryParse(puntosText) ?? 0;
 
-                if (textoJugadores.isEmpty) {
+                if (textoJugadores.isEmpty || idEquipoFantasy.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Debe ingresar al menos un jugador."),
+                      content: Text("Debe ingresar jugadores y ID de equipo."),
                     ),
                   );
                   return;
@@ -184,7 +191,7 @@ class _UiAdminAlineacionListaDesktopEstado
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        "Formato inválido para la lista de jugadores.",
+                        "Formato inválido para los IDs de jugadores.",
                       ),
                     ),
                   );
@@ -194,11 +201,13 @@ class _UiAdminAlineacionListaDesktopEstado
                 await _controlador.crearAlineacion(
                   widget.idLiga,
                   widget.idUsuario,
+                  idEquipoFantasy,
                   idsJugadores,
                   formacion: seleccionFormacion,
                   puntosTotales: puntos,
                 );
 
+                if (!mounted) return;
                 Navigator.pop(context);
                 cargar();
               },
@@ -212,11 +221,11 @@ class _UiAdminAlineacionListaDesktopEstado
   /*
     Nombre: confirmar
     Descripción:
-      Diálogo genérico de confirmación para operaciones críticas.
+      Abre diálogo de confirmación para acciones críticas.
     Entradas:
-      - mensaje (String)
+      - mensaje (String): texto a mostrar
     Salidas:
-      - Future<bool>
+      - Future<bool>: true si el usuario confirma
   */
   Future<bool> confirmar(String mensaje) async {
     final res = await showDialog<bool>(
@@ -242,11 +251,11 @@ class _UiAdminAlineacionListaDesktopEstado
   /*
     Nombre: itemAlineacion
     Descripción:
-      Construye la tarjeta de una alineación en la lista.
+      Renderiza la tarjeta visual de una alineación individual.
     Entradas:
-      - a (Alineacion)
+      - a (Alineacion): alineación a mostrar
     Salidas:
-      - Widget
+      - Widget: tarjeta de alineación
   */
   Widget itemAlineacion(Alineacion a) {
     return Card(
@@ -264,7 +273,6 @@ class _UiAdminAlineacionListaDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Editar
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: "Editar alineación",
@@ -279,8 +287,6 @@ class _UiAdminAlineacionListaDesktopEstado
                 if (resultado == true) cargar();
               },
             ),
-
-            // Archivar / Activar
             IconButton(
               icon: Icon(a.activo ? Icons.archive : Icons.unarchive),
               tooltip: a.activo ? "Archivar" : "Activar",
@@ -300,8 +306,6 @@ class _UiAdminAlineacionListaDesktopEstado
                 cargar();
               },
             ),
-
-            // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
               tooltip: "Eliminar alineación",
@@ -350,7 +354,6 @@ class _UiAdminAlineacionListaDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Row(
               children: [
-                // Activas
                 Expanded(
                   child: Column(
                     children: [
@@ -369,8 +372,6 @@ class _UiAdminAlineacionListaDesktopEstado
                     ],
                   ),
                 ),
-
-                // Archivadas
                 Expanded(
                   child: Column(
                     children: [

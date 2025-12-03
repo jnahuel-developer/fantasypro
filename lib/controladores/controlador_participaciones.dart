@@ -3,9 +3,7 @@
   Descripción:
     Lógica de negocio y validación para la gestión de participaciones
     de usuarios en una liga.
-    Etapa 1:
-      - Validar si usuario ya participa
-      - Crear participación si no existe
+    Se añade método registrarParticipacionUsuario para uso desde controlador externo.
 */
 
 import 'package:fantasypro/modelos/participacion_liga.dart';
@@ -56,6 +54,7 @@ class ControladorParticipaciones {
       idUsuario: idUsuario,
       nombreEquipoFantasy: nombreEquipoFantasy.trim(),
       puntos: 0,
+      plantelCompleto: false,
       fechaCreacion: timestamp,
       activo: true,
     );
@@ -63,6 +62,28 @@ class ControladorParticipaciones {
     _log.informacion("Creando participación (Etapa 1)");
 
     return await _servicio.crearParticipacion(participacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // NUEVO MÉTODO mod0017
+  // ---------------------------------------------------------------------------
+
+  /*
+    Nombre: registrarParticipacionUsuario
+    Descripción:
+      Alias / wrapper de crearParticipacionSiNoExiste,
+      pensado para ser invocado desde ControladorEquipoFantasy
+  */
+  Future<ParticipacionLiga> registrarParticipacionUsuario(
+    String idLiga,
+    String idUsuario,
+    String nombreEquipoFantasy,
+  ) async {
+    return await crearParticipacionSiNoExiste(
+      idLiga,
+      idUsuario,
+      nombreEquipoFantasy,
+    );
   }
 
   // ---------------------------------------------------------------------------

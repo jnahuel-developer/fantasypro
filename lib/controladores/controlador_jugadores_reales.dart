@@ -181,4 +181,30 @@ class ControladorJugadoresReales {
 
     await _servicio.eliminarJugadorReal(idJugador);
   }
+
+  /*
+    Nombre: obtenerPorIds
+    Descripción:
+      Recupera jugadores reales activos según una lista de IDs provista. 
+      La lista es validada, se eliminan duplicados y luego se consulta
+      el servicio correspondiente. El resultado está ordenado por ID.
+
+    Entradas:
+      - ids: List<String> → Lista de IDs de jugadores reales
+
+    Salidas: Future<List<JugadorReal>>
+  */
+  Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
+    if (ids.isEmpty) {
+      throw ArgumentError("La lista de IDs no puede estar vacía.");
+    }
+
+    final idsUnicos = ids.toSet().toList();
+
+    _log.informacion(
+      "Obteniendo jugadores reales por IDs (solicitados=${ids.length}, unicos=${idsUnicos.length})",
+    );
+
+    return await _servicio.obtenerPorIds(idsUnicos);
+  }
 }

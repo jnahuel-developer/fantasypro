@@ -1,30 +1,44 @@
 /// ---------------------------------------------------------------------------
-/// Diferencias funcionales reales mod0015 → mod0016
+/// DIFERENCIAS FUNCIONALES REALES mod0016 → mod0017
 /// Módulo: Servicios
 /// ---------------------------------------------------------------------------
 
-+ Archivo agregado: servicio_puntajes_reales.dart
-  Métodos públicos agregados:
-    - Future<void> guardarPuntajesDeFecha(String idLiga, String idFecha, List<PuntajeJugadorFecha> puntajes)
-    - Future<List<PuntajeJugadorFecha>> obtenerPuntajesPorFecha(String idFecha)
-    - Future<PuntajeJugadorFecha?> obtenerPuntajeDeJugadorEnFecha(String idFecha, String idJugadorReal)
++ Métodos agregados en servicio_equipos_fantasy.dart
+  - Future<EquipoFantasy> crearEquipoFantasyParaUsuario(String idUsuario, String idLiga, String nombre, {int presupuestoInicial = 1000})
+  - Future<EquipoFantasy?> obtenerEquipoFantasyDeUsuario(String idUsuario, String idLiga)
 
-~ Archivo modificado: servicio_puntajes_reales.dart
   Cambios funcionales:
-    - guardarPuntajesDeFecha ahora usa ID determinístico:
-        "<idFecha>_<idJugadorReal>"
-    - Se reemplazó la creación aleatoria de documentos por upserts con SetOptions(merge: true)
-    - obtenerPuntajeDeJugadorEnFecha ahora consulta directamente por ID determinístico
+    • El servicio ahora soporta creación de equipos con:
+        - presupuestoInicial
+        - presupuestoRestante
+        - idsJugadoresPlantel (lista vacía inicial)
+    • Se mantiene compatibilidad preservando crearEquipoFantasy() delegando al nuevo método.
 
-= Archivos sin cambios:
-  - servicio_autenticacion.dart
-  - servicio_base_de_datos.dart
-  - servicio_ligas.dart
-  - servicio_participaciones.dart
++ Métodos agregados en servicio_participaciones.dart
+  - Future<ParticipacionLiga> crearParticipacionEnLiga(String idUsuario, String idLiga, String nombreEquipoFantasy)
+  - Future<ParticipacionLiga?> obtenerParticipacion(String idUsuario, String idLiga)
+
+  Cambios funcionales:
+    • Soporte para plantelCompleto (nuevo campo del modelo).
+    • Nueva capacidad de obtener la participación única del usuario en una liga.
+
++ Métodos agregados en servicio_alineaciones.dart
+  - Future<Alineacion> guardarPlantelInicial(String idEquipoFantasy, String idLiga, String idUsuario, List<String> idsJugadoresPlantel)
+  - Future<void> guardarAlineacionInicial(String idAlineacion, String formacion, List<String> idsTitulares, List<String> idsSuplentes)
+
+  Cambios funcionales:
+    • Se incorporan campos nuevos del modelo: idEquipoFantasy, idsTitulares, idsSuplentes.
+    • Se soporta la carga del plantel inicial de un equipo fantasy.
+    • Se soporta la edición inicial de titulares, suplentes y formación.
+
+= Archivos sin cambios (funcionales)
+  - servicio_puntajes_reales.dart
   - servicio_equipos_reales.dart
-  - servicio_equipos_fantasy.dart
-  - servicio_jugadores_reales.dart
   - servicio_jugadores.dart
-  - servicio_alineaciones.dart
+  - servicio_jugadores_reales.dart
+  - servicio_ligas.dart
+  - servicio_base_de_datos.dart
+  - servicio_autenticacion.dart
   - servicio_inicializacion.dart
   - servicio_reglas_de_seguridad.dart
+  - servicio_alineaciones.dart (solo agregó métodos, funciones previas sin cambios)

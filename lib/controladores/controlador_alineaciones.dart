@@ -2,14 +2,19 @@
   Archivo: controlador_alineaciones.dart
   Descripción:
     Lógica de negocio y validación para gestión de alineaciones.
+    Se añaden métodos para guardar plantel inicial y confirmar alineación (titulares + suplentes).
 */
 
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/servicios/firebase/servicio_alineaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 class ControladorAlineaciones {
   final ServicioAlineaciones _servicio = ServicioAlineaciones();
+  final ServicioParticipaciones _servicioPart = ServicioParticipaciones();
+  final ServicioFechas _servicioFechas = ServicioFechas();
   final ServicioLog _log = ServicioLog();
 
   // ---------------------------------------------------------------------------
@@ -18,9 +23,12 @@ class ControladorAlineaciones {
   Future<Alineacion> crearAlineacion(
     String idLiga,
     String idUsuario,
+    String idEquipoFantasy,
     List<String> jugadoresSeleccionados, {
     String formacion = "4-4-2",
     int puntosTotales = 0,
+    List<String> idsTitulares = const [],
+    List<String> idsSuplentes = const [],
   }) async {
     if (idLiga.trim().isEmpty) {
       throw ArgumentError("El ID de la liga no puede estar vacío.");
@@ -28,6 +36,10 @@ class ControladorAlineaciones {
 
     if (idUsuario.trim().isEmpty) {
       throw ArgumentError("El ID del usuario no puede estar vacío.");
+    }
+
+    if (idEquipoFantasy.trim().isEmpty) {
+      throw ArgumentError("El ID del equipo fantasy no puede estar vacío.");
     }
 
     if (jugadoresSeleccionados.isEmpty) {
@@ -48,11 +60,14 @@ class ControladorAlineaciones {
       id: "",
       idLiga: idLiga,
       idUsuario: idUsuario,
+      idEquipoFantasy: idEquipoFantasy,
       jugadoresSeleccionados: jugadoresSeleccionados,
       formacion: formacion,
       puntosTotales: puntosTotales,
       fechaCreacion: timestamp,
       activo: true,
+      idsTitulares: idsTitulares,
+      idsSuplentes: idsSuplentes,
     );
 
     _log.informacion(
@@ -137,5 +152,121 @@ class ControladorAlineaciones {
   // ---------------------------------------------------------------------------
   bool _validarFormacion(String f) {
     return f == "4-4-2" || f == "4-3-3";
+  }
+
+  // ---------------------------------------------------------------------------
+  // Guardar plantel inicial (15 jugadores, sin titulares/suplentes)
+  // ---------------------------------------------------------------------------
+  Future<Alineacion> guardarPlantelInicial(
+    String idLiga,
+    String idUsuario,
+    String idEquipoFantasy,
+    List<String> idsJugadoresSeleccionados,
+    String formacion,
+  ) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+    if (idEquipoFantasy.trim().isEmpty) {
+      throw ArgumentError("El idEquipoFantasy no puede estar vacío.");
+    }
+    if (!_validarFormacion(formacion)) {
+      throw ArgumentError("Formación no válida: $formacion");
+    }
+    if (idsJugadoresSeleccionados.length != 15) {
+      throw ArgumentError("Debe seleccionar exactamente 15 jugadores.");
+    }
+
+    final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
+    final existeActiva = fechas.any((f) => f.activa && !f.cerrada);
+    if (existeActiva) {
+      throw Exception(
+        "No se puede armar el plantel: la liga tiene una fecha activa.",
+      );
+    }
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    final alineacion = Alineacion(
+      id: "",
+      idLiga: idLiga,
+      idUsuario: idUsuario,
+      idEquipoFantasy: idEquipoFantasy,
+      jugadoresSeleccionados: idsJugadoresSeleccionados,
+      formacion: formacion,
+      puntosTotales: 0,
+      fechaCreacion: timestamp,
+      activo: true,
+      idsTitulares: const [],
+      idsSuplentes: const [],
+    );
+
+    _log.informacion(
+      "Guardando plantel inicial para usuario $idUsuario en liga $idLiga",
+    );
+
+    return await _servicio.crearAlineacion(alineacion);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Guardar alineación inicial (titulares y suplentes)
+  // ---------------------------------------------------------------------------
+  Future<Alineacion> guardarAlineacionInicial(
+    String idLiga,
+    String idUsuario,
+    String idAlineacion,
+    List<String> idsTitulares,
+    List<String> idsSuplentes,
+  ) async {
+    if (idLiga.trim().isEmpty ||
+        idUsuario.trim().isEmpty ||
+        idAlineacion.trim().isEmpty) {
+      throw ArgumentError(
+        "Los campos idLiga, idUsuario y idAlineacion son obligatorios.",
+      );
+    }
+    if (idsTitulares.length != 11) {
+      throw ArgumentError("Debe seleccionar exactamente 11 titulares.");
+    }
+    if (idsSuplentes.length != 4) {
+      throw ArgumentError("Debe seleccionar exactamente 4 suplentes.");
+    }
+
+    final alineaciones = await _servicio.obtenerPorUsuarioEnLiga(
+      idLiga,
+      idUsuario,
+    );
+    final alineacion = alineaciones.firstWhere(
+      (a) => a.id == idAlineacion,
+      orElse: () => throw Exception("Alineación no encontrada."),
+    );
+
+    final todos = {...idsTitulares, ...idsSuplentes};
+    final setPlantel = alineacion.jugadoresSeleccionados.toSet();
+    if (!setPlantel.containsAll(todos)) {
+      throw ArgumentError(
+        "Jugadores seleccionados no coinciden con el plantel.",
+      );
+    }
+
+    final actualizada = alineacion.copiarCon(
+      idsTitulares: idsTitulares,
+      idsSuplentes: idsSuplentes,
+    );
+
+    await _servicio.editarAlineacion(actualizada);
+
+    final participaciones = await _servicioPart.obtenerPorLiga(idLiga);
+    final participacion = participaciones.firstWhere(
+      (p) => p.idUsuario == idUsuario,
+    );
+    final actualizadaPart = participacion.copiarCon(plantelCompleto: true);
+
+    await _servicioPart.editarParticipacion(actualizadaPart);
+
+    return actualizada;
   }
 }

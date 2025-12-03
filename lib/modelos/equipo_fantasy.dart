@@ -1,47 +1,55 @@
 /*
   Archivo: equipo_fantasy.dart
   Descripción:
-    Modelo de datos que representa un Equipo FANTASY creado por un usuario
-    dentro de una liga en FantasyPro. Este modelo corresponde únicamente al
-    equipo fantasy del usuario final y no incluye datos de presupuesto,
-    mercado, planteles ni alineaciones en esta etapa.
-
-  Dependencias:
-    - Ninguna directa.
-  Archivos que dependen de este archivo:
-    - Controladores de participación y equipo fantasy.
-    - Servicios vinculados al flujo de creación de equipo por parte del usuario.
+    Modelo que representa un Equipo Fantasy creado por un usuario dentro de una liga.
+    Incluye información de presupuesto y el plantel inicial de 15 jugadores reales.
+  Responsabilidades:
+    - Persistir los datos principales del equipo fantasy.
+    - Mantener el presupuesto inicial y restante.
+    - Almacenar la lista fija de 15 jugadores del plantel.
+    - Permitir serialización, deserialización y copia.
+  Dependencias directas:
+    - Ninguna.
+  Archivos que dependen de este:
+    - alineacion.dart
+    - participacion_liga.dart
 */
 
 class EquipoFantasy {
-  /// Identificador único del equipo fantasy dentro de Firestore.
+  /// Identificador del documento en Firestore.
   final String id;
 
-  /// Identificador del usuario propietario del equipo fantasy.
+  /// Identificador del usuario que creó el equipo.
   final String idUsuario;
 
-  /// Identificador de la liga en la que participa el equipo fantasy.
+  /// Identificador de la liga a la que pertenece el equipo fantasy.
   final String idLiga;
 
-  /// Nombre visible del equipo fantasy.
+  /// Nombre del equipo fantasy.
   final String nombre;
 
-  /// Fecha de creación expresada como timestamp (milisegundos desde época Unix).
+  /// Presupuesto asignado al usuario al crear el equipo.
+  final int presupuestoInicial;
+
+  /// Presupuesto restante luego de seleccionar el plantel inicial.
+  final int presupuestoRestante;
+
+  /// Lista fija de los 15 jugadores reales seleccionados.
+  final List<String> idsJugadoresPlantel;
+
+  /// Timestamp de creación en milisegundos.
   final int fechaCreacion;
 
-  /// Estado del equipo fantasy (true = activo, false = archivado).
+  /// Estado del equipo.
   final bool activo;
 
   /*
-    Constructor principal de EquipoFantasy.
+    Nombre: Constructor principal de EquipoFantasy
+    Descripción:
+      Crea una instancia completa del modelo.
     Entradas:
-      - id (String): identificador único del equipo.
-      - idUsuario (String): identificador del usuario creador.
-      - idLiga (String): liga donde participa el equipo fantasy.
-      - nombre (String): nombre visible del equipo fantasy.
-      - fechaCreacion (int): timestamp de creación.
-      - activo (bool): indica si el equipo se encuentra activo.
-    Salida:
+      - Todos los campos obligatorios.
+    Salidas:
       - Instancia de EquipoFantasy.
   */
   const EquipoFantasy({
@@ -49,6 +57,9 @@ class EquipoFantasy {
     required this.idUsuario,
     required this.idLiga,
     required this.nombre,
+    required this.presupuestoInicial,
+    required this.presupuestoRestante,
+    required this.idsJugadoresPlantel,
     required this.fechaCreacion,
     required this.activo,
   });
@@ -56,10 +67,10 @@ class EquipoFantasy {
   /*
     Nombre: desdeMapa
     Descripción:
-      Crea una instancia de EquipoFantasy a partir de un Map proveniente de Firestore.
+      Construye una instancia desde un Map de Firestore.
     Entradas:
-      - id (String): identificador del documento.
-      - datos (Map<String, dynamic>): datos obtenidos desde Firestore.
+      - id: identificador del documento.
+      - datos: mapa con la información del equipo.
     Salidas:
       - Instancia de EquipoFantasy.
   */
@@ -69,6 +80,11 @@ class EquipoFantasy {
       idUsuario: datos['idUsuario'] ?? '',
       idLiga: datos['idLiga'] ?? '',
       nombre: datos['nombre'] ?? '',
+      presupuestoInicial: datos['presupuestoInicial'] ?? 1000,
+      presupuestoRestante: datos['presupuestoRestante'] ?? 1000,
+      idsJugadoresPlantel: List<String>.from(
+        datos['idsJugadoresPlantel'] ?? [],
+      ),
       fechaCreacion: datos['fechaCreacion'] ?? 0,
       activo: datos['activo'] ?? true,
     );
@@ -77,18 +93,20 @@ class EquipoFantasy {
   /*
     Nombre: aMapa
     Descripción:
-      Convierte la instancia actual en un Map<String, dynamic>
-      para almacenar sus datos en Firestore.
+      Serializa la instancia actual en un mapa.
     Entradas:
       - Ninguna.
     Salidas:
-      - Map<String, dynamic> con los datos serializados.
+      - Mapa<String, dynamic> para almacenar en Firestore.
   */
   Map<String, dynamic> aMapa() {
     return {
       'idUsuario': idUsuario,
       'idLiga': idLiga,
       'nombre': nombre,
+      'presupuestoInicial': presupuestoInicial,
+      'presupuestoRestante': presupuestoRestante,
+      'idsJugadoresPlantel': idsJugadoresPlantel,
       'fechaCreacion': fechaCreacion,
       'activo': activo,
     };
@@ -97,18 +115,20 @@ class EquipoFantasy {
   /*
     Nombre: copiarCon
     Descripción:
-      Permite crear una copia del EquipoFantasy modificando únicamente los campos
-      deseados, útil para modificaciones parciales.
+      Genera una copia modificada del objeto.
     Entradas:
-      - Campos opcionales para modificar.
+      - Campos opcionales para reemplazar.
     Salidas:
-      - Nueva instancia de EquipoFantasy con los cambios aplicados.
+      - Nueva instancia de EquipoFantasy.
   */
   EquipoFantasy copiarCon({
     String? id,
     String? idUsuario,
     String? idLiga,
     String? nombre,
+    int? presupuestoInicial,
+    int? presupuestoRestante,
+    List<String>? idsJugadoresPlantel,
     int? fechaCreacion,
     bool? activo,
   }) {
@@ -117,6 +137,9 @@ class EquipoFantasy {
       idUsuario: idUsuario ?? this.idUsuario,
       idLiga: idLiga ?? this.idLiga,
       nombre: nombre ?? this.nombre,
+      presupuestoInicial: presupuestoInicial ?? this.presupuestoInicial,
+      presupuestoRestante: presupuestoRestante ?? this.presupuestoRestante,
+      idsJugadoresPlantel: idsJugadoresPlantel ?? this.idsJugadoresPlantel,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
       activo: activo ?? this.activo,
     );

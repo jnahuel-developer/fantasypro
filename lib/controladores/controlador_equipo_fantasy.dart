@@ -1,19 +1,28 @@
 /*
   Archivo: controlador_equipo_fantasy.dart
   Descripción: Controlador para gestionar equipos fantasy del usuario final.
-  Dependencias: servicio_equipos_fantasy.dart, equipo_fantasy.dart, servicio_log.dart
-  Archivos que dependen de este archivo: vistas de usuario que gestionan su equipo fantasy.
+  Añade métodos para crear equipo fantasy + participación inicial, y obtener el equipo de un usuario en una liga.
 */
 
 import 'package:fantasypro/modelos/equipo_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_equipos_fantasy.dart';
+import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+
+import 'controlador_participaciones.dart';
 
 class ControladorEquipoFantasy {
   /// Servicio para operaciones con equipos fantasy.
   final ServicioEquiposFantasy _servicio = ServicioEquiposFantasy();
 
-  /// Servicio para registro de logs.
+  /// Servicio para participaciones.
+  final ServicioParticipaciones _servicioPart = ServicioParticipaciones();
+
+  /// Servicio para fechas de liga (para validar que no haya fecha activa).
+  final ServicioFechas _servicioFechas = ServicioFechas();
+
+  /// Servicio de registro de logs.
   final ServicioLog _log = ServicioLog();
 
   /*
@@ -68,60 +77,102 @@ class ControladorEquipoFantasy {
     return await _servicio.obtenerPorUsuarioYLiga(idUsuario, idLiga);
   }
 
+  // ---------------------------------------------------------------------------
+  // NUEVOS MÉTODOS para mod0017
+  // ---------------------------------------------------------------------------
+
   /*
-    Nombre: editarNombreEquipo
-    Descripción: Edita el nombre de un equipo fantasy.
-    Entradas: equipo (EquipoFantasy), nuevoNombre (String)
-    Salidas: Future<void>
+    Nombre: crearEquipoParaLiga
+    Descripción:
+      Crea un equipo fantasy + participación para un usuario en una liga,
+      sólo si:
+        - el usuario no tiene ya un equipo en esa liga
+        - no existe fecha activa en la liga (no hay Fecha en curso)
+    Entradas:
+      idUsuario, idLiga, nombreEquipo
+    Salidas:
+      Future<EquipoFantasy>
   */
-  Future<void> editarNombreEquipo(
-    EquipoFantasy equipo,
-    String nuevoNombre,
+  Future<EquipoFantasy> crearEquipoParaLiga(
+    String idUsuario,
+    String idLiga,
+    String nombreEquipo,
   ) async {
-    if (nuevoNombre.trim().isEmpty) {
-      throw ArgumentError("El nombre no puede estar vacío.");
+    // Validaciones básicas
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (nombreEquipo.trim().isEmpty) {
+      throw ArgumentError("El nombre del equipo no puede estar vacío.");
     }
 
-    final actualizado = equipo.copiarCon(nombre: nuevoNombre.trim());
+    _log.informacion(
+      "Iniciando creación de equipo fantasy + participación: usuario=$idUsuario liga=$idLiga",
+    );
 
-    _log.informacion("Editando nombre de equipo fantasy ${equipo.id}");
+    // 1) Verificar que no exista equipo fantasy para este usuario en esta liga
+    final equiposExistentes = await _servicio.obtenerPorUsuarioYLiga(
+      idUsuario,
+      idLiga,
+    );
+    if (equiposExistentes.isNotEmpty) {
+      _log.advertencia("El usuario ya tiene un equipo fantasy en esta liga");
+      throw Exception("El usuario ya tiene un equipo fantasy en esta liga.");
+    }
 
-    await _servicio.editarEquipoFantasy(actualizado);
+    // 2) Verificar que no haya fecha activa en la liga
+    final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
+    final existeActiva = fechas.any(
+      (f) => f.activa == true && f.cerrada == false,
+    );
+    if (existeActiva) {
+      _log.advertencia(
+        "No se puede crear equipo: ya existe fecha activa en la liga",
+      );
+      throw Exception(
+        "No se puede crear equipo fantasy: la liga tiene una fecha activa.",
+      );
+    }
+
+    // 3) Crear el equipo fantasy
+    final EquipoFantasy equipo = await crearEquipoFantasy(
+      idUsuario,
+      idLiga,
+      nombreEquipo.trim(),
+    );
+
+    // 4) Crear la participación inicial (plantel no completo aún)
+    await _servicioPart.crearParticipacion(
+      (await ControladorParticipaciones().crearParticipacionSiNoExiste(
+        idLiga,
+        idUsuario,
+        nombreEquipo.trim(),
+      )).copiarCon(plantelCompleto: false),
+    );
+
+    _log.informacion("Equipo fantasy y participación creados OK: ${equipo.id}");
+    return equipo;
   }
 
   /*
-    Nombre: activarEquipoFantasy
-    Descripción: Activa un equipo fantasy archivado.
-    Entradas: idEquipo (String)
-    Salidas: Future<void>
+    Nombre: obtenerEquipoUsuarioEnLiga
+    Descripción:
+      Devuelve el equipo fantasy del usuario en la liga indicada, o null si no tiene.
+    Entradas:
+      idUsuario, idLiga
+    Salidas:
+      Future<EquipoFantasy?>
   */
-  Future<void> activarEquipoFantasy(String idEquipo) async {
-    _log.informacion("Activando equipo fantasy $idEquipo");
-
-    await _servicio.activarEquipoFantasy(idEquipo);
-  }
-
-  /*
-    Nombre: archivarEquipoFantasy
-    Descripción: Archiva un equipo fantasy.
-    Entradas: idEquipo (String)
-    Salidas: Future<void>
-  */
-  Future<void> archivarEquipoFantasy(String idEquipo) async {
-    _log.advertencia("Archivando equipo fantasy $idEquipo");
-
-    await _servicio.archivarEquipoFantasy(idEquipo);
-  }
-
-  /*
-    Nombre: eliminarEquipoFantasy
-    Descripción: Elimina un equipo fantasy.
-    Entradas: idEquipo (String)
-    Salidas: Future<void>
-  */
-  Future<void> eliminarEquipoFantasy(String idEquipo) async {
-    _log.error("Eliminando equipo fantasy $idEquipo");
-
-    await _servicio.eliminarEquipoFantasy(idEquipo);
+  Future<EquipoFantasy?> obtenerEquipoUsuarioEnLiga(
+    String idUsuario,
+    String idLiga,
+  ) async {
+    final lista = await obtenerPorUsuarioYLiga(idUsuario, idLiga);
+    if (lista.isEmpty) return null;
+    // Asumimos un solo equipo por usuario/liga
+    return lista.first;
   }
 }

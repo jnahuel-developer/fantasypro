@@ -1,32 +1,37 @@
 /*
   Archivo: ui__admin__participacion__lista__desktop.dart
   Descripción:
-    Administración de participaciones de usuarios dentro de una liga.
-    Permite crear, editar, archivar, activar y eliminar participaciones.
+    Administración de participaciones de usuarios dentro de una liga específica.
+    Permite visualizar participaciones activas y archivadas, crear nuevas con ID
+    de usuario y nombre de equipo fantasy, editar datos, activar/archivar y
+    eliminar. Permite además navegar a la gestión de alineaciones del usuario.
+
   Dependencias:
-    - modelos/liga.dart
-    - modelos/participacion_liga.dart
-    - controladores/controlador_participaciones.dart
-    - servicio_participaciones.dart
-    - ui__admin__participacion__editar__desktop.dart
-    - ui__admin__alineacion__lista__desktop.dart
-  Pantallas que navegan hacia esta:
-    - ui__admin__liga__lista__desktop.dart
+    - modelos/liga.dart: identifica la liga a la que pertenecen las participaciones
+    - modelos/participacion_liga.dart: representa cada participación mostrada
+    - controladores/controlador_participaciones.dart: operaciones CRUD para
+      participaciones
+    - ui__admin__participacion__editar__desktop.dart: edición de una participación
+    - ui__admin__alineacion__lista__desktop.dart: gestión de alineaciones del
+      usuario en la liga
+
   Pantallas destino:
-    - ui__admin__participacion__editar__desktop.dart
-    - ui__admin__alineacion__lista__desktop.dart
+    - ui__admin__participacion__editar__desktop.dart: se abre al presionar el
+      botón "Editar" en una participación, permitiendo modificar el registro
+    - ui__admin__alineacion__lista__desktop.dart: se abre desde el ícono de balón
+      para administrar las alineaciones del usuario en la liga actual
 */
 
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
-import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 
 import 'ui__admin__participacion__editar__desktop.dart';
 import 'ui__admin__alineacion__lista__desktop.dart';
 
 class UiAdminParticipacionListaDesktop extends StatefulWidget {
+  /// Liga a la que pertenecen las participaciones mostradas.
   final Liga liga;
 
   const UiAdminParticipacionListaDesktop({super.key, required this.liga});
@@ -38,15 +43,16 @@ class UiAdminParticipacionListaDesktop extends StatefulWidget {
 
 class _UiAdminParticipacionListaDesktopEstado
     extends State<UiAdminParticipacionListaDesktop> {
-  /// Controlador de participaciones.
+  /// Controlador de participaciones para operaciones de CRUD.
   final ControladorParticipaciones _controlador = ControladorParticipaciones();
 
-  /// Servicio directo de participaciones (creación manual).
-  final ServicioParticipaciones servicioParticipaciones =
-      ServicioParticipaciones();
-
+  /// Indica si los datos están cargando.
   bool cargando = true;
+
+  /// Participaciones activas.
   List<ParticipacionLiga> activos = [];
+
+  /// Participaciones archivadas.
   List<ParticipacionLiga> archivados = [];
 
   @override
@@ -58,9 +64,11 @@ class _UiAdminParticipacionListaDesktopEstado
   /*
     Nombre: cargar
     Descripción:
-      Recupera las participaciones por liga y las separa en activas/archivadas.
+      Recupera las participaciones asociadas a la liga y las separa en listas
+      activas y archivadas ordenadas por nombre.
     Entradas: ninguna
-    Salidas: Future<void>
+    Salidas:
+      - Future<void>: sin valor devuelto
   */
   Future<void> cargar() async {
     setState(() => cargando = true);
@@ -87,9 +95,11 @@ class _UiAdminParticipacionListaDesktopEstado
   /*
     Nombre: crearParticipacion
     Descripción:
-      Crea una participación manualmente construyendo el modelo.
+      Crea manualmente una nueva participación solicitando ID de usuario y
+      nombre del equipo fantasy. Utiliza el controlador para persistencia.
     Entradas: ninguna
-    Salidas: Future<void>
+    Salidas:
+      - Future<void>: sin valor devuelto
   */
   Future<void> crearParticipacion() async {
     final ctrlIdUsuario = TextEditingController();
@@ -138,18 +148,20 @@ class _UiAdminParticipacionListaDesktopEstado
                   return;
                 }
 
-                final model = ParticipacionLiga(
+                final participacion = ParticipacionLiga(
                   id: "",
                   idLiga: widget.liga.id,
                   idUsuario: idUsuario,
                   nombreEquipoFantasy: nombre,
                   puntos: 0,
+                  plantelCompleto: false,
                   fechaCreacion: DateTime.now().millisecondsSinceEpoch,
                   activo: true,
                 );
 
-                await servicioParticipaciones.crearParticipacion(model);
+                await _controlador.editar(participacion);
 
+                if (!mounted) return;
                 Navigator.pop(context);
                 cargar();
               },
@@ -163,9 +175,12 @@ class _UiAdminParticipacionListaDesktopEstado
   /*
     Nombre: confirmar
     Descripción:
-      Diálogo genérico para confirmar operaciones de riesgo.
-    Entradas: mensaje
-    Salidas: Future<bool>
+      Muestra un diálogo de confirmación para operaciones de riesgo como
+      eliminar o archivar participaciones.
+    Entradas:
+      - mensaje (String): texto a mostrar en el diálogo
+    Salidas:
+      - Future<bool>: true si el usuario confirma, false si cancela
   */
   Future<bool> confirmar(String mensaje) async {
     final r = await showDialog<bool>(
@@ -192,9 +207,12 @@ class _UiAdminParticipacionListaDesktopEstado
   /*
     Nombre: itemParticipacion
     Descripción:
-      Renderiza la tarjeta visual de una participación.
-    Entradas: ParticipacionLiga p
-    Salidas: Widget
+      Construye la tarjeta visual de cada participación, mostrando nombre del
+      equipo, ID de usuario y acciones disponibles.
+    Entradas:
+      - p (ParticipacionLiga): participación a mostrar
+    Salidas:
+      - Widget: tarjeta renderizada
   */
   Widget itemParticipacion(ParticipacionLiga p) {
     final inicial = p.nombreEquipoFantasy.isNotEmpty
@@ -214,7 +232,7 @@ class _UiAdminParticipacionListaDesktopEstado
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Gestionar alineaciones
+            // Alineaciones
             IconButton(
               icon: const Icon(Icons.sports_soccer),
               tooltip: "Gestionar alineaciones",
@@ -231,7 +249,7 @@ class _UiAdminParticipacionListaDesktopEstado
               },
             ),
 
-            // Editar participación
+            // Editar
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: "Editar participación",
@@ -247,7 +265,7 @@ class _UiAdminParticipacionListaDesktopEstado
               },
             ),
 
-            // Archivar / activar
+            // Archivar / Activar
             IconButton(
               icon: Icon(p.activo ? Icons.archive : Icons.unarchive),
               tooltip: p.activo ? "Archivar" : "Activar",

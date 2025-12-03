@@ -1,0 +1,62 @@
+1. El archivo debe comenzar con este encabezado:
+
+/// ---------------------------------------------------------------------------
+/// DIFERENCIAS FUNCIONALES REALES modXXXX-1 → modXXXX
+/// Módulo: <módulo>
+/// ---------------------------------------------------------------------------
+
+2. El contenido debe dividirse en tres secciones, **separadas por tres líneas vacías**:
+
+
+### 1) Archivos nuevos
+
+- Si se agregaron nuevos archivos en esta mod, se listan uno por uno.
+- Para cada archivo nuevo:
+  - Nombre del archivo.
+  - Breve descripción funcional.
+  - Todas las firmas públicas agregadas (no métodos privados).
+
+Ejemplo:
+
+/// ---------------------------------------------------------------------------
+/// Archivo: controlador_nuevo.dart
+/// Descripción:
+///   Controlador para manejar [funcionalidad].
+/// Firmas nuevas:
+///   Future<Tipo> metodoNuevo(String arg)
+///   Future<void> otroMetodo()
+
+- Si **no hubo archivos nuevos**, debe indicarse:
+
+No se incorporaron archivos nuevos en esta mod.
+
+
+### 2) Archivos modificados
+
+- Listar todos los archivos que fueron modificados.
+- Para cada uno:
+  - Nombre del archivo.
+  - Descripción general del cambio.
+  - Separador menor (`--- Archivo: nombre ---`) entre archivos modificados.
+  - Listado de:
+    - Firmas agregadas
+    - Firmas modificadas (indicar versión previa → actual)
+    - Firmas eliminadas
+
+
+### 3) Archivos no modificados
+
+- Simplemente listar los archivos que **no fueron alterados** en esta mod.
+- Respetar el nombre exacto del archivo.
+
+📌 REGLAS
+
+- Si un archivo fue modificado, debe estar en la sección correcta.
+- Si un archivo fue eliminado o fusionado, se debe documentar en los comentarios.
+- Separadores y formato deben respetarse exactamente.
+
+⛔ PROHIBIDO
+
+- Mezclar archivos modificados con no modificados.
+- Omitir métodos agregados o eliminados.
+- Alterar la estructura general del archivo.

@@ -25,10 +25,6 @@ class ServicioJugadoresReales {
   /// Servicio de logs para auditoría.
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Métodos públicos
-  // ---------------------------------------------------------------------------
-
   /*
     Nombre: crearJugadorReal
     Descripción:
@@ -161,6 +157,63 @@ class ServicioJugadoresReales {
       _log.informacion("Eliminar jugador real: $idJugador");
     } catch (e) {
       _log.error("Error al eliminar jugador real: $e");
+      rethrow;
+    }
+  }
+
+  /*
+  Nombre: obtenerPorIds
+  Descripción:
+    Recupera un subconjunto de jugadores reales filtrando por una lista de IDs.
+    Solo se incluyen jugadores activos. El resultado final se ordena alfabéticamente
+    por ID para mantener consistencia visual. Si la lista está vacía, lanza excepción.
+
+  Entradas:
+    - ids (List<String>): lista de IDs de jugadores reales a recuperar.
+
+  Salidas:
+    - Futuro que retorna una lista de instancias de JugadorReal activas encontradas.
+*/
+  Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
+    try {
+      // Validación de lista vacía
+      if (ids.isEmpty) {
+        _log.advertencia("obtenerPorIds: lista de IDs vacía");
+        throw ArgumentError("La lista de IDs no puede estar vacía.");
+      }
+
+      // Quitar duplicados
+      final idsUnicos = ids.toSet().toList();
+
+      final List<JugadorReal> resultado = [];
+
+      // Paginación en lotes de 10
+      const int lote = 10;
+      final coleccion = _db.collection("jugadores_reales");
+
+      for (int i = 0; i < idsUnicos.length; i += lote) {
+        final sublista = idsUnicos.skip(i).take(lote).toList();
+
+        final query = await coleccion
+            .where(FieldPath.documentId, whereIn: sublista)
+            .where("activo", isEqualTo: true)
+            .get();
+
+        resultado.addAll(
+          query.docs.map((d) => JugadorReal.desdeMapa(d.id, d.data())),
+        );
+      }
+
+      // Ordenar por ID alfabéticamente
+      resultado.sort((a, b) => a.id.compareTo(b.id));
+
+      _log.informacion(
+        "obtenerPorIds: solicitados=${idsUnicos.length} recuperados=${resultado.length}",
+      );
+
+      return resultado;
+    } catch (e) {
+      _log.error("Error al obtener jugadores por IDs: $e");
       rethrow;
     }
   }
