@@ -1,58 +1,46 @@
 /*
   Archivo: alineacion.dart
   Descripción:
-    Modelo de datos que representa una alineación seleccionada por un usuario
-    dentro de una liga. Incluye los jugadores seleccionados y la formación táctica.
-
-  Dependencias:
-    - Ninguna directa.
-  Archivos que dependen de este archivo:
-    - Controladores de alineaciones.
+    Modelo que representa una Alineación de un EquipoFantasy.
+    Incluye titulares, suplentes y la referencia al equipo fantasy.
+  Responsabilidades:
+    - Persistir la alineación titular/suplentes.
+    - Mantener compatibilidad con jugadoresSeleccionados.
+  Dependencias directas:
+    - equipo_fantasy.dart
+  Archivos que dependen de este:
+    - Servicios y controladores de alineaciones.
 */
 
 class Alineacion {
-  /// Identificador único de la alineación en Firestore.
   final String id;
-
-  /// Identificador de la liga donde se aplica la alineación.
   final String idLiga;
-
-  /// Identificador del usuario propietario de la alineación.
   final String idUsuario;
 
-  /// Lista de IDs de jugadores incluidos en esta alineación.
+  /// Identificador del equipo fantasy al que pertenece esta alineación.
+  final String idEquipoFantasy;
+
+  /// IDs de los 11 titulares.
+  final List<String> idsTitulares;
+
+  /// IDs de los 4 suplentes.
+  final List<String> idsSuplentes;
+
+  /// Unión de titulares y suplentes (compatibilidad).
   final List<String> jugadoresSeleccionados;
 
-  /// Formación táctica (ej.: "4-4-2", "4-3-3").
   final String formacion;
-
-  /// Puntos totales obtenidos por la alineación.
   final int puntosTotales;
-
-  /// Fecha de creación en timestamp Unix (milisegundos).
   final int fechaCreacion;
-
-  /// Estado de la alineación (true = activa, false = archivada).
   final bool activo;
 
-  /*
-    Constructor principal de Alineacion.
-    Entradas:
-      - id (String)
-      - idLiga (String)
-      - idUsuario (String)
-      - jugadoresSeleccionados (List<String>)
-      - formacion (String)
-      - puntosTotales (int)
-      - fechaCreacion (int)
-      - activo (bool)
-    Salida:
-      - Instancia de Alineacion.
-  */
   const Alineacion({
     required this.id,
     required this.idLiga,
     required this.idUsuario,
+    required this.idEquipoFantasy,
+    required this.idsTitulares,
+    required this.idsSuplentes,
     required this.jugadoresSeleccionados,
     required this.formacion,
     required this.puntosTotales,
@@ -60,23 +48,19 @@ class Alineacion {
     required this.activo,
   });
 
-  /*
-    Nombre: desdeMapa
-    Descripción:
-      Crea una instancia de Alineacion a partir de datos Firestore.
-    Entradas:
-      - id (String): identificador del documento.
-      - datos (Map<String, dynamic>): datos deserializados.
-    Salidas:
-      - Instancia de Alineacion.
-  */
   factory Alineacion.desdeMapa(String id, Map<String, dynamic> datos) {
+    final titulares = List<String>.from(datos['idsTitulares'] ?? []);
+    final suplentes = List<String>.from(datos['idsSuplentes'] ?? []);
+
     return Alineacion(
       id: id,
       idLiga: datos['idLiga'] ?? '',
       idUsuario: datos['idUsuario'] ?? '',
+      idEquipoFantasy: datos['idEquipoFantasy'] ?? '',
+      idsTitulares: titulares,
+      idsSuplentes: suplentes,
       jugadoresSeleccionados: List<String>.from(
-        datos['jugadoresSeleccionados'] ?? [],
+        datos['jugadoresSeleccionados'] ?? titulares + suplentes,
       ),
       formacion: datos['formacion'] ?? '4-4-2',
       puntosTotales: datos['puntosTotales'] ?? 0,
@@ -85,19 +69,13 @@ class Alineacion {
     );
   }
 
-  /*
-    Nombre: aMapa
-    Descripción:
-      Convierte esta instancia en un mapa para almacenarla en Firestore.
-    Entradas:
-      - Ninguna.
-    Salidas:
-      - Map<String, dynamic> representando la alineación.
-  */
   Map<String, dynamic> aMapa() {
     return {
       'idLiga': idLiga,
       'idUsuario': idUsuario,
+      'idEquipoFantasy': idEquipoFantasy,
+      'idsTitulares': idsTitulares,
+      'idsSuplentes': idsSuplentes,
       'jugadoresSeleccionados': jugadoresSeleccionados,
       'formacion': formacion,
       'puntosTotales': puntosTotales,
@@ -106,19 +84,13 @@ class Alineacion {
     };
   }
 
-  /*
-    Nombre: copiarCon
-    Descripción:
-      Crea una copia de Alineacion modificando únicamente los campos deseados.
-    Entradas:
-      - Campos opcionales para modificar.
-    Salidas:
-      - Nueva instancia con los cambios aplicados.
-  */
   Alineacion copiarCon({
     String? id,
     String? idLiga,
     String? idUsuario,
+    String? idEquipoFantasy,
+    List<String>? idsTitulares,
+    List<String>? idsSuplentes,
     List<String>? jugadoresSeleccionados,
     String? formacion,
     int? puntosTotales,
@@ -129,6 +101,9 @@ class Alineacion {
       id: id ?? this.id,
       idLiga: idLiga ?? this.idLiga,
       idUsuario: idUsuario ?? this.idUsuario,
+      idEquipoFantasy: idEquipoFantasy ?? this.idEquipoFantasy,
+      idsTitulares: idsTitulares ?? this.idsTitulares,
+      idsSuplentes: idsSuplentes ?? this.idsSuplentes,
       jugadoresSeleccionados:
           jugadoresSeleccionados ?? this.jugadoresSeleccionados,
       formacion: formacion ?? this.formacion,

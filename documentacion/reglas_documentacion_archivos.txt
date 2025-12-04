@@ -1,0 +1,43 @@
+✅ Resumen de las reglas de documentación del proyecto
+
+Basado en el estándar mostrado en servicio_equipos_fantasy.dart, la documentación debe cumplir con lo siguiente:
+
+🔷 A. Documentación general del archivo
+
+Encabezado con el nombre del archivo
+
+Descripción general de la responsabilidad del servicio
+
+Listado de dependencias
+
+Listado de archivos (o flujos) que dependen de este archivo
+
+🔷 B. Documentación de clase y miembros
+
+Cada variable interna (ej. instancias de Firestore, logs, etc.) debe tener una línea de comentario explicando su rol.
+
+🔷 C. Documentación de métodos
+
+Cada método debe tener un bloque previo con este contenido:
+
+Nombre del método
+
+Descripción de funcionamiento
+
+Entradas (con tipos y nombres)
+
+Salidas (tipo devuelto, y cuándo/por qué)
+
+Ejemplo de formato correcto:
+
+/*
+  Nombre: crearEquipoFantasy
+  Descripción:
+    Crea un equipo fantasy para el usuario dentro de una liga.
+  Entradas:
+    - idUsuario (String): usuario propietario.
+    - idLiga (String): liga asociada.
+    - nombre (String): nombre del equipo.
+  Salidas:
+    - Future<EquipoFantasy>: instancia creada.
+*/

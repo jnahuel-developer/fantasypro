@@ -32,7 +32,7 @@ void main() async {
   log.informacion("Iniciando carga de Firebase...");
 
   await init.inicializarDesdeArchivo(
-    'assets/configuracion/entorno/firebase_desarrollo.json',
+    'assets/configuracion/entorno/firebase_produccion.json',
   );
 
   log.informacion("Firebase inicializado correctamente.");

@@ -7,8 +7,8 @@
   "appId": "1:709444228370:web:884084804306a888b98fcb",
   "measurementId": "G-WNR70ZZ4BM",
 
-  "usarEmulador": true,
-  "emuladorHost": "localhost",
-  "emuladorAuthPuerto": 9099,
-  "emuladorFirestorePuerto": 8080
+  "usarEmulador": false,
+  "emuladorHost": "",
+  "emuladorAuthPuerto": 0,
+  "emuladorFirestorePuerto": 0
 }

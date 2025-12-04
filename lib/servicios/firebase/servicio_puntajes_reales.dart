@@ -26,10 +26,6 @@ class ServicioPuntajesReales {
   /// Servicio de logging interno.
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Métodos públicos
-  // ---------------------------------------------------------------------------
-
   /*
     Nombre: guardarPuntajesDeFecha
     Descripción:

@@ -3,13 +3,15 @@
   Descripción:
     Lógica de negocio y validación para la gestión de participaciones
     de usuarios en una liga.
-    Etapa 1:
-      - Validar si usuario ya participa
-      - Crear participación si no existe
+    Se mantiene el método crearParticipacionSiNoExiste que asegura unicidad usuario–liga.
+    Se conserva registrarParticipacionUsuario como wrapper/wrapper extendido
+    para dicho método, adaptado a la corrección del flujo mod0017+mod0018:
+    al registrar participación, también crea automáticamente el equipo fantasy asociado.
 */
 
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_equipos_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 class ControladorParticipaciones {
@@ -24,13 +26,13 @@ class ControladorParticipaciones {
     String idUsuario,
     String nombreEquipoFantasy,
   ) async {
-    if (idLiga.trim().isEmpty) {
+    if (idLiga.isEmpty) {
       throw ArgumentError("El idLiga no puede estar vacío.");
     }
-    if (idUsuario.trim().isEmpty) {
+    if (idUsuario.isEmpty) {
       throw ArgumentError("El idUsuario no puede estar vacío.");
     }
-    if (nombreEquipoFantasy.trim().isEmpty) {
+    if (nombreEquipoFantasy.isEmpty) {
       throw ArgumentError("El nombre del equipo fantasy no puede estar vacío.");
     }
 
@@ -48,14 +50,15 @@ class ControladorParticipaciones {
       throw Exception("El usuario ya participa en esta liga.");
     }
 
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     final participacion = ParticipacionLiga(
       id: "",
       idLiga: idLiga,
       idUsuario: idUsuario,
-      nombreEquipoFantasy: nombreEquipoFantasy.trim(),
+      nombreEquipoFantasy: nombreEquipoFantasy,
       puntos: 0,
+      plantelCompleto: false,
       fechaCreacion: timestamp,
       activo: true,
     );
@@ -66,10 +69,45 @@ class ControladorParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
+  // registrarParticipacionUsuario — alias / wrapper corregido
+  // ---------------------------------------------------------------------------
+  /*
+    Nombre: registrarParticipacionUsuario
+    Descripción:
+      Wrapper de crearParticipacionSiNoExiste. Además de crear la participación,
+      crea automáticamente el equipo fantasy correspondiente para que la UI
+      pueda encontrarlo inmediatamente.
+  */
+  Future<ParticipacionLiga> registrarParticipacionUsuario(
+    String idLiga,
+    String idUsuario,
+    String nombreEquipoFantasy,
+  ) async {
+    final participacion = await crearParticipacionSiNoExiste(
+      idLiga,
+      idUsuario,
+      nombreEquipoFantasy,
+    );
+
+    _log.informacion(
+      "Creando equipo fantasy automáticamente tras registrar participación: usuario=$idUsuario, liga=$idLiga, nombreEquipo=$nombreEquipoFantasy",
+    );
+
+    // Crear equipo fantasy asociado — uso directo del servicio, sin intermediarios
+    await ServicioEquiposFantasy().crearEquipoFantasy(
+      idUsuario,
+      idLiga,
+      nombreEquipoFantasy,
+    );
+
+    return participacion;
+  }
+
+  // ---------------------------------------------------------------------------
   // Obtener participaciones por liga
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
-    if (idLiga.trim().isEmpty) {
+    if (idLiga.isEmpty) {
       throw ArgumentError("El ID de la liga no puede estar vacío.");
     }
 
@@ -82,7 +120,7 @@ class ControladorParticipaciones {
   // Obtener participaciones por usuario
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
-    if (idUsuario.trim().isEmpty) {
+    if (idUsuario.isEmpty) {
       throw ArgumentError("El ID del usuario no puede estar vacío.");
     }
 
@@ -92,7 +130,7 @@ class ControladorParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Archivar
+  // Archivar participación
   // ---------------------------------------------------------------------------
   Future<void> archivar(String idParticipacion) async {
     _log.advertencia("Archivando participación $idParticipacion");
@@ -100,7 +138,7 @@ class ControladorParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Activar
+  // Activar participación
   // ---------------------------------------------------------------------------
   Future<void> activar(String idParticipacion) async {
     _log.informacion("Activando participación $idParticipacion");
@@ -108,7 +146,7 @@ class ControladorParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Eliminar
+  // Eliminar participación
   // ---------------------------------------------------------------------------
   Future<void> eliminar(String idParticipacion) async {
     _log.error("Eliminando participación $idParticipacion");
@@ -116,13 +154,12 @@ class ControladorParticipaciones {
   }
 
   // ---------------------------------------------------------------------------
-  // Editar
+  // Editar participación
   // ---------------------------------------------------------------------------
   Future<void> editar(ParticipacionLiga participacion) async {
     if (participacion.id.isEmpty) {
       throw ArgumentError("El ID de la participación no puede estar vacío.");
     }
-
     if (participacion.puntos < 0) {
       throw ArgumentError("Los puntos no pueden ser negativos.");
     }

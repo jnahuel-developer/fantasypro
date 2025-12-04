@@ -1,0 +1,45 @@
+1. El archivo debe comenzar con este encabezado:
+
+========================================
+catalogo_<módulo>.txt
+========================================
+
+CATÁLOGO DEL MÓDULO <módulo> — modXXXX
+Descripción:
+Función del <módulo>
+
+2. Cada archivo debe documentarse en secciones con este formato:
+
+/// ---------------------------------------------------------------------------
+/// Archivo: nombre_archivo.dart
+/// ---------------------------------------------------------------------------
+/// Descripción:
+///   Breve explicación del propósito del archivo y sus responsabilidades.
+/// Responsabilidades:
+///   - Lista de responsabilidades claras del controlador.
+/// Dependencias:
+///   - Lista de archivos que importa o utiliza directamente.
+
+3. Cada método público del controlador debe documentarse así:
+
+/// ---------------------------------------------------------------------------
+/// Método: Nombre del método
+/// Firma: Firma completa del método
+/// Descripción:
+///   Descripción clara y precisa de lo que hace el método.
+/// Ejemplo:
+///   Ejemplo de uso en código (si aplica)
+
+📌 REGLAS
+
+- Los métodos deben ir en orden lógico, como en el archivo original.
+- No incluir métodos privados.
+- Los métodos eliminados en mods previas no deben aparecer.
+- No asumir ni modificar comportamiento no aprobado.
+- El catálogo debe reflejar exactamente el estado de los archivos del <módulo> hasta la mod actual.
+
+⛔ PROHIBIDO
+
+- Alterar firmas sin autorización.
+- Cambiar el formato establecido.
+- Incluir cosas que no existen.

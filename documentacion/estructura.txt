@@ -1,9 +1,5 @@
 fantasypro
 │
-├── assets
-│   └── configuracion
-│       └── entorno
-│           └── firebase_desarrollo.json
 ├── documentacion
 │   ├── catalogo_controladores.txt
 │   ├── catalogo_modelos.txt
@@ -11,71 +7,87 @@ fantasypro
 │   ├── catalogo_servicios.txt
 │   ├── diff_controladores.txt
 │   ├── diff_modelos.txt
+│   ├── diff_pantallas.txt
 │   ├── diff_servicios.txt
-│   └── estructura.txt
+│   ├── estructura.txt
+│   ├── reglas_catalogo.txt
+│   ├── reglas_diff.txt
+│   ├── reglas_documentacion_archivos.txt
+│   ├── reglas_documentacion_pantallas.txt
+│   └── reglas_documentacion_servicios.txt
 ├── lib
-│   ├── configuracion
-│   │   └── entorno
-│   │       └── firebase_desarrollo.example.json
-│   ├── controladores
+│   ├── configuracion
+│   │   └── entorno
+│   │       └── firebase_desarrollo.example.json
+│   ├── controladores
 │   │   ├── controlador_alineaciones.dart
 │   │   ├── controlador_equipo_fantasy.dart
 │   │   ├── controlador_equipos_reales.dart
-│   │   ├── controlador_jugadores_reales
-│   │   ├── controlador_jugadores.dart
+│   │   ├── controlador_fechas.dart
+│   │   ├── controlador_jugadores_reales.dart
 │   │   ├── controlador_ligas.dart
 │   │   ├── controlador_participaciones.dart
+│   │   ├── controlador_puntajes_reales.dart
 │   │   └── controlador_router.dart
-│   ├── main.dart
-│   ├── modelos
+│   ├── main.dart
+│   ├── modelos
 │   │   ├── alineacion.dart
 │   │   ├── equipo_fantasy.dart
 │   │   ├── equipo_real.dart
+│   │   ├── fecha_liga.dart
 │   │   ├── jugador.dart
+│   │   ├── jugador_real.dart
 │   │   ├── liga.dart
 │   │   ├── participacion_liga.dart
+│   │   ├── puntaje_jugador_fecha.dart
 │   │   └── roles.dart
-│   ├── servicios
-│   │   ├── firebase
+│   ├── servicios
+│   │   ├── firebase
 │   │   │   ├── servicio_alineaciones.dart
 │   │   │   ├── servicio_autenticacion.dart
 │   │   │   ├── servicio_base_de_datos.dart
 │   │   │   ├── servicio_equipos_fantasy.dart
 │   │   │   ├── servicio_equipos_reales.dart
-│   │   │   ├── servicio_inicializacion.dart
-│   │   │   ├── servicio_jugadores.dart
+│   │   │   ├── servicio_fechas.dart
+│   │   │   ├── servicio_inicializacion.dart    
+│   │   │   ├── servicio_jugadores_reales.dart
 │   │   │   ├── servicio_ligas.dart
 │   │   │   ├── servicio_participaciones.dart
-│   │   │   └── servicio_reglas_de_seguridad.dart
-│   │   └── utilidades
-│   │       ├── servicio_detector_plataforma.dart
-│   │       ├── servicio_log.dart
-│   │       └── servicio_traducciones.dart
-│   ├── temas
-│   │   ├── tema_web_desktop.dart
-│   │   └── tema_web_mobile.dart
-│   ├── textos
-│   │   └── textos_app.dart
-│   └── vistas
-│       └── web
-│           ├── desktop
+│   │   │   ├── servicio_puntajes_reales.dart
+│   │   └── utilidades
+│   │       ├── servicio_detector_plataforma.dart
+│   │       ├── servicio_log.dart
+│   │       └── servicio_traducciones.dart
+│   ├── temas
+│   │   ├── tema_web_desktop.dart
+│   │   └── tema_web_mobile.dart
+│   ├── textos
+│   │   └── textos_app.dart
+│   └── vistas
+│       └── web
+│           ├── desktop
 │           │   ├── ui__admin__alineacion__editar__desktop.dart
 │           │   ├── ui__admin__alineacion__lista__desktop.dart
 │           │   ├── ui__admin__equipo_real__editar__desktop.dart
 │           │   ├── ui__admin__equipo_real__lista__desktop.dart
+│           │   ├── ui__admin__fecha__lista__desktop.dart
 │           │   ├── ui__admin__jugador__editar__desktop.dart
 │           │   ├── ui__admin__jugador__lista__desktop.dart
 │           │   ├── ui__admin__liga__lista__desktop.dart
 │           │   ├── ui__admin__panel__dashboard__desktop.dart
 │           │   ├── ui__admin__participacion__editar__desktop.dart
 │           │   ├── ui__admin__participacion__lista__desktop.dart
+│           │   ├── ui__admin__puntajes_reales__lista__desktop.dart
 │           │   ├── ui__comun__autenticacion__login__desktop.dart
 │           │   ├── ui__comun__autenticacion__registro__desktop.dart
+│           │   ├── ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart
 │           │   ├── ui__usuario__equipo_fantasy__crear__desktop.dart
+│           │   ├── ui__usuario__equipo_fantasy__plantel__desktop.dart
+│           │   ├── ui__usuario__equipo_fantasy__resumen__desktop.dart
 │           │   ├── ui__usuario__inicio__lista__desktop.dart
 │           │   └── ui__usuario__liga__detalle__desktop.dart
-│           └── mobile
-│               └── pagina_inicio_mobile.dart
+│           └── mobile
+│               └── pagina_inicio_mobile.dart
 ├── test
 │   ├── integracion
 │   │   ├── prueba_firebase_integracion_test.dart
@@ -92,6 +104,7 @@ fantasypro
 │       ├── prueba_servicio_ligas_test.dart
 │       ├── prueba_traducciones_test.dart
 │       └── prueba_validaciones_autenticacion_test.dart
+├── fantasypro.iml
 ├── firebase.json
 ├── firestore.indexes.json
 ├── firestore.rules

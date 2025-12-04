@@ -1,0 +1,57 @@
+✅ PLANTILLA OFICIAL DE DOCUMENTACIÓN
+
+🔹 Standard unificado para todos los archivos de servicios Firebase del proyecto Fantasy MVP
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+📁 Encabezado del archivo
+
+/*
+  Archivo: <nombre_archivo>.dart
+  Descripción:
+    <Descripción clara del propósito del servicio. Qué colección maneja, qué operaciones permite, qué no permite, etc.>
+
+  Dependencias:
+    - <paquetes o modelos utilizados>
+  
+  Archivos que dependen de este archivo:
+    - <vistas o controladores que usan este servicio, o flujos funcionales del sistema que lo requieren>
+*/
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+🧱 Variables internas de clase
+
+Cada variable interna debe ir precedida de una línea descriptiva:
+
+/// Instancia de Firestore para acceder a la base de datos.
+final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+/// Servicio de logging para registrar eventos y errores.
+final ServicioLog _log = ServicioLog();
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+🔧 Encabezado por método
+
+/*
+  Nombre: <nombreMetodo>
+  Descripción:
+    <Descripción clara y precisa de lo que hace el método. Qué crea/lee/modifica/elimina.>
+
+  Entradas:
+    - <parametro1> (<tipo>): <explicación del parámetro>
+    - <parametro2> (<tipo>): <explicación del parámetro>
+
+  Salidas:
+    - <tipo devuelto>: <qué representa y cuándo se devuelve>
+*/
+
+
+✅ Notas:
+
+Si el método no devuelve nada, indicar - void: sin valor devuelto.
+
+Si no tiene entradas, indicar Entradas: ninguna.
+
+/* ---------------------------------------------------------------------------------------------------- */

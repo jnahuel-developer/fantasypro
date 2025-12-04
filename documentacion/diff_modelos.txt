@@ -2,35 +2,84 @@
 diff_modelos.txt
 ========================================
 
-DIFF FUNCIONAL mod0015 → mod0016
+DIFF FUNCIONAL mod0016 → mod0017
 Módulo: Modelos
 
 1) Archivos nuevos
-+ agregado: puntaje_jugador_fecha.dart
-  Métodos públicos expuestos:
-    - factory PuntajeJugadorFecha.desdeMapa(String id, Map<String, dynamic> datos)
-    - Map<String, dynamic> aMapa()
-    - PuntajeJugadorFecha copiarCon({
-        String? id,
-        String? idFecha,
-        String? idLiga,
-        String? idEquipoReal,
-        String? idJugadorReal,
-        int? puntuacion,
-        int? fechaCreacion
-      })
+(ninguno)
 
 2) Archivos modificados
-~ Ninguno (no se modificaron modelos existentes)
+
+~ modificado: equipo_fantasy.dart
+  Cambios funcionales:
+    - Campos públicos agregados:
+        int presupuestoInicial
+        int presupuestoRestante
+        List<String> idsJugadoresPlantel
+    - Constructor actualizado:
+        antes:
+          const EquipoFantasy({
+            required String id,
+            required String idUsuario,
+            required String idLiga,
+            required String nombre,
+            required int fechaCreacion,
+            required bool activo,
+          })
+        ahora:
+          const EquipoFantasy({
+            required String id,
+            required String idUsuario,
+            required String idLiga,
+            required String nombre,
+            required int presupuestoInicial,
+            required int presupuestoRestante,
+            required List<String> idsJugadoresPlantel,
+            required int fechaCreacion,
+            required bool activo,
+          })
+    - Método desdeMapa actualizado para cargar:
+        presupuestoInicial (default 1000)
+        presupuestoRestante (default 1000)
+        idsJugadoresPlantel (lista vacía por defecto)
+    - Método aMapa actualizado para serializar:
+        presupuestoInicial, presupuestoRestante, idsJugadoresPlantel
+    - Método copiarCon actualizado para permitir modificar:
+        presupuestoInicial, presupuestoRestante, idsJugadoresPlantel
+
+~ modificado: participacion_liga.dart
+  Cambios funcionales:
+    - Campo público agregado:
+        bool plantelCompleto
+    - Constructor actualizado para incluir plantelCompleto.
+    - Método desdeMapa actualizado para leer plantelCompleto (default false).
+    - Método aMapa actualizado para escribir plantelCompleto.
+    - Método copiarCon actualizado para permitir modificar plantelCompleto.
+
+~ modificado: alineacion.dart
+  Cambios funcionales:
+    - Campos públicos agregados:
+        String idEquipoFantasy
+        List<String> idsTitulares
+        List<String> idsSuplentes
+    - Campo jugadoresSeleccionados mantiene el nombre pero pasa a considerarse
+      la unión de idsTitulares + idsSuplentes (cuando corresponda).
+    - Constructor actualizado para incluir:
+        idEquipoFantasy, idsTitulares, idsSuplentes, jugadoresSeleccionados.
+    - Método desdeMapa actualizado para leer:
+        idEquipoFantasy, idsTitulares, idsSuplentes,
+        y jugadoresSeleccionados (o derivarlo de titulares+suplentes).
+    - Método aMapa actualizado para serializar:
+        idEquipoFantasy, idsTitulares, idsSuplentes, jugadoresSeleccionados.
+    - Método copiarCon actualizado para permitir modificar:
+        idEquipoFantasy, idsTitulares, idsSuplentes, jugadoresSeleccionados.
 
 3) Archivos sin cambios
 = sin cambios:
   - liga.dart
   - fecha_liga.dart
-  - participacion_liga.dart
   - jugador.dart
-  - alineacion.dart
   - roles.dart
   - equipo_real.dart
-  - equipo_fantasy.dart
   - jugador_real.dart
+  - puntaje_jugador_fecha.dart

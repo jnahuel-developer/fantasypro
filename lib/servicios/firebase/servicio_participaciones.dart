@@ -3,7 +3,14 @@
   Descripción:
     Servicio dedicado a la administración CRUD de la colección "participaciones_liga".
     Permite crear, obtener, editar, activar, archivar y eliminar participaciones
-    de usuarios dentro de una liga.
+    de usuarios dentro de una liga. Todas las operaciones aplican sanitización
+    de IDs y validación posterior, para garantizar consistencia y evitar errores
+    de consultas vacías o mal formateadas.
+
+  Dependencias:
+    - cloud_firestore
+    - modelos/participacion_liga.dart
+    - servicio_log.dart
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,25 +21,38 @@ class ServicioParticipaciones {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Constantes internas
-  // ---------------------------------------------------------------------------
+  String _sanitizarId(String valor) {
+    return valor
+        .trim()
+        .replaceAll('"', '')
+        .replaceAll("'", "")
+        .replaceAll("\\", "")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "");
+  }
 
-  static const String _coleccion = "participaciones_liga";
+  void _validarIdsObligatorios(String idUsuario, String idLiga) {
+    if (idUsuario.isEmpty || idLiga.isEmpty) {
+      throw ArgumentError("ID sanitizado inválido.");
+    }
+  }
 
-  static const String _campoIdLiga = "idLiga";
-  static const String _campoIdUsuario = "idUsuario";
-  static const String _campoActivo = "activo";
-
-  // ---------------------------------------------------------------------------
-  // Crear participación
-  // ---------------------------------------------------------------------------
   Future<ParticipacionLiga> crearParticipacion(
     ParticipacionLiga participacion,
   ) async {
     try {
-      final doc = await _db.collection(_coleccion).add(participacion.aMapa());
-      final nueva = participacion.copiarCon(id: doc.id);
+      final datos = participacion.copiarCon(
+        idUsuario: _sanitizarId(participacion.idUsuario),
+        idLiga: _sanitizarId(participacion.idLiga),
+      );
+
+      _validarIdsObligatorios(datos.idUsuario, datos.idLiga);
+
+      final doc = await _db
+          .collection("participaciones_liga")
+          .add(datos.aMapa());
+
+      final nueva = datos.copiarCon(id: doc.id);
 
       _log.informacion("Crear participación: ${nueva.id}");
       return nueva;
@@ -42,16 +62,59 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Verificar si el usuario ya participa en una liga
-  // ---------------------------------------------------------------------------
+  Future<ParticipacionLiga> crearParticipacionEnLiga(
+    String idUsuario,
+    String idLiga,
+    String nombreEquipoFantasy,
+  ) async {
+    try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+      final participacion = ParticipacionLiga(
+        id: "",
+        idLiga: idLiga,
+        idUsuario: idUsuario,
+        nombreEquipoFantasy: nombreEquipoFantasy,
+        puntos: 0,
+        fechaCreacion: timestamp,
+        activo: true,
+        plantelCompleto: false,
+      );
+
+      final doc = await _db
+          .collection("participaciones_liga")
+          .add(participacion.aMapa());
+
+      final nueva = participacion.copiarCon(id: doc.id);
+
+      _log.informacion(
+        "Crear participación en liga: usuario=$idUsuario liga=$idLiga → ${nueva.id}",
+      );
+
+      return nueva;
+    } catch (e) {
+      _log.error("Error creando participación en liga: $e");
+      rethrow;
+    }
+  }
+
   Future<bool> usuarioYaParticipa(String idUsuario, String idLiga) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
       final query = await _db
-          .collection(_coleccion)
-          .where(_campoIdUsuario, isEqualTo: idUsuario)
-          .where(_campoIdLiga, isEqualTo: idLiga)
-          .where(_campoActivo, isEqualTo: true)
+          .collection("participaciones_liga")
+          .where("idUsuario", isEqualTo: idUsuario)
+          .where("idLiga", isEqualTo: idLiga)
+          .where("activo", isEqualTo: true)
           .limit(1)
           .get();
 
@@ -68,14 +131,52 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Obtener participaciones de una liga
-  // ---------------------------------------------------------------------------
+  Future<ParticipacionLiga?> obtenerParticipacion(
+    String idUsuario,
+    String idLiga,
+  ) async {
+    try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
+      final consulta = await _db
+          .collection("participaciones_liga")
+          .where("idUsuario", isEqualTo: idUsuario)
+          .where("idLiga", isEqualTo: idLiga)
+          .limit(1)
+          .get();
+
+      if (consulta.docs.isEmpty) {
+        _log.informacion(
+          "Participación no encontrada: usuario=$idUsuario liga=$idLiga",
+        );
+        return null;
+      }
+
+      if (consulta.docs.length > 1) {
+        _log.advertencia(
+          "Múltiples participaciones encontradas para usuario=$idUsuario y liga=$idLiga. Usando la primera.",
+        );
+      }
+
+      final d = consulta.docs.first;
+      return ParticipacionLiga.desdeMapa(d.id, d.data());
+    } catch (e) {
+      _log.error("Error obteniendo participación única: $e");
+      rethrow;
+    }
+  }
+
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
     try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) throw ArgumentError("ID de liga inválido.");
+
       final consulta = await _db
-          .collection(_coleccion)
-          .where(_campoIdLiga, isEqualTo: idLiga)
+          .collection("participaciones_liga")
+          .where("idLiga", isEqualTo: idLiga)
           .get();
 
       _log.informacion("Listar participaciones de liga: $idLiga");
@@ -89,14 +190,14 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Obtener participaciones de un usuario
-  // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      if (idUsuario.isEmpty) throw ArgumentError("ID de usuario inválido.");
+
       final consulta = await _db
-          .collection(_coleccion)
-          .where(_campoIdUsuario, isEqualTo: idUsuario)
+          .collection("participaciones_liga")
+          .where("idUsuario", isEqualTo: idUsuario)
           .get();
 
       _log.informacion("Listar participaciones del usuario: $idUsuario");
@@ -110,29 +211,55 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Editar participación
-  // ---------------------------------------------------------------------------
+  /*
+  Nombre: editarParticipacion
+  Descripción:
+    Actualiza únicamente los campos permitidos de una participación existente.
+    Evita enviar campos de identidad para cumplir con las reglas de Firestore.
+  Entradas:
+    - participacion (ParticipacionLiga): instancia con datos editables.
+  Salidas:
+    - Future<void>
+*/
   Future<void> editarParticipacion(ParticipacionLiga participacion) async {
     try {
-      await _db
-          .collection(_coleccion)
-          .doc(participacion.id)
-          .update(participacion.aMapa());
+      // Sanitizar ID del documento
+      final String idSan = _sanitizarId(participacion.id);
+      if (idSan.isEmpty) {
+        throw ArgumentError("ID de participación inválido.");
+      }
 
-      _log.informacion("Editar participación: ${participacion.id}");
+      // Construcción explícita de campos editables permitidos
+      final actualizacion = {
+        "puntos": participacion.puntos,
+        "plantelCompleto": participacion.plantelCompleto,
+        "nombreEquipoFantasy": participacion.nombreEquipoFantasy
+            .trim(), // limpieza mínima
+        "activo": participacion.activo,
+      };
+
+      _log.informacion(
+        "Editando participación $idSan con campos: $actualizacion",
+      );
+
+      await _db
+          .collection("participaciones_liga")
+          .doc(idSan)
+          .update(actualizacion);
     } catch (e) {
       _log.error("Error en operación de participaciones: $e");
       rethrow;
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Archivar participación
-  // ---------------------------------------------------------------------------
   Future<void> archivarParticipacion(String id) async {
     try {
-      await _db.collection(_coleccion).doc(id).update({_campoActivo: false});
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
+      await _db.collection("participaciones_liga").doc(id).update({
+        "activo": false,
+      });
 
       _log.informacion("Archivar participación: $id");
     } catch (e) {
@@ -141,12 +268,14 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Activar participación
-  // ---------------------------------------------------------------------------
   Future<void> activarParticipacion(String id) async {
     try {
-      await _db.collection(_coleccion).doc(id).update({_campoActivo: true});
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
+      await _db.collection("participaciones_liga").doc(id).update({
+        "activo": true,
+      });
 
       _log.informacion("Activar participación: $id");
     } catch (e) {
@@ -155,12 +284,12 @@ class ServicioParticipaciones {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Eliminar participación
-  // ---------------------------------------------------------------------------
   Future<void> eliminarParticipacion(String id) async {
     try {
-      await _db.collection(_coleccion).doc(id).delete();
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
+      await _db.collection("participaciones_liga").doc(id).delete();
 
       _log.informacion("Eliminar participación: $id");
     } catch (e) {
