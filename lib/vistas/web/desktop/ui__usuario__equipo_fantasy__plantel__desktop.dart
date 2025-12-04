@@ -3,24 +3,30 @@
   Descripción:
     Pantalla de armado del PLANTEL (15 jugadores) para un equipo fantasy.
     El usuario:
-      - Elige formación (4-4-2 o 4-3-3)
+      - Elige formación (4‑4‑2 o 4‑3‑3)
       - Ve presupuesto disponible
       - Selecciona 15 jugadores reales activos
       - Debe respetar distribución de posiciones según formación
-      - Esta pantalla NO guarda en BD → solo arma el plantel
-        El guardado se hace en la pantalla de Alineación Inicial.
+    Al confirmar el plantel:
+      - Crea la alineación inicial en la base (mediante guardarPlantelInicial)
+      - Navega hacia la pantalla de selección de titulares/suplentes,
+        pasando el idReal de la alineación creada.
 
   Dependencias:
     - modelos/liga.dart
     - modelos/participacion_liga.dart
     - modelos/jugador_real.dart
-    - modelos/equipo_real.dart
     - controladores/controlador_equipos_reales.dart
     - controladores/controlador_jugadores_reales.dart
+    - controladores/controlador_equipos_fantasy.dart
+    - controladores/controlador_alineaciones.dart
+    - servicios/servicio_autenticacion.dart
+    - servicios/utilidades/servicio_log.dart
+
+  Pantallas destino:
+    - ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart: selección de titulares y suplentes, con idAlineacion real.
 */
 
-import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
-import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
@@ -28,6 +34,10 @@ import 'package:fantasypro/modelos/jugador_real.dart';
 
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
 import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
+import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
+import 'package:fantasypro/controladores/controlador_alineaciones.dart';
+import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
+import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 import 'ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart';
 
@@ -48,28 +58,44 @@ class UiUsuarioEquipoFantasyPlantelDesktop extends StatefulWidget {
 
 class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     extends State<UiUsuarioEquipoFantasyPlantelDesktop> {
-  /// Presupuesto fijo inicial (aprobado por PM)
-  static const int presupuestoInicial = 1000;
+  /// Presupuesto fijo inicial para el armado del plantel.
+  static const int _presupuestoInicial = 1000;
 
-  /// Controladores
-  final ControladorEquiposReales ctrlEquipos = ControladorEquiposReales();
-  final ControladorJugadoresReales ctrlJugadores = ControladorJugadoresReales();
+  /// Controlador para obtener equipos reales de la liga.
+  final ControladorEquiposReales _ctrlEquiposReales =
+      ControladorEquiposReales();
 
-  bool cargando = true;
+  /// Controlador para obtener jugadores reales activos.
+  final ControladorJugadoresReales _ctrlJugadoresReales =
+      ControladorJugadoresReales();
 
-  /// Formación actual (solo 2 opciones)
-  String formacion = "4-4-2";
+  /// Controlador para equipos fantasy, para obtener el equipo del usuario.
+  final ControladorEquipoFantasy _ctrlEquiposFantasy =
+      ControladorEquipoFantasy();
 
-  /// Jugadores disponibles por posición
-  List<JugadorReal> por = [];
-  List<JugadorReal> def = [];
-  List<JugadorReal> med = [];
-  List<JugadorReal> del = [];
+  /// Controlador de alineaciones para guardar alineación inicial.
+  final ControladorAlineaciones _ctrlAlineaciones = ControladorAlineaciones();
 
-  /// Jugadores seleccionados (sus IDs)
-  final List<String> seleccionados = [];
+  /// Servicio de logging.
+  final ServicioLog _log = ServicioLog();
 
-  int presupuestoRestante = presupuestoInicial;
+  /// Formación actual seleccionada.
+  String _formacion = "4-4-2";
+
+  /// Listas de jugadores disponibles por posición.
+  List<JugadorReal> _por = [];
+  List<JugadorReal> _def = [];
+  List<JugadorReal> _med = [];
+  List<JugadorReal> _del = [];
+
+  /// IDs de jugadores seleccionados para el plantel.
+  final List<String> _seleccionados = [];
+
+  /// Presupuesto restante al seleccionar jugadores.
+  int _presupuestoRestante = _presupuestoInicial;
+
+  /// Indica si la lista está cargando.
+  bool _cargando = true;
 
   @override
   void initState() {
@@ -81,129 +107,145 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     Nombre: _cargar
     Descripción:
       Carga todos los equipos reales de la liga y sus jugadores reales activos.
-      Luego agrupa jugadores por posición para mostrarlos.
+      Luego los agrupa por posición para ser mostrados.
+    Entradas: ninguna
+    Salidas: Future<void>
   */
   Future<void> _cargar() async {
-    setState(() => cargando = true);
-
-    final equipos = await ctrlEquipos.obtenerPorLiga(widget.liga.id);
-
-    List<JugadorReal> acumulado = [];
-
-    for (final eq in equipos) {
-      final lista = await ctrlJugadores.obtenerPorEquipoReal(eq.id);
-      acumulado.addAll(lista.where((j) => j.activo));
+    setState(() {
+      _cargando = true;
+    });
+    try {
+      final equipos = await _ctrlEquiposReales.obtenerPorLiga(widget.liga.id);
+      List<JugadorReal> acumulado = [];
+      for (final eq in equipos) {
+        final lista = await _ctrlJugadoresReales.obtenerPorEquipoReal(eq.id);
+        acumulado.addAll(lista.where((j) => j.activo));
+      }
+      _por = acumulado.where((j) => j.posicion == "POR").toList();
+      _def = acumulado.where((j) => j.posicion == "DEF").toList();
+      _med = acumulado.where((j) => j.posicion == "MED").toList();
+      _del = acumulado.where((j) => j.posicion == "DEL").toList();
+    } catch (e) {
+      // En este contexto no se muestran errores explícitos para carga
     }
-
-    por = acumulado.where((j) => j.posicion == "POR").toList();
-    def = acumulado.where((j) => j.posicion == "DEF").toList();
-    med = acumulado.where((j) => j.posicion == "MED").toList();
-    del = acumulado.where((j) => j.posicion == "DEL").toList();
-
-    setState(() => cargando = false);
+    setState(() {
+      _cargando = false;
+    });
   }
 
   /*
     Nombre: _limitePorPosicion
     Descripción:
-      Devuelve la cantidad máxima permitida para una posición según la formación.
+      Devuelve la cantidad máxima permitida de jugadores por posición según la formación.
+    Entradas:
+      - pos (String): posición ("POR","DEF","MED","DEL")
+    Salidas:
+      - int: límite permitido
   */
   int _limitePorPosicion(String pos) {
-    if (formacion == "4-4-2") {
-      switch (pos) {
-        case "POR":
-          return 2;
-        case "DEF":
-          return 5;
-        case "MED":
-          return 5;
-        case "DEL":
-          return 3;
-      }
-    } else if (formacion == "4-3-3") {
-      switch (pos) {
-        case "POR":
-          return 2;
-        case "DEF":
-          return 5;
-        case "MED":
-          return 4;
-        case "DEL":
-          return 4;
-      }
+    switch (_formacion) {
+      case "4-4-2":
+        switch (pos) {
+          case "POR":
+            return 2;
+          case "DEF":
+            return 5;
+          case "MED":
+            return 5;
+          case "DEL":
+            return 3;
+          default:
+            return 0;
+        }
+      case "4-3-3":
+        switch (pos) {
+          case "POR":
+            return 2;
+          case "DEF":
+            return 5;
+          case "MED":
+            return 4;
+          case "DEL":
+            return 4;
+          default:
+            return 0;
+        }
+      default:
+        return 0;
     }
-    return 0;
   }
 
   /*
     Nombre: _countSeleccionados
     Descripción:
-      Devuelve cuántos jugadores del plantel seleccionado pertenecen a una posición.
+      Cuenta cuántos jugadores seleccionados pertenecen a una posición dada.
+    Entradas:
+      - pos (String): posición a contar
+    Salidas:
+      - int: cantidad de jugadores seleccionados en esa posición
   */
   int _countSeleccionados(String pos) {
-    // Para contar, hay que buscar en todas las listas ya cargadas
+    List<JugadorReal> todos = [..._por, ..._def, ..._med, ..._del];
     int count = 0;
-
-    List<JugadorReal> todos = [...por, ...def, ...med, ...del];
-
-    for (final id in seleccionados) {
-      final j = todos.firstWhere((e) => e.id == id);
-      if (j.posicion == pos) count++;
+    for (final id in _seleccionados) {
+      final jList = todos.where((e) => e.id == id && e.posicion == pos);
+      if (jList.isNotEmpty) {
+        count++;
+      }
     }
-
     return count;
   }
 
   /*
     Nombre: _toggleJugador
     Descripción:
-      Agrega o saca un jugador del plantel respetando límites y presupuesto.
+      Agrega o quita un jugador del plantel, validando límite por posición y presupuesto restante.
+    Entradas:
+      - j (JugadorReal): jugador a togglear
+    Salidas: void
   */
   void _toggleJugador(JugadorReal j) {
-    final esSeleccionado = seleccionados.contains(j.id);
-
+    final esSeleccionado = _seleccionados.contains(j.id);
     if (!esSeleccionado) {
-      // Validar límite por posición
-      final cantPos = _countSeleccionados(j.posicion);
-      if (cantPos >= _limitePorPosicion(j.posicion)) {
+      final cntPos = _countSeleccionados(j.posicion);
+      final limite = _limitePorPosicion(j.posicion);
+      if (cntPos >= limite) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Límite alcanzado para ${j.posicion}")),
         );
         return;
       }
-
-      // Validar presupuesto
-      if (presupuestoRestante - j.valorMercado < 0) {
+      if (_presupuestoRestante - j.valorMercado < 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Presupuesto insuficiente.")),
         );
         return;
       }
-
-      seleccionados.add(j.id);
-      presupuestoRestante -= j.valorMercado;
+      _seleccionados.add(j.id);
+      _presupuestoRestante -= j.valorMercado;
     } else {
-      seleccionados.remove(j.id);
-      presupuestoRestante += j.valorMercado;
+      _seleccionados.remove(j.id);
+      _presupuestoRestante += j.valorMercado;
     }
-
     setState(() {});
   }
 
   /*
     Nombre: _cambiarFormacion
     Descripción:
-      Permite cambiar formación, reiniciando la selección actual.
+      Modifica la formación seleccionada y reinicia la selección actual.
+    Entradas:
+      - nueva (String): nueva formación ("4-4-2" o "4-3-3")
+    Salidas: void
   */
   void _cambiarFormacion(String nueva) {
-    if (nueva == formacion) return;
-
+    if (nueva == _formacion) return;
     setState(() {
-      formacion = nueva;
-      seleccionados.clear();
-      presupuestoRestante = presupuestoInicial;
+      _formacion = nueva;
+      _seleccionados.clear();
+      _presupuestoRestante = _presupuestoInicial;
     });
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Formación cambiada. Selección reiniciada."),
@@ -214,11 +256,15 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
   /*
     Nombre: _confirmarPlantel
     Descripción:
-      Valida que haya exactamente 15 jugadores seleccionados.
-      Navega a la pantalla de selección de titulares/suplentes.
+      Valida que haya exactamente 15 jugadores seleccionados, crea la alineación inicial
+      mediante el controlador, y navega hacia la pantalla de selección de titulares/suplentes,
+      pasando el id real de la alineación creada.
+
+    Entradas: ninguna
+    Salidas: Future<void>
   */
   Future<void> _confirmarPlantel() async {
-    if (seleccionados.length != 15) {
+    if (_seleccionados.length != 15) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Debés seleccionar exactamente 15 jugadores."),
@@ -235,11 +281,12 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       return;
     }
 
-    final equipo = await ControladorEquipoFantasy().obtenerEquipoUsuarioEnLiga(
+    // Obtener equipo fantasy del usuario en la liga
+    final equipos = await _ctrlEquiposFantasy.obtenerEquiposPorUsuarioYLiga(
       usuario.uid,
       widget.liga.id,
     );
-
+    final equipo = equipos.isNotEmpty ? equipos.first : null;
     if (equipo == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("No se encontró tu equipo fantasy.")),
@@ -247,30 +294,81 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       return;
     }
 
-    final plantel = await ControladorJugadoresReales().obtenerPorIds(
-      seleccionados,
+    // Log antes de guardar alineación inicial (plantel)
+    _log.informacion(
+      "Llamando guardarPlantelInicial: idLiga=${widget.liga.id}, idUsuario=${usuario.uid}, idEquipoFantasy=${equipo.id}, jugadoresSeleccionados=${_seleccionados.length}, formacion=$_formacion",
     );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => UiUsuarioEquipoFantasyAlineacionInicialDesktop(
-          liga: widget.liga,
-          participacion: widget.participacion,
-          idEquipoFantasy: equipo.id,
-          plantel: plantel,
-          formacion: formacion,
+    /*
+  Nombre: _confirmarPlantel (sección de guardado)
+  Descripción:
+    Guarda el plantel inicial mediante el controlador, registra logs
+    y navega hacia la pantalla de alineación inicial utilizando el
+    idAlineacion real generado. Se evita el uso de await dentro del
+    callback del Navigator, dado que dicho contexto no admite
+    ejecución asincrónica.
+*/
+
+    try {
+      _log.informacion(
+        "Llamando guardarPlantelInicial: idLiga=${widget.liga.id}, "
+        "idUsuario=${usuario.uid}, idEquipoFantasy=${equipo.id}, "
+        "cantidadJugadores=${_seleccionados.length}, formacion=$_formacion",
+      );
+
+      final alineacion = await _ctrlAlineaciones.guardarPlantelInicial(
+        widget.liga.id,
+        usuario.uid,
+        equipo.id,
+        _seleccionados,
+        _formacion,
+      );
+
+      _log.informacion(
+        "guardarPlantelInicial finalizado correctamente con idAlineacion=${alineacion.id}",
+      );
+
+      // ---------------------------------------------------------------------
+      //  Se carga el plantel antes de navegar, dado que el builder no puede
+      //  utilizar 'await'. Esta práctica es obligatoria según el PM.
+      // ---------------------------------------------------------------------
+      final plantel = await _ctrlJugadoresReales.obtenerPorIds(_seleccionados);
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => UiUsuarioEquipoFantasyAlineacionInicialDesktop(
+            liga: widget.liga,
+            participacion: widget.participacion,
+            idEquipoFantasy: equipo.id,
+            idAlineacion: alineacion.id, // ✔ Parámetro obligatorio
+            plantel: plantel,
+            formacion: _formacion,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      _log.informacion("Error en guardarPlantelInicial: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error al guardar el plantel inicial.")),
+      );
+    }
   }
 
   /*
-    Nombre: _listaJugadores
+    Nombre: _buildListaPorPosicion
     Descripción:
-      Crea la lista visual de jugadores para una posición.
+      Crea un widget ExpansionTile con lista de jugadores de una posición dada.
+    Entradas:
+      - titulo (String): título de sección
+      - lista (List<JugadorReal>): jugadores disponibles
+    Salidas:
+      - Widget
   */
-  Widget _listaJugadores(String titulo, List<JugadorReal> lista) {
+  Widget _buildListaPorPosicion(String titulo, List<JugadorReal> lista) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: ExpansionTile(
@@ -283,7 +381,7 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                   "Equipo: ${j.idEquipoReal} · Valor: ${j.valorMercado}",
                 ),
                 trailing: Checkbox(
-                  value: seleccionados.contains(j.id),
+                  value: _seleccionados.contains(j.id),
                   onChanged: (_) => _toggleJugador(j),
                 ),
               ),
@@ -297,13 +395,11 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Armado del plantel — ${widget.liga.nombre}")),
-      body: cargando
+      body: _cargando
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 const SizedBox(height: 16),
-
-                // Formación
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -311,7 +407,7 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                       const Text("Formación:", style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 12),
                       DropdownButton<String>(
-                        value: formacion,
+                        value: _formacion,
                         items: const [
                           DropdownMenuItem(
                             value: "4-4-2",
@@ -322,47 +418,40 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                             child: Text("4-3-3"),
                           ),
                         ],
-                        onChanged: (v) => _cambiarFormacion(v!),
+                        onChanged: (v) {
+                          if (v != null) _cambiarFormacion(v);
+                        },
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
-                // Presupuesto
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    "Presupuesto restante: $presupuestoRestante / $presupuestoInicial",
+                    "Presupuesto restante: $_presupuestoRestante / $_presupuestoInicial",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-
                 const Divider(),
-
-                // Listas de jugadores
                 Expanded(
                   child: ListView(
                     children: [
-                      _listaJugadores("Arqueros (POR)", por),
-                      _listaJugadores("Defensores (DEF)", def),
-                      _listaJugadores("Mediocampistas (MED)", med),
-                      _listaJugadores("Delanteros (DEL)", del),
+                      _buildListaPorPosicion("Arqueros (POR)", _por),
+                      _buildListaPorPosicion("Defensores (DEF)", _def),
+                      _buildListaPorPosicion("Mediocampistas (MED)", _med),
+                      _buildListaPorPosicion("Delanteros (DEL)", _del),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 ElevatedButton(
                   onPressed: _confirmarPlantel,
                   child: const Text("Confirmar plantel"),
                 ),
-
                 const SizedBox(height: 16),
               ],
             ),

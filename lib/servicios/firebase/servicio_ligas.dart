@@ -27,6 +27,18 @@ class ServicioLigas {
   /// Servicio de logs para registrar acciones y errores relacionados a ligas.
   final ServicioLog _log = ServicioLog();
 
+  /// Sanitización universal de IDs o campos de texto
+  String _sanitizarTexto(String v) {
+    return v
+        .trim()
+        .toLowerCase()
+        .replaceAll('"', '')
+        .replaceAll("'", "")
+        .replaceAll("\\", "")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "");
+  }
+
   /*
     Nombre: crearLiga
     Descripción:
@@ -38,7 +50,10 @@ class ServicioLigas {
   */
   Future<Liga> crearLiga(Liga liga) async {
     try {
-      final doc = await _db.collection("ligas").add(liga.aMapa());
+      final datos = liga.aMapa();
+      datos['nombreBusqueda'] = _sanitizarTexto(liga.nombre);
+
+      final doc = await _db.collection("ligas").add(datos);
       final nuevaLiga = liga.copiarCon(id: doc.id);
 
       _log.informacion("${TextosApp.LOG_LIGA_CREADA} ${nuevaLiga.id}");
@@ -60,6 +75,8 @@ class ServicioLigas {
   */
   Future<Liga?> obtenerLiga(String id) async {
     try {
+      id = _sanitizarTexto(id);
+
       final doc = await _db.collection("ligas").doc(id).get();
 
       if (!doc.exists) {
@@ -108,12 +125,13 @@ class ServicioLigas {
   */
   Future<List<Liga>> buscarLigasPorNombre(String texto) async {
     try {
-      if (texto.trim().isEmpty) return [];
+      texto = _sanitizarTexto(texto);
+      if (texto.isEmpty) return [];
 
       final query = await _db
           .collection("ligas")
-          .where('nombreBusqueda', isGreaterThanOrEqualTo: texto.toLowerCase())
-          .where('nombreBusqueda', isLessThan: '${texto.toLowerCase()}z')
+          .where('nombreBusqueda', isGreaterThanOrEqualTo: texto)
+          .where('nombreBusqueda', isLessThan: '${texto}z')
           .get();
 
       _log.informacion("Buscar ligas por nombre: '$texto'");
@@ -121,7 +139,6 @@ class ServicioLigas {
       return query.docs.map((d) => Liga.desdeMapa(d.id, d.data())).toList();
     } catch (e) {
       _log.informacion("Buscar ligas por nombre: '$texto'");
-
       rethrow;
     }
   }
@@ -159,7 +176,10 @@ class ServicioLigas {
   */
   Future<void> editarLiga(Liga liga) async {
     try {
-      await _db.collection("ligas").doc(liga.id).update(liga.aMapa());
+      final datos = liga.aMapa();
+      datos['nombreBusqueda'] = _sanitizarTexto(liga.nombre);
+
+      await _db.collection("ligas").doc(liga.id).update(datos);
       _log.informacion("${TextosApp.LOG_LIGA_EDITADA} ${liga.id}");
     } catch (e) {
       _log.error("${TextosApp.LOG_LIGA_ERROR_EDITAR} $e");
@@ -178,6 +198,7 @@ class ServicioLigas {
   */
   Future<void> archivarLiga(String id) async {
     try {
+      id = _sanitizarTexto(id);
       await _db.collection("ligas").doc(id).update({'activa': false});
       _log.informacion("${TextosApp.LOG_LIGA_ARCHIVADA} $id");
     } catch (e) {
@@ -197,6 +218,7 @@ class ServicioLigas {
   */
   Future<void> activarLiga(String id) async {
     try {
+      id = _sanitizarTexto(id);
       await _db.collection("ligas").doc(id).update({'activa': true});
       _log.informacion("${TextosApp.LOG_LIGA_ACTIVADA} $id");
     } catch (e) {
@@ -216,6 +238,7 @@ class ServicioLigas {
   */
   Future<void> eliminarLiga(String id) async {
     try {
+      id = _sanitizarTexto(id);
       await _db.collection("ligas").doc(id).delete();
       _log.informacion("${TextosApp.LOG_LIGA_ELIMINADA} $id");
     } catch (e) {

@@ -86,11 +86,20 @@ service cloud.firestore {
     // Equipos Fantasy
     // --------------------------
     match /equipos_fantasy/{idEq} {
+
+      // LECTURA: solo el dueño del documento
       allow read:
         if request.auth != null
         && request.auth.uid == resource.data.idUsuario;
 
-      allow write:
+      // ESCRITURA:
+      // - CREATE → validar contra request.resource.data
+      // - UPDATE → validar contra resource.data
+      allow create:
+        if request.auth != null
+        && request.auth.uid == request.resource.data.idUsuario;
+
+      allow update, delete:
         if request.auth != null
         && request.auth.uid == resource.data.idUsuario;
     }
@@ -99,11 +108,19 @@ service cloud.firestore {
     // Alineaciones Fantasy
     // --------------------------
     match /alineaciones/{idAli} {
+      // LECTURA: solo el dueño del documento
       allow read:
         if request.auth != null
         && request.auth.uid == resource.data.idUsuario;
 
-      allow write:
+      // ESCRITURA:
+      // - CREATE → validar contra request.resource.data
+      // - UPDATE → validar contra resource.data
+      allow create:
+        if request.auth != null
+        && request.auth.uid == request.resource.data.idUsuario;
+
+      allow update, delete:
         if request.auth != null
         && request.auth.uid == resource.data.idUsuario;
     }

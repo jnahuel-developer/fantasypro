@@ -1,23 +1,22 @@
 /*
   Archivo: ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart
   Descripción:
-    Pantalla para seleccionar la alineación inicial de un equipo fantasy.
-    Permite elegir 11 titulares y 4 suplentes (1 por posición) a partir
-    de un plantel de 15 jugadores reales ya definido y una formación fija.
+    Pantalla destinada a la selección de la alineación inicial del equipo fantasy.
+    Se permite elegir 11 titulares y 4 suplentes (uno por posición) a partir del plantel
+    previamente definido. Una vez confirmada la alineación, se procede a guardar la
+    información mediante el controlador oficial y posteriormente se navega hacia la
+    pantalla de resumen del equipo fantasy.
 
   Dependencias:
     - modelos/liga.dart
     - modelos/participacion_liga.dart
     - modelos/jugador_real.dart
     - servicios/servicio_autenticacion.dart
+    - servicios/utilidades/servicio_log.dart
     - controladores/controlador_alineaciones.dart
-    - ui__usuario__equipo_fantasy__resumen__desktop.dart
-
-  Pantallas que navegan hacia esta:
-    - ui__usuario__equipo_fantasy__plantel__desktop.dart
 
   Pantallas destino:
-    - ui__usuario__equipo_fantasy__resumen__desktop.dart
+    - ui__usuario__equipo_fantasy__resumen__desktop.dart: muestra el resumen final del equipo.
 */
 
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
+import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 import 'ui__usuario__equipo_fantasy__resumen__desktop.dart';
 
@@ -33,6 +33,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
   final Liga liga;
   final ParticipacionLiga participacion;
   final String idEquipoFantasy;
+  final String idAlineacion; // ← agregado según requisito oficial
   final List<JugadorReal> plantel;
   final String formacion;
 
@@ -41,6 +42,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
     required this.liga,
     required this.participacion,
     required this.idEquipoFantasy,
+    required this.idAlineacion, // ← parámetro requerido
     required this.plantel,
     required this.formacion,
   });
@@ -52,27 +54,29 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
 
 class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
     extends State<UiUsuarioEquipoFantasyAlineacionInicialDesktop> {
-  /// Servicio de autenticación para obtener el usuario actual.
-  final ServicioAutenticacion servicioAutenticacion = ServicioAutenticacion();
+  /// Servicio destinado a obtener los datos del usuario actual.
+  final ServicioAutenticacion _servicioAuth = ServicioAutenticacion();
 
-  /// Controlador de alineaciones para guardar la alineación inicial.
-  final ControladorAlineaciones controladorAlineaciones =
-      ControladorAlineaciones();
+  /// Controlador encargado de la gestión de alineaciones.
+  final ControladorAlineaciones _ctrlAlineaciones = ControladorAlineaciones();
 
-  /// Lista de IDs de jugadores seleccionados como titulares.
-  final List<String> idsTitulares = [];
+  /// Servicio de log para registrar eventos relevantes.
+  final ServicioLog _log = ServicioLog();
 
-  /// Lista de IDs de jugadores seleccionados como suplentes.
-  final List<String> idsSuplentes = [];
+  /// Identificadores de los jugadores seleccionados como titulares.
+  final List<String> _idsTitulares = [];
+
+  /// Identificadores de los jugadores seleccionados como suplentes.
+  final List<String> _idsSuplentes = [];
 
   /*
     Nombre: _limitesTitulares
     Descripción:
-      Retorna el mapa de límites por posición para titulares según la formación.
-    Entradas:
-      - ninguna
+      Devuelve un mapa que contiene los límites permitidos por posición para los titulares,
+      definidos en función de la formación establecida para el equipo.
+    Entradas: ninguna
     Salidas:
-      - Map<String, int>
+      - Map<String, int>: límites por posición.
   */
   Map<String, int> _limitesTitulares() {
     if (widget.formacion == "4-4-2") {
@@ -85,12 +89,12 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _contarPorPosicion
     Descripción:
-      Cuenta cuántos jugadores de una lista de IDs corresponden a una posición dada.
+      Realiza un conteo de cuántos jugadores seleccionados pertenecen a una posición específica.
     Entradas:
-      - List<String> ids
-      - String posicion
+      - ids (List<String>): lista de identificadores seleccionados
+      - posicion (String): posición a evaluar (POR, DEF, MED, DEL)
     Salidas:
-      - int
+      - int: cantidad encontrada por posición.
   */
   int _contarPorPosicion(List<String> ids, String posicion) {
     return ids
@@ -107,11 +111,10 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _mostrarMensaje
     Descripción:
-      Muestra un mensaje rápido mediante SnackBar.
+      Muestra un mensaje breve mediante un SnackBar.
     Entradas:
-      - String texto
-    Salidas:
-      - ninguna
+      - texto (String): mensaje a desplegar.
+    Salidas: void.
   */
   void _mostrarMensaje(String texto) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(texto)));
@@ -120,38 +123,39 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _alternarTitular
     Descripción:
-      Agrega o quita un jugador de la lista de titulares respetando límites.
+      Realiza la asignación o eliminación de un jugador como titular, respetando los
+      límites permitidos por posición y evitando conflictos con suplentes.
     Entradas:
-      - JugadorReal jugador
-    Salidas:
-      - ninguna
+      - jugador (JugadorReal)
+    Salidas: void.
   */
   void _alternarTitular(JugadorReal jugador) {
-    if (idsTitulares.contains(jugador.id)) {
-      idsTitulares.remove(jugador.id);
+    if (_idsTitulares.contains(jugador.id)) {
+      _idsTitulares.remove(jugador.id);
     } else {
-      if (idsTitulares.length >= 11) {
+      if (_idsTitulares.length >= 11) {
         _mostrarMensaje("Debe haber exactamente 11 titulares.");
         return;
       }
 
       final limites = _limitesTitulares();
-      final actual = _contarPorPosicion(idsTitulares, jugador.posicion);
-      final limitePosicion = limites[jugador.posicion] ?? 0;
+      final usados = _contarPorPosicion(_idsTitulares, jugador.posicion);
 
-      if (actual >= limitePosicion) {
+      if (usados >= (limites[jugador.posicion] ?? 0)) {
         _mostrarMensaje(
-          "Ya se alcanzó el máximo de ${jugador.posicion} para la formación ${widget.formacion}.",
+          "Máximo alcanzado para ${jugador.posicion} según formación ${widget.formacion}.",
         );
         return;
       }
 
-      if (idsSuplentes.contains(jugador.id)) {
-        _mostrarMensaje("Un jugador no puede ser titular y suplente a la vez.");
+      if (_idsSuplentes.contains(jugador.id)) {
+        _mostrarMensaje(
+          "Un jugador no puede ser titular y suplente simultáneamente.",
+        );
         return;
       }
 
-      idsTitulares.add(jugador.id);
+      _idsTitulares.add(jugador.id);
     }
 
     setState(() {});
@@ -160,36 +164,35 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _alternarSuplente
     Descripción:
-      Agrega o quita un jugador de la lista de suplentes respetando límites.
-      Debe haber exactamente 1 suplente por posición.
+      Realiza la asignación o eliminación como suplente, verificando que exista uno por posición.
     Entradas:
-      - JugadorReal jugador
-    Salidas:
-      - ninguna
+      - jugador (JugadorReal)
+    Salidas: void.
   */
   void _alternarSuplente(JugadorReal jugador) {
-    if (idsSuplentes.contains(jugador.id)) {
-      idsSuplentes.remove(jugador.id);
+    if (_idsSuplentes.contains(jugador.id)) {
+      _idsSuplentes.remove(jugador.id);
     } else {
-      if (idsSuplentes.length >= 4) {
-        _mostrarMensaje("Debe haber exactamente 4 suplentes (1 por posición).");
-        return;
-      }
-
-      final actual = _contarPorPosicion(idsSuplentes, jugador.posicion);
-      if (actual >= 1) {
+      if (_idsSuplentes.length >= 4) {
         _mostrarMensaje(
-          "Ya existe un suplente para la posición ${jugador.posicion}.",
+          "Debe haber exactamente 4 suplentes (uno por posición).",
         );
         return;
       }
 
-      if (idsTitulares.contains(jugador.id)) {
-        _mostrarMensaje("Un jugador no puede ser titular y suplente a la vez.");
+      if (_contarPorPosicion(_idsSuplentes, jugador.posicion) >= 1) {
+        _mostrarMensaje("Ya existe un suplente ${jugador.posicion}.");
         return;
       }
 
-      idsSuplentes.add(jugador.id);
+      if (_idsTitulares.contains(jugador.id)) {
+        _mostrarMensaje(
+          "Un jugador no puede ser titular y suplente simultáneamente.",
+        );
+        return;
+      }
+
+      _idsSuplentes.add(jugador.id);
     }
 
     setState(() {});
@@ -198,36 +201,32 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _validarSeleccion
     Descripción:
-      Valida que la cantidad y distribución de titulares y suplentes sea correcta.
-    Entradas:
-      - ninguna
+      Verifica que la selección cumpla estrictamente con las reglas de cantidad y
+      distribución para titulares y suplentes.
+    Entradas: ninguna
     Salidas:
-      - bool (true si la selección es válida)
+      - bool: true si la selección es válida; false si se detecta inconsistencia.
   */
   bool _validarSeleccion() {
-    if (idsTitulares.length != 11) {
+    if (_idsTitulares.length != 11) {
       _mostrarMensaje("Debe haber exactamente 11 titulares.");
       return false;
     }
 
-    if (idsSuplentes.length != 4) {
-      _mostrarMensaje("Debe haber exactamente 4 suplentes (1 por posición).");
+    if (_idsSuplentes.length != 4) {
+      _mostrarMensaje("Debe haber exactamente 4 suplentes.");
       return false;
     }
 
     final limites = _limitesTitulares();
+
     for (final pos in ["POR", "DEF", "MED", "DEL"]) {
-      final countTitulares = _contarPorPosicion(idsTitulares, pos);
-      if (countTitulares != (limites[pos] ?? 0)) {
-        _mostrarMensaje(
-          "Distribución de titulares inválida para la posición $pos en la formación ${widget.formacion}.",
-        );
+      if (_contarPorPosicion(_idsTitulares, pos) != (limites[pos] ?? 0)) {
+        _mostrarMensaje("Distribución incorrecta para posición $pos.");
         return false;
       }
-
-      final countSuplentes = _contarPorPosicion(idsSuplentes, pos);
-      if (countSuplentes != 1) {
-        _mostrarMensaje("Debe haber exactamente 1 suplente $pos.");
+      if (_contarPorPosicion(_idsSuplentes, pos) != 1) {
+        _mostrarMensaje("Debe existir exactamente 1 suplente $pos.");
         return false;
       }
     }
@@ -238,29 +237,37 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _confirmarAlineacion
     Descripción:
-      Valida la selección y guarda la alineación inicial mediante el controlador.
-      Navega luego a la pantalla de resumen.
-    Entradas:
-      - ninguna
-    Salidas:
-      - Future<void>
+      Ejecuta la validación correspondiente y procede a guardar la alineación inicial,
+      utilizando el idAlineacion real. Una vez persistida la información, la vista
+      navega hacia la pantalla de resumen.
+    Entradas: ninguna
+    Salidas: Future<void>
   */
   Future<void> _confirmarAlineacion() async {
     if (!_validarSeleccion()) return;
 
-    final usuario = servicioAutenticacion.obtenerUsuarioActual();
+    final usuario = _servicioAuth.obtenerUsuarioActual();
     if (usuario == null) {
       _mostrarMensaje("No hay usuario autenticado.");
       return;
     }
 
     try {
-      final alineacion = await controladorAlineaciones.guardarAlineacionInicial(
-        usuario.uid,
-        widget.liga.id,
-        widget.idEquipoFantasy,
-        idsTitulares,
-        idsSuplentes,
+      _log.informacion(
+        "Guardando alineación inicial con idAlineacion=${widget.idAlineacion}, "
+        "idLiga=${widget.liga.id}, idUsuario=${usuario.uid}",
+      );
+
+      final alineacion = await _ctrlAlineaciones.guardarAlineacionInicial(
+        widget.liga.id, // idLiga
+        usuario.uid, // idUsuario
+        widget.idAlineacion, // idAlineacion real
+        _idsTitulares,
+        _idsSuplentes,
+      );
+
+      _log.informacion(
+        "guardarAlineacionInicial finalizado correctamente para idAlineacion=${alineacion.id}",
       );
 
       if (!mounted) return;
@@ -277,6 +284,7 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
         ),
       );
     } catch (e) {
+      _log.informacion("Error al guardar alineación inicial: $e");
       _mostrarMensaje("Error al guardar la alineación inicial.");
     }
   }
@@ -284,11 +292,12 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   /*
     Nombre: _seccionSeleccion
     Descripción:
-      Construye una sección de selección (titulares o suplentes) con checkboxes.
+      Genera un bloque visual para seleccionar titulares o suplentes, utilizando
+      elementos de tipo CheckboxListTile.
     Entradas:
-      - String titulo
-      - List<String> seleccionados
-      - void Function(JugadorReal) onToggle
+      - titulo (String)
+      - seleccionados (List<String>)
+      - onToggle (void Function(JugadorReal))
     Salidas:
       - Widget
   */
@@ -342,12 +351,12 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
               children: [
                 _seccionSeleccion(
                   "Titulares (11)",
-                  idsTitulares,
+                  _idsTitulares,
                   _alternarTitular,
                 ),
                 _seccionSeleccion(
                   "Suplentes (4)",
-                  idsSuplentes,
+                  _idsSuplentes,
                   _alternarSuplente,
                 ),
               ],

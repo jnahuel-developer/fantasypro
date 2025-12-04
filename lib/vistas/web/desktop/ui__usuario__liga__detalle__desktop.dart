@@ -25,12 +25,12 @@
     - ui__usuario__inicio__lista__desktop.dart
 
   Pantallas destino:
-    - ui__usuario__equipo_fantasy__plantel__desktop.dart
-    - ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart
-    - ui__usuario__equipo_fantasy__resumen__desktop.dart
+    - ui__usuario__equipo_fantasy__plantel__desktop.dart: navegación luego de crear o continuar armado del equipo fantasy.
+    - ui__usuario__equipo_fantasy__resumen__desktop.dart: navegación cuando el usuario ya completó el equipo y desea ver el resumen.
 */
 
 import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
+import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
@@ -60,24 +60,44 @@ class UiUsuarioLigaDetalleDesktop extends StatefulWidget {
 
 class _UiUsuarioLigaDetalleDesktopEstado
     extends State<UiUsuarioLigaDetalleDesktop> {
-  final ServicioAutenticacion servicioAuth = ServicioAutenticacion();
-  final ServicioParticipaciones servicioParticipaciones =
+  /// Servicio de autenticación para obtener el usuario actual.
+  final ServicioAutenticacion _servicioAuth = ServicioAutenticacion();
+
+  /// Servicio de participación usado solo para recuperación directa por ID.
+  final ServicioParticipaciones _servicioParticipaciones =
       ServicioParticipaciones();
-  final ControladorParticipaciones controladorParticipaciones =
+
+  /// Controlador de participaciones en ligas.
+  final ControladorParticipaciones _ctrlParticipaciones =
       ControladorParticipaciones();
-  final ControladorFechas controladorFechas = ControladorFechas();
-  final ControladorAlineaciones controladorAlineaciones =
-      ControladorAlineaciones();
-  final ControladorEquipoFantasy controladorEquiposFantasy =
-      ControladorEquipoFantasy();
-  final ControladorJugadoresReales controladorJugadoresReales =
+
+  /// Controlador de fechas de liga.
+  final ControladorFechas _ctrlFechas = ControladorFechas();
+
+  /// Controlador de alineaciones fantasy.
+  final ControladorAlineaciones _ctrlAlineaciones = ControladorAlineaciones();
+
+  /// Controlador de equipos fantasy.
+  final ControladorEquipoFantasy _ctrlEquipos = ControladorEquipoFantasy();
+
+  /// Controlador de jugadores reales.
+  final ControladorJugadoresReales _ctrlJugadoresReales =
       ControladorJugadoresReales();
 
-  bool cargando = true;
-  String? mensajeError;
-  ParticipacionLiga? participacion;
-  bool existeFechaActiva = false;
-  final TextEditingController campoNombreEquipo = TextEditingController();
+  /// Campo de texto para ingresar nombre del equipo fantasy.
+  final TextEditingController _campoNombreEquipo = TextEditingController();
+
+  /// Participación actual del usuario en la liga (si existe).
+  ParticipacionLiga? _participacion;
+
+  /// Indica si hay al menos una fecha activa en la liga.
+  bool _existeFechaActiva = false;
+
+  /// Estado de carga general de la pantalla.
+  bool _cargando = true;
+
+  /// Mensaje de error actual (si existe).
+  String? _mensajeError;
 
   @override
   void initState() {
@@ -85,84 +105,116 @@ class _UiUsuarioLigaDetalleDesktopEstado
     _cargar();
   }
 
+  /*
+    Nombre: _cargar
+    Descripción:
+      Recupera el usuario autenticado, verifica si participa en la liga,
+      y consulta si hay fechas activas para bloquear el flujo.
+
+    Entradas: ninguna
+    Salidas: void: sin valor devuelto
+  */
   Future<void> _cargar() async {
     setState(() {
-      cargando = true;
-      mensajeError = null;
+      _cargando = true;
+      _mensajeError = null;
     });
 
+    final ServicioLog log = ServicioLog();
+
     try {
-      final usuario = servicioAuth.obtenerUsuarioActual();
+      log.informacion(
+        "Iniciando _cargar en la pantalla <ui__usuario__liga__detalle__desktop>",
+      );
+
+      final usuario = _servicioAuth.obtenerUsuarioActual();
+
+      log.informacion("obtenerUsuarioActual devolvió $usuario");
+
       if (usuario == null) {
         setState(() {
-          mensajeError = "No hay usuario autenticado.";
-          cargando = false;
+          _mensajeError = "No hay usuario autenticado.";
+          _cargando = false;
         });
         return;
       }
 
       final idUsuario = usuario.uid;
 
-      participacion = await servicioParticipaciones.obtenerParticipacion(
+      log.informacion("idUsuario = $idUsuario");
+
+      _participacion = await _servicioParticipaciones.obtenerParticipacion(
         idUsuario,
         widget.liga.id,
       );
 
-      final fechas = await controladorFechas.obtenerPorLiga(widget.liga.id);
-      existeFechaActiva = fechas.any((f) => f.activa && !f.cerrada);
+      final fechas = await _ctrlFechas.obtenerPorLiga(widget.liga.id);
 
-      setState(() => cargando = false);
+      log.informacion("obtenerPorLiga devolvió $fechas");
+
+      _existeFechaActiva = fechas.any((f) => f.activa && !f.cerrada);
+
+      setState(() => _cargando = false);
     } catch (e) {
       setState(() {
-        mensajeError = "Error al cargar los datos de la liga.";
-        cargando = false;
+        _mensajeError = "Error al cargar los datos de la liga.";
+        _cargando = false;
       });
     }
   }
 
+  /*
+    Nombre: _crearParticipacionYContinuar
+    Descripción:
+      Registra una nueva participación del usuario en la liga con el nombre
+      provisto, y navega a la pantalla de armado del plantel inicial.
+
+    Entradas: ninguna
+    Salidas: void: sin valor devuelto
+  */
   Future<void> _crearParticipacionYContinuar() async {
-    final nombreEquipo = campoNombreEquipo.text.trim();
+    final nombreEquipo = _campoNombreEquipo.text.trim();
 
     if (nombreEquipo.isEmpty) {
       setState(() {
-        mensajeError = "Debés ingresar un nombre para tu equipo fantasy.";
+        _mensajeError = "Debés ingresar un nombre para tu equipo fantasy.";
       });
       return;
     }
 
     setState(() {
-      cargando = true;
-      mensajeError = null;
+      _cargando = true;
+      _mensajeError = null;
     });
 
     try {
-      final usuario = servicioAuth.obtenerUsuarioActual();
+      final usuario = _servicioAuth.obtenerUsuarioActual();
       if (usuario == null) {
         setState(() {
-          mensajeError = "No hay usuario autenticado.";
-          cargando = false;
+          _mensajeError = "No hay usuario autenticado.";
+          _cargando = false;
         });
         return;
       }
 
       final idUsuario = usuario.uid;
 
-      await controladorParticipaciones.registrarParticipacionUsuario(
+      await _ctrlParticipaciones.registrarParticipacionUsuario(
         widget.liga.id,
         idUsuario,
         nombreEquipo,
       );
 
-      participacion = await servicioParticipaciones.obtenerParticipacion(
+      _participacion = await _servicioParticipaciones.obtenerParticipacion(
         idUsuario,
         widget.liga.id,
       );
 
-      setState(() => cargando = false);
+      setState(() => _cargando = false);
 
-      if (participacion == null) {
+      if (_participacion == null) {
         setState(() {
-          mensajeError = "No se pudo recuperar la participación creada.";
+          _mensajeError = "No se pudo recuperar la participación creada.";
         });
         return;
       }
@@ -172,46 +224,63 @@ class _UiUsuarioLigaDetalleDesktopEstado
         MaterialPageRoute(
           builder: (_) => UiUsuarioEquipoFantasyPlantelDesktop(
             liga: widget.liga,
-            participacion: participacion!,
+            participacion: _participacion!,
           ),
         ),
       );
     } catch (e) {
       setState(() {
-        mensajeError = "Error al crear la participación en la liga.";
-        cargando = false;
+        _mensajeError = "Error al crear la participación en la liga.";
+        _cargando = false;
       });
     }
   }
 
+  /*
+    Nombre: _continuarArmado
+    Descripción:
+      Permite reanudar el armado del equipo si la participación está incompleta.
+
+    Entradas: ninguna
+    Salidas: void: sin valor devuelto
+  */
   void _continuarArmado() {
-    if (participacion == null) return;
+    if (_participacion == null) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => UiUsuarioEquipoFantasyPlantelDesktop(
           liga: widget.liga,
-          participacion: participacion!,
+          participacion: _participacion!,
         ),
       ),
     );
   }
 
+  /*
+    Nombre: _verResumen
+    Descripción:
+      Recupera la alineación y plantel actual del usuario y navega a la pantalla
+      de resumen fantasy.
+
+    Entradas: ninguna
+    Salidas: void: sin valor devuelto
+  */
   Future<void> _verResumen() async {
-    if (participacion == null) return;
+    if (_participacion == null) return;
 
     setState(() {
-      cargando = true;
-      mensajeError = null;
+      _cargando = true;
+      _mensajeError = null;
     });
 
     try {
-      final usuario = servicioAuth.obtenerUsuarioActual();
+      final usuario = _servicioAuth.obtenerUsuarioActual();
       if (usuario == null) {
         setState(() {
-          mensajeError = "No hay usuario autenticado.";
-          cargando = false;
+          _mensajeError = "No hay usuario autenticado.";
+          _cargando = false;
         });
         return;
       }
@@ -219,42 +288,46 @@ class _UiUsuarioLigaDetalleDesktopEstado
       final idUsuario = usuario.uid;
       final idLiga = widget.liga.id;
 
-      final alineaciones = await controladorAlineaciones
-          .obtenerPorUsuarioEnLiga(idLiga, idUsuario);
+      final alineaciones = await _ctrlAlineaciones.obtenerPorUsuarioEnLiga(
+        idLiga,
+        idUsuario,
+      );
       final alineacion = alineaciones.isNotEmpty ? alineaciones.first : null;
 
       if (alineacion == null) {
         setState(() {
-          mensajeError = "No se encontró la alineación inicial.";
-          cargando = false;
+          _mensajeError = "No se encontró la alineación inicial.";
+          _cargando = false;
         });
         return;
       }
 
-      final equipo = await controladorEquiposFantasy.obtenerEquipoUsuarioEnLiga(
+      final equipos = await _ctrlEquipos.obtenerEquiposPorUsuarioYLiga(
         idUsuario,
         idLiga,
       );
+      final equipo = equipos.isNotEmpty ? equipos.first : null;
+
       if (equipo == null) {
         setState(() {
-          mensajeError = "No se encontró el equipo fantasy.";
-          cargando = false;
+          _mensajeError = "No se encontró el equipo fantasy.";
+          _cargando = false;
         });
         return;
       }
 
-      final plantel = await controladorJugadoresReales.obtenerPorIds(
+      final plantel = await _ctrlJugadoresReales.obtenerPorIds(
         equipo.idsJugadoresPlantel,
       );
 
-      setState(() => cargando = false);
+      setState(() => _cargando = false);
 
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => UiUsuarioEquipoFantasyResumenDesktop(
             liga: widget.liga,
-            participacion: participacion!,
+            participacion: _participacion!,
             alineacion: alineacion,
             plantel: plantel,
           ),
@@ -262,8 +335,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
       );
     } catch (e) {
       setState(() {
-        mensajeError = "Error al cargar el resumen del equipo.";
-        cargando = false;
+        _mensajeError = "Error al cargar el resumen del equipo.";
+        _cargando = false;
       });
     }
   }
@@ -276,7 +349,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
       appBar: AppBar(title: Text("Liga: ${liga.nombre}")),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: cargando
+        child: _cargando
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,16 +363,16 @@ class _UiUsuarioLigaDetalleDesktopEstado
                   ),
                   const SizedBox(height: 20),
 
-                  if (mensajeError != null)
+                  if (_mensajeError != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
-                        mensajeError!,
+                        _mensajeError!,
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
 
-                  if (existeFechaActiva)
+                  if (_existeFechaActiva)
                     const Text(
                       "No podés crear ni modificar tu equipo mientras haya una fecha activa en curso.",
                       style: TextStyle(
@@ -308,14 +381,14 @@ class _UiUsuarioLigaDetalleDesktopEstado
                       ),
                     )
                   else ...[
-                    if (participacion == null) ...[
+                    if (_participacion == null) ...[
                       const Text(
                         "Elegí un nombre para tu equipo fantasy:",
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: campoNombreEquipo,
+                        controller: _campoNombreEquipo,
                         decoration: const InputDecoration(
                           labelText: "Nombre del equipo",
                           border: OutlineInputBorder(),
@@ -326,8 +399,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
                         onPressed: _crearParticipacionYContinuar,
                         child: const Text("Crear equipo fantasy"),
                       ),
-                    ] else if (participacion != null &&
-                        participacion!.plantelCompleto == false) ...[
+                    ] else if (_participacion!.plantelCompleto == false) ...[
                       const Text(
                         "Tenés un equipo fantasy pendiente de completar.",
                         style: TextStyle(fontSize: 16),
@@ -337,8 +409,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
                         onPressed: _continuarArmado,
                         child: const Text("Continuar armado del equipo"),
                       ),
-                    ] else if (participacion != null &&
-                        participacion!.plantelCompleto == true) ...[
+                    ] else if (_participacion!.plantelCompleto == true) ...[
                       const Text(
                         "Tu equipo fantasy ya está completo.",
                         style: TextStyle(fontSize: 16),

@@ -10,6 +10,11 @@
     - modelos/participacion_liga.dart
     - modelos/alineacion.dart
     - modelos/jugador_real.dart
+
+  Pantallas que navegan hacia esta:
+    - ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart: al finalizar la selección táctica.
+
+  Pantallas destino: ninguna
 */
 
 import 'package:flutter/material.dart';
@@ -19,9 +24,16 @@ import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 
 class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
+  /// Liga actual en la que participa el usuario.
   final Liga liga;
+
+  /// Participación del usuario en la liga.
   final ParticipacionLiga participacion;
+
+  /// Alineación inicial seleccionada (titulares, suplentes, formación).
   final Alineacion alineacion;
+
+  /// Plantel completo de jugadores ya recuperados por controlador.
   final List<JugadorReal> plantel;
 
   const UiUsuarioEquipoFantasyResumenDesktop({
@@ -35,11 +47,13 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
   /*
     Nombre: _buscarJugador
     Descripción:
-      Busca un jugador dentro del plantel por ID.
+      Busca un jugador dentro del plantel usando su ID.
+
     Entradas:
-      - String idJugador
+      - idJugador (String): ID del jugador a buscar
+
     Salidas:
-      - JugadorReal
+      - JugadorReal: instancia del jugador encontrado
   */
   JugadorReal _buscarJugador(String idJugador) {
     return plantel.firstWhere((j) => j.id == idJugador);
@@ -48,11 +62,12 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
   /*
     Nombre: _calcularCosto
     Descripción:
-      Suma el valorMercado de todos los jugadores del plantel.
-    Entradas:
-      - ninguna
+      Calcula el costo total del plantel sumando el valorMercado de cada jugador.
+
+    Entradas: ninguna
+
     Salidas:
-      - int
+      - int: total acumulado del valor del plantel
   */
   int _calcularCosto() {
     return plantel.fold<int>(0, (prev, j) => prev + j.valorMercado);
@@ -61,12 +76,15 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
   /*
     Nombre: _listaJugadores
     Descripción:
-      Convierte una lista de IDs en widgets con datos de cada jugador.
+      Construye un widget visual que muestra una lista de jugadores
+      basada en una lista de IDs, con su información básica.
+
     Entradas:
-      - List<String> ids
-      - String titulo
+      - titulo (String): encabezado de la sección
+      - ids (List<String>): lista de IDs de jugadores
+
     Salidas:
-      - Widget
+      - Widget: sección visual renderizada
   */
   Widget _listaJugadores(String titulo, List<String> ids) {
     return Card(
@@ -102,9 +120,14 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final presupuestoInicial = 1000;
-    final costoPlantel = _calcularCosto();
-    final presupuestoRestante = presupuestoInicial - costoPlantel;
+    /// Presupuesto inicial fijo del sistema.
+    const int presupuestoInicial = 1000;
+
+    /// Costo actual del plantel.
+    final int costoPlantel = _calcularCosto();
+
+    /// Presupuesto restante luego de seleccionar plantel.
+    final int presupuestoRestante = presupuestoInicial - costoPlantel;
 
     return Scaffold(
       appBar: AppBar(title: Text("Resumen del equipo — ${liga.nombre}")),
@@ -121,7 +144,7 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Presupuestos
+          // Presupuesto total del equipo
           Card(
             margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             child: ListTile(
@@ -134,10 +157,10 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // Titulares
+          // Sección de titulares
           _listaJugadores("Titulares", alineacion.idsTitulares),
 
-          // Suplentes
+          // Sección de suplentes
           _listaJugadores("Suplentes", alineacion.idsSuplentes),
 
           const SizedBox(height: 32),
@@ -146,7 +169,6 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 24),
         ],
       ),

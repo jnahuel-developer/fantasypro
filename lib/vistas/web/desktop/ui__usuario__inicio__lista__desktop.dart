@@ -3,14 +3,17 @@
   Descripción:
     Pantalla principal del usuario final donde se listan las ligas activas.
     Permite buscar ligas y navegar al detalle para unirse.
+
   Dependencias:
     - modelos/liga.dart
     - controladores/controlador_ligas.dart
     - servicios/servicio_autenticacion.dart
+
   Pantallas que navegan hacia esta:
     - ui__comun__autenticacion__login__desktop.dart
+
   Pantallas destino:
-    - ui__usuario__liga__detalle__desktop.dart
+    - ui__usuario__liga__detalle__desktop.dart: navegación al seleccionar una liga para unirse.
 */
 
 import 'package:flutter/material.dart';
@@ -32,72 +35,102 @@ class UiUsuarioInicioListaDesktop extends StatefulWidget {
 class _UiUsuarioInicioListaDesktopEstado
     extends State<UiUsuarioInicioListaDesktop> {
   /// Controlador de ligas.
-  final ControladorLigas controladorLigas = ControladorLigas();
+  final ControladorLigas _controladorLigas = ControladorLigas();
 
-  bool cargando = true;
-  List<Liga> ligas = [];
-  final TextEditingController ctrlBuscar = TextEditingController();
+  /// Lista actual de ligas mostradas.
+  List<Liga> _ligas = [];
+
+  /// Estado de carga de datos.
+  bool _cargando = true;
+
+  /// Campo de búsqueda.
+  final TextEditingController _ctrlBuscar = TextEditingController();
+
+  /// Mensaje de error en caso de excepción real.
+  String? _mensajeError;
 
   @override
   void initState() {
     super.initState();
-    cargar();
+    _cargar();
   }
 
   /*
-    Nombre: cargar
+    Nombre: _cargar
     Descripción:
-      Obtiene y ordena todas las ligas activas.
+      Carga todas las ligas activas y las ordena por nombre.
+      Si ocurre un error real en el controlador, muestra mensaje de error.
+      Si la lista está vacía pero sin excepción, no se considera error.
+
     Entradas: ninguna
     Salidas: Future<void>
   */
-  Future<void> cargar() async {
-    setState(() => cargando = true);
+  Future<void> _cargar() async {
+    setState(() {
+      _cargando = true;
+      _mensajeError = null;
+    });
 
     try {
-      final resultado = await controladorLigas.obtenerActivas();
-      ligas = resultado.toList()
+      final resultado = await _controladorLigas.obtenerActivas();
+      _ligas = resultado.toList()
         ..sort(
           (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
         );
-    } catch (_) {}
+    } catch (e) {
+      _mensajeError = "Error al cargar las ligas activas.";
+    }
 
-    setState(() => cargando = false);
+    setState(() => _cargando = false);
   }
 
   /*
-    Nombre: buscar
+    Nombre: _buscar
     Descripción:
-      Realiza búsqueda de ligas según texto ingresado.
-    Entradas: texto de búsqueda
+      Realiza búsqueda de ligas por nombre ingresado.
+      Si el texto está vacío, recarga todas las activas.
+
+    Entradas:
+      - texto (String): texto a buscar
+
     Salidas: Future<void>
   */
-  Future<void> buscar(String texto) async {
-    setState(() => cargando = true);
+  Future<void> _buscar(String texto) async {
+    setState(() {
+      _cargando = true;
+      _mensajeError = null;
+    });
 
     try {
       if (texto.trim().isEmpty) {
-        ligas = (await controladorLigas.obtenerActivas()).toList();
+        _ligas = (await _controladorLigas.obtenerActivas()).toList();
       } else {
-        ligas = (await controladorLigas.buscar(texto.trim())).toList();
+        _ligas = (await _controladorLigas.buscar(texto.trim())).toList();
       }
 
-      ligas.sort(
+      _ligas.sort(
         (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
       );
-    } catch (_) {}
+    } catch (e) {
+      _mensajeError = "Error al realizar la búsqueda.";
+    }
 
-    setState(() => cargando = false);
+    setState(() => _cargando = false);
   }
 
   /*
-    Nombre: itemLiga
+    Nombre: _itemLiga
     Descripción:
-      Construye la tarjeta visual de una liga en la lista.
-    Entradas: Liga liga
-    Salidas: Widget
+      Construye el widget visual para una liga individual,
+      con botón que navega a detalle y recarga al volver.
+
+    Entradas:
+      - liga (Liga): liga a renderizar
+
+    Salidas:
+      - Widget: tarjeta de la liga
   */
-  Widget itemLiga(Liga liga) {
+  Widget _itemLiga(Liga liga) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -111,7 +144,7 @@ class _UiUsuarioInicioListaDesktopEstado
               MaterialPageRoute(
                 builder: (_) => UiUsuarioLigaDetalleDesktop(liga: liga),
               ),
-            ).then((_) => cargar());
+            ).then((_) => _cargar());
           },
           child: const Text("Unirse"),
         ),
@@ -150,23 +183,30 @@ class _UiUsuarioInicioListaDesktopEstado
         child: Column(
           children: [
             TextField(
-              controller: ctrlBuscar,
+              controller: _ctrlBuscar,
               decoration: InputDecoration(
                 labelText: "Buscar ligas",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
-                  onPressed: () => buscar(ctrlBuscar.text),
+                  onPressed: () => _buscar(_ctrlBuscar.text),
                 ),
               ),
-              onSubmitted: buscar,
+              onSubmitted: _buscar,
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: cargando
+              child: _cargando
                   ? const Center(child: CircularProgressIndicator())
-                  : ligas.isEmpty
+                  : _mensajeError != null
+                  ? Center(
+                      child: Text(
+                        _mensajeError!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    )
+                  : _ligas.isEmpty
                   ? const Center(child: Text("No hay ligas disponibles."))
-                  : ListView(children: ligas.map(itemLiga).toList()),
+                  : ListView(children: _ligas.map(_itemLiga).toList()),
             ),
           ],
         ),

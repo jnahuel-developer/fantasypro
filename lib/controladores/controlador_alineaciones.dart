@@ -259,13 +259,30 @@ class ControladorAlineaciones {
 
     await _servicio.editarAlineacion(actualizada);
 
-    final participaciones = await _servicioPart.obtenerPorLiga(idLiga);
-    final participacion = participaciones.firstWhere(
-      (p) => p.idUsuario == idUsuario,
+    _log.informacion(
+      "Buscando participación del usuario $idUsuario en liga $idLiga",
     );
+
+    final participacion = await _servicioPart.obtenerParticipacion(
+      idUsuario,
+      idLiga,
+    );
+
+    if (participacion == null) {
+      throw Exception("Participación no encontrada.");
+    }
+
+    _log.informacion("Participación encontrada: ${participacion.id}");
+
     final actualizadaPart = participacion.copiarCon(plantelCompleto: true);
 
+    _log.informacion(
+      "Marcando participación como plantelCompleto=true para ${participacion.id}",
+    );
+
     await _servicioPart.editarParticipacion(actualizadaPart);
+
+    _log.informacion("Participación actualizada correctamente.");
 
     return actualizada;
   }

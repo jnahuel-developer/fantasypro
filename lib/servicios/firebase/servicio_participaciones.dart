@@ -3,16 +3,14 @@
   Descripción:
     Servicio dedicado a la administración CRUD de la colección "participaciones_liga".
     Permite crear, obtener, editar, activar, archivar y eliminar participaciones
-    de usuarios dentro de una liga.
+    de usuarios dentro de una liga. Todas las operaciones aplican sanitización
+    de IDs y validación posterior, para garantizar consistencia y evitar errores
+    de consultas vacías o mal formateadas.
 
   Dependencias:
     - cloud_firestore
     - modelos/participacion_liga.dart
     - servicio_log.dart
-
-  Archivos que dependen de este archivo:
-    - Controladores de participación en ligas
-    - Flujos de alta de equipos fantasy y armado de plantel
 */
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,29 +18,41 @@ import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 class ServicioParticipaciones {
-  /// Instancia de Firestore para operaciones sobre la colección "participaciones_liga".
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-  /// Servicio de logs para registrar operaciones relacionadas a participaciones.
   final ServicioLog _log = ServicioLog();
 
-  /*
-    Nombre: crearParticipacion
-    Descripción:
-      Crea una participación en una liga con los datos proporcionados.
-    Entradas:
-      - participacion (ParticipacionLiga): instancia con los datos de la participación.
-    Salidas:
-      - Future<ParticipacionLiga>: instancia con ID generado por Firestore.
-  */
+  String _sanitizarId(String valor) {
+    return valor
+        .trim()
+        .replaceAll('"', '')
+        .replaceAll("'", "")
+        .replaceAll("\\", "")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "");
+  }
+
+  void _validarIdsObligatorios(String idUsuario, String idLiga) {
+    if (idUsuario.isEmpty || idLiga.isEmpty) {
+      throw ArgumentError("ID sanitizado inválido.");
+    }
+  }
+
   Future<ParticipacionLiga> crearParticipacion(
     ParticipacionLiga participacion,
   ) async {
     try {
+      final datos = participacion.copiarCon(
+        idUsuario: _sanitizarId(participacion.idUsuario),
+        idLiga: _sanitizarId(participacion.idLiga),
+      );
+
+      _validarIdsObligatorios(datos.idUsuario, datos.idLiga);
+
       final doc = await _db
           .collection("participaciones_liga")
-          .add(participacion.aMapa());
-      final nueva = participacion.copiarCon(id: doc.id);
+          .add(datos.aMapa());
+
+      final nueva = datos.copiarCon(id: doc.id);
 
       _log.informacion("Crear participación: ${nueva.id}");
       return nueva;
@@ -52,23 +62,17 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: crearParticipacionEnLiga
-    Descripción:
-      Crea una participación nueva a partir del ID del usuario, ID de liga y nombre del equipo fantasy.
-    Entradas:
-      - idUsuario (String): ID del usuario participante.
-      - idLiga (String): ID de la liga.
-      - nombreEquipoFantasy (String): nombre elegido para el equipo.
-    Salidas:
-      - Future<ParticipacionLiga>: participación creada con ID asignado.
-  */
   Future<ParticipacionLiga> crearParticipacionEnLiga(
     String idUsuario,
     String idLiga,
     String nombreEquipoFantasy,
   ) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final participacion = ParticipacionLiga(
@@ -85,6 +89,7 @@ class ServicioParticipaciones {
       final doc = await _db
           .collection("participaciones_liga")
           .add(participacion.aMapa());
+
       final nueva = participacion.copiarCon(id: doc.id);
 
       _log.informacion(
@@ -98,18 +103,13 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: usuarioYaParticipa
-    Descripción:
-      Verifica si un usuario ya tiene una participación activa en una liga.
-    Entradas:
-      - idUsuario (String): ID del usuario.
-      - idLiga (String): ID de la liga.
-    Salidas:
-      - Future<bool>: true si ya participa, false en caso contrario.
-  */
   Future<bool> usuarioYaParticipa(String idUsuario, String idLiga) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
       final query = await _db
           .collection("participaciones_liga")
           .where("idUsuario", isEqualTo: idUsuario)
@@ -131,21 +131,16 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: obtenerParticipacion
-    Descripción:
-      Devuelve la participación única de un usuario en una liga, si existe.
-    Entradas:
-      - idUsuario (String): ID del usuario.
-      - idLiga (String): ID de la liga.
-    Salidas:
-      - Future<ParticipacionLiga?>: participación encontrada o null.
-  */
   Future<ParticipacionLiga?> obtenerParticipacion(
     String idUsuario,
     String idLiga,
   ) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      idLiga = _sanitizarId(idLiga);
+
+      _validarIdsObligatorios(idUsuario, idLiga);
+
       final consulta = await _db
           .collection("participaciones_liga")
           .where("idUsuario", isEqualTo: idUsuario)
@@ -160,6 +155,12 @@ class ServicioParticipaciones {
         return null;
       }
 
+      if (consulta.docs.length > 1) {
+        _log.advertencia(
+          "Múltiples participaciones encontradas para usuario=$idUsuario y liga=$idLiga. Usando la primera.",
+        );
+      }
+
       final d = consulta.docs.first;
       return ParticipacionLiga.desdeMapa(d.id, d.data());
     } catch (e) {
@@ -168,17 +169,11 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: obtenerPorLiga
-    Descripción:
-      Devuelve todas las participaciones registradas para una liga dada.
-    Entradas:
-      - idLiga (String): ID de la liga.
-    Salidas:
-      - Future<List<ParticipacionLiga>>: lista de participaciones encontradas.
-  */
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
     try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) throw ArgumentError("ID de liga inválido.");
+
       final consulta = await _db
           .collection("participaciones_liga")
           .where("idLiga", isEqualTo: idLiga)
@@ -195,17 +190,11 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: obtenerPorUsuario
-    Descripción:
-      Devuelve todas las participaciones del usuario, en cualquier liga.
-    Entradas:
-      - idUsuario (String): ID del usuario.
-    Salidas:
-      - Future<List<ParticipacionLiga>>: lista de participaciones.
-  */
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
     try {
+      idUsuario = _sanitizarId(idUsuario);
+      if (idUsuario.isEmpty) throw ArgumentError("ID de usuario inválido.");
+
       final consulta = await _db
           .collection("participaciones_liga")
           .where("idUsuario", isEqualTo: idUsuario)
@@ -223,39 +212,51 @@ class ServicioParticipaciones {
   }
 
   /*
-    Nombre: editarParticipacion
-    Descripción:
-      Actualiza los datos de una participación existente.
-    Entradas:
-      - participacion (ParticipacionLiga): instancia con datos actualizados.
-    Salidas:
-      - Future<void>
-  */
+  Nombre: editarParticipacion
+  Descripción:
+    Actualiza únicamente los campos permitidos de una participación existente.
+    Evita enviar campos de identidad para cumplir con las reglas de Firestore.
+  Entradas:
+    - participacion (ParticipacionLiga): instancia con datos editables.
+  Salidas:
+    - Future<void>
+*/
   Future<void> editarParticipacion(ParticipacionLiga participacion) async {
     try {
+      // Sanitizar ID del documento
+      final String idSan = _sanitizarId(participacion.id);
+      if (idSan.isEmpty) {
+        throw ArgumentError("ID de participación inválido.");
+      }
+
+      // Construcción explícita de campos editables permitidos
+      final actualizacion = {
+        "puntos": participacion.puntos,
+        "plantelCompleto": participacion.plantelCompleto,
+        "nombreEquipoFantasy": participacion.nombreEquipoFantasy
+            .trim(), // limpieza mínima
+        "activo": participacion.activo,
+      };
+
+      _log.informacion(
+        "Editando participación $idSan con campos: $actualizacion",
+      );
+
       await _db
           .collection("participaciones_liga")
-          .doc(participacion.id)
-          .update(participacion.aMapa());
-
-      _log.informacion("Editar participación: ${participacion.id}");
+          .doc(idSan)
+          .update(actualizacion);
     } catch (e) {
       _log.error("Error en operación de participaciones: $e");
       rethrow;
     }
   }
 
-  /*
-    Nombre: archivarParticipacion
-    Descripción:
-      Marca una participación como inactiva (activo = false).
-    Entradas:
-      - id (String): ID de la participación.
-    Salidas:
-      - Future<void>
-  */
   Future<void> archivarParticipacion(String id) async {
     try {
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
       await _db.collection("participaciones_liga").doc(id).update({
         "activo": false,
       });
@@ -267,17 +268,11 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: activarParticipacion
-    Descripción:
-      Marca una participación como activa (activo = true).
-    Entradas:
-      - id (String): ID de la participación.
-    Salidas:
-      - Future<void>
-  */
   Future<void> activarParticipacion(String id) async {
     try {
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
       await _db.collection("participaciones_liga").doc(id).update({
         "activo": true,
       });
@@ -289,17 +284,11 @@ class ServicioParticipaciones {
     }
   }
 
-  /*
-    Nombre: eliminarParticipacion
-    Descripción:
-      Elimina definitivamente una participación de Firestore.
-    Entradas:
-      - id (String): ID de la participación.
-    Salidas:
-      - Future<void>
-  */
   Future<void> eliminarParticipacion(String id) async {
     try {
+      id = _sanitizarId(id);
+      if (id.isEmpty) throw ArgumentError("ID inválido.");
+
       await _db.collection("participaciones_liga").doc(id).delete();
 
       _log.informacion("Eliminar participación: $id");
