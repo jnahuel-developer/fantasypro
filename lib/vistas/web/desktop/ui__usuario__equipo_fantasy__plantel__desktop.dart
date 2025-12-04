@@ -294,28 +294,29 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       return;
     }
 
-    // Log antes de guardar alineación inicial (plantel)
     _log.informacion(
-      "Llamando guardarPlantelInicial: idLiga=${widget.liga.id}, idUsuario=${usuario.uid}, idEquipoFantasy=${equipo.id}, jugadoresSeleccionados=${_seleccionados.length}, formacion=$_formacion",
+      "Confirmando plantel — idLiga=${widget.liga.id}, idUsuario=${usuario.uid}, "
+      "idEquipoFantasy=${equipo.id}, jugadores=${_seleccionados.length}, "
+      "presupuestoRestante=$_presupuestoRestante, formacion=$_formacion",
     );
 
-    /*
-  Nombre: _confirmarPlantel (sección de guardado)
-  Descripción:
-    Guarda el plantel inicial mediante el controlador, registra logs
-    y navega hacia la pantalla de alineación inicial utilizando el
-    idAlineacion real generado. Se evita el uso de await dentro del
-    callback del Navigator, dado que dicho contexto no admite
-    ejecución asincrónica.
-*/
-
     try {
-      _log.informacion(
-        "Llamando guardarPlantelInicial: idLiga=${widget.liga.id}, "
-        "idUsuario=${usuario.uid}, idEquipoFantasy=${equipo.id}, "
-        "cantidadJugadores=${_seleccionados.length}, formacion=$_formacion",
+      // ---------------------------------------------------------------------
+      // 1) GUARDAR PLANTEL INICIAL EN EL EQUIPO FANTASY
+      // ---------------------------------------------------------------------
+      await _ctrlEquiposFantasy.guardarPlantelInicial(
+        equipo.id,
+        _seleccionados,
+        _presupuestoRestante,
       );
 
+      _log.informacion(
+        "Plantel inicial guardado correctamente en EquipoFantasy ${equipo.id}",
+      );
+
+      // ---------------------------------------------------------------------
+      // 2) CREAR ALINEACIÓN INICIAL (como ya hacía antes)
+      // ---------------------------------------------------------------------
       final alineacion = await _ctrlAlineaciones.guardarPlantelInicial(
         widget.liga.id,
         usuario.uid,
@@ -325,12 +326,11 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       );
 
       _log.informacion(
-        "guardarPlantelInicial finalizado correctamente con idAlineacion=${alineacion.id}",
+        "Alineación inicial generada: idAlineacion=${alineacion.id}",
       );
 
       // ---------------------------------------------------------------------
-      //  Se carga el plantel antes de navegar, dado que el builder no puede
-      //  utilizar 'await'. Esta práctica es obligatoria según el PM.
+      // 3) Cargar la lista de modelos JugadorReal antes de navegar
       // ---------------------------------------------------------------------
       final plantel = await _ctrlJugadoresReales.obtenerPorIds(_seleccionados);
 
@@ -343,14 +343,14 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
             liga: widget.liga,
             participacion: widget.participacion,
             idEquipoFantasy: equipo.id,
-            idAlineacion: alineacion.id, // ✔ Parámetro obligatorio
+            idAlineacion: alineacion.id,
             plantel: plantel,
             formacion: _formacion,
           ),
         ),
       );
     } catch (e) {
-      _log.informacion("Error en guardarPlantelInicial: $e");
+      _log.error("Error confirmando plantel inicial: $e");
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error al guardar el plantel inicial.")),
@@ -378,7 +378,7 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
               (j) => ListTile(
                 title: Text(j.nombre),
                 subtitle: Text(
-                  "Equipo: ${j.idEquipoReal} · Valor: ${j.valorMercado}",
+                  "Equipo: ${j.nombreEquipoReal} · Valor: ${j.valorMercado}",
                 ),
                 trailing: Checkbox(
                   value: _seleccionados.contains(j.id),

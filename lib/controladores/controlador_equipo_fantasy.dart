@@ -212,4 +212,59 @@ class ControladorEquipoFantasy {
 
     await _servicio.eliminarEquipoFantasy(idEquipo);
   }
+
+  /*
+    Nombre: obtenerEquipoUsuarioEnLiga
+    Descripción:
+      Recupera el equipo fantasy de un usuario en una liga. Si hay más de uno, devuelve el primero.
+    Entradas:
+      - idUsuario: String — ID del usuario
+      - idLiga: String — ID de la liga
+    Salidas:
+      - Future<EquipoFantasy?> — el equipo si existe, null si no hay ninguno
+  */
+  Future<EquipoFantasy?> obtenerEquipoUsuarioEnLiga(
+    String idUsuario,
+    String idLiga,
+  ) async {
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+
+    _log.informacion(
+      "Obteniendo equipo fantasy para usuario $idUsuario en liga $idLiga",
+    );
+    final lista = await _servicio.obtenerPorUsuarioYLiga(idUsuario, idLiga);
+    if (lista.isEmpty) return null;
+    return lista.first;
+  }
+
+  Future<void> guardarPlantelInicial(
+    String idEquipoFantasy,
+    List<String> ids,
+    int presupuestoRestante,
+  ) async {
+    if (idEquipoFantasy.isEmpty) {
+      throw ArgumentError("ID de equipo vacío.");
+    }
+    if (ids.length != 15) {
+      throw ArgumentError("El plantel inicial debe tener 15 jugadores.");
+    }
+
+    _log.informacion(
+      "Guardando plantel inicial para equipo $idEquipoFantasy "
+      "(jugadores=${ids.length}, presupuesto=$presupuestoRestante)",
+    );
+
+    await _servicio.actualizarPlantel(
+      idEquipoFantasy,
+      ids,
+      presupuestoRestante,
+    );
+
+    _log.informacion("Plantel inicial guardado correctamente.");
+  }
 }

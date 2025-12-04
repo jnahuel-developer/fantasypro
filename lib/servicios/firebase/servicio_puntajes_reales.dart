@@ -26,6 +26,17 @@ class ServicioPuntajesReales {
   /// Servicio de logging interno.
   final ServicioLog _log = ServicioLog();
 
+  /// Sanitización universal de IDs
+  String _sanitizarId(String valor) {
+    return valor
+        .trim()
+        .replaceAll('"', '')
+        .replaceAll("'", "")
+        .replaceAll("\\", "")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "");
+  }
+
   /*
     Nombre: guardarPuntajesDeFecha
     Descripción:
@@ -92,14 +103,18 @@ class ServicioPuntajesReales {
       final query = await _db
           .collection("puntajes_reales")
           .where("idFecha", isEqualTo: idFecha)
-          .orderBy("idJugadorReal")
           .get();
 
       _log.informacion("Listar puntajes reales de la fecha: $idFecha");
 
-      return query.docs
+      final lista = query.docs
           .map((doc) => PuntajeJugadorFecha.desdeMapa(doc.id, doc.data()))
           .toList();
+
+      // Ordenar en memoria si es necesario
+      lista.sort((a, b) => a.idJugadorReal.compareTo(b.idJugadorReal));
+
+      return lista;
     } catch (e) {
       _log.error("Error obteniendo puntajes reales de fecha: $e");
       rethrow;
@@ -136,6 +151,56 @@ class ServicioPuntajesReales {
       return PuntajeJugadorFecha.desdeMapa(snap.id, snap.data()!);
     } catch (e) {
       _log.error("Error obteniendo puntaje individual: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: obtenerMapaPuntajesPorLigaYFecha
+    Firma: Future<Map<String, int>> obtenerMapaPuntajesPorLigaYFecha(String idLiga, String idFecha)
+    Descripción:
+      Devuelve un mapa con los puntajes reales de jugadores para una fecha y liga dada.
+      Se filtran únicamente jugadores activos y con puntaje asignado.
+    Ejemplo:
+      final mapa = await servicio.obtenerMapaPuntajesPorLigaYFecha("idLigaX", "fecha1");
+  */
+  Future<Map<String, int>> obtenerMapaPuntajesPorLigaYFecha(
+    String idLiga,
+    String idFecha,
+  ) async {
+    try {
+      idLiga = _sanitizarId(idLiga);
+      idFecha = _sanitizarId(idFecha);
+
+      if (idLiga.isEmpty || idFecha.isEmpty) {
+        throw ArgumentError("ID de liga o fecha inválido.");
+      }
+
+      _log.informacion(
+        "Obteniendo puntajes reales por liga=$idLiga y fecha=$idFecha",
+      );
+
+      final query = await _db
+          .collection("puntajes_reales")
+          .where("idLiga", isEqualTo: idLiga)
+          .where("idFecha", isEqualTo: idFecha)
+          .get();
+
+      final mapa = <String, int>{};
+
+      for (final doc in query.docs) {
+        final data = doc.data();
+        final String idJugador = _sanitizarId(data['idJugadorReal'] ?? '');
+        final int puntaje = data['puntuacion'] ?? 0;
+
+        if (idJugador.isNotEmpty) {
+          mapa[idJugador] = puntaje;
+        }
+      }
+
+      return mapa;
+    } catch (e) {
+      _log.error("Error al obtener puntajes reales: $e");
       rethrow;
     }
   }

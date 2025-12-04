@@ -9,9 +9,15 @@
     al registrar participación, también crea automáticamente el equipo fantasy asociado.
 */
 
+import 'package:fantasypro/controladores/controlador_alineaciones.dart';
+import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
+import 'package:fantasypro/controladores/controlador_puntajes_reales.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
+import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
+import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_equipos_fantasy.dart';
+import 'package:fantasypro/servicios/firebase/servicio_puntajes_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
 class ControladorParticipaciones {
@@ -167,5 +173,143 @@ class ControladorParticipaciones {
     _log.informacion("Editando participación ${participacion.id}");
 
     await _servicio.editarParticipacion(participacion);
+  }
+
+  /*
+    Nombre: aplicarPuntajesFantasyAFecha
+    Descripción:
+      Orquesta la aplicación de puntajes fantasy a todos los equipos participantes
+      de una liga cuando se cierra una fecha: suma puntajes reales de titulares,
+      guarda el puntaje fantasy, y actualiza los puntos acumulados de cada participación.
+      Es idempotente: no recalcula si ya existe el puntaje fantasy para la participación + fecha.
+    Entradas:
+      - idLiga: String — ID de la liga
+      - idFecha: String — ID de la fecha cerrada
+    Salidas:
+      - Future<void>
+  */
+  Future<void> aplicarPuntajesFantasyAFecha(
+    String idLiga,
+    String idFecha,
+  ) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (idFecha.trim().isEmpty) {
+      throw ArgumentError("El idFecha no puede estar vacío.");
+    }
+
+    final ServicioFechas servicioFechas = ServicioFechas();
+    final ServicioPuntajesFantasy servicioPuntajesFantasy =
+        ServicioPuntajesFantasy();
+
+    _log.informacion(
+      "Iniciando cálculo de puntajes fantasy para liga $idLiga, fecha $idFecha",
+    );
+
+    // 1) Validar que la fecha existe, pertenece a la liga y está cerrada
+    final fecha = await servicioFechas.obtenerFechaPorId(idFecha);
+    if (fecha == null || fecha.idLiga != idLiga) {
+      throw Exception("Fecha no válida para la liga especificada.");
+    }
+    if (!fecha.cerrada) {
+      throw Exception("La fecha $idFecha no está cerrada.");
+    }
+
+    // 2) Obtener todos los participaciones activas de la liga
+    final participaciones = await _servicio.obtenerActivasPorLiga(idLiga);
+    _log.informacion(
+      "Participaciones activas encontradas: ${participaciones.length}",
+    );
+
+    for (final participacion in participaciones) {
+      try {
+        _log.informacion(
+          "Procesando participación ${participacion.id} (usuario ${participacion.idUsuario})",
+        );
+
+        // 3) Obtener equipo fantasy del usuario en la liga
+        final equipo = await ControladorEquipoFantasy()
+            .obtenerEquipoUsuarioEnLiga(participacion.idUsuario, idLiga);
+        if (equipo == null) {
+          _log.advertencia(
+            "No se encuentra equipo fantasy para participación ${participacion.id} — se saltea.",
+          );
+          continue;
+        }
+
+        // 4) Obtener alineación (activa o más reciente) del usuario en la liga
+        final alineacion = await ControladorAlineaciones()
+            .obtenerAlineacionActivaDeUsuarioEnLiga(
+              idLiga,
+              participacion.idUsuario,
+            );
+        if (alineacion == null) {
+          _log.advertencia(
+            "No se encontró alineación para usuario ${participacion.idUsuario} — se saltea.",
+          );
+          continue;
+        }
+
+        // 5) Obtener puntajes reales de la fecha
+        final Map<String, int> mapaPuntajes = await ControladorPuntajesReales()
+            .obtenerMapaPorLigaYFecha(idLiga, idFecha);
+
+        // 6) Calcular puntaje total sumando titulares (suplentes no puntúan)
+        int puntajeTotal = 0;
+        final Map<String, int> detalle = {};
+        for (final idJ in alineacion.idsTitulares) {
+          final pts = mapaPuntajes[idJ] ?? 0;
+          puntajeTotal += pts;
+          detalle[idJ] = pts;
+        }
+
+        // 7) Idempotencia: verificar si ya existe puntaje fantasy para esta participación + fecha
+        final existente = await servicioPuntajesFantasy
+            .obtenerPorParticipacionYFecha(participacion.id, idFecha);
+        if (existente != null) {
+          _log.informacion(
+            "Puntaje fantasy ya aplicado para participación ${participacion.id}, fecha $idFecha — se saltea.",
+          );
+          continue;
+        }
+
+        // 8) Crear y guardar registro de puntaje fantasy
+        final int timestamp = DateTime.now().millisecondsSinceEpoch;
+        final registro = PuntajeEquipoFantasy(
+          id: idFecha,
+          idParticipacion: participacion.id,
+          idEquipoFantasy: equipo.id,
+          idLiga: idLiga,
+          idFecha: idFecha,
+          puntajeTotal: puntajeTotal,
+          detalleJugadores: detalle,
+          timestampAplicacion: timestamp,
+          activo: true,
+        );
+
+        _log.informacion(
+          "Guardando puntaje fantasy para participación ${participacion.id}: total=$puntajeTotal",
+        );
+        await servicioPuntajesFantasy.guardarPuntajeEquipoFantasy(registro);
+
+        // 9) Incrementar puntos acumulados en la participación
+        await _servicio.incrementarPuntosParticipacion(
+          participacion.id,
+          puntajeTotal,
+        );
+
+        _log.informacion(
+          "Puntos acumulados actualizados para participación ${participacion.id}",
+        );
+      } catch (e) {
+        _log.error("Error procesando participación ${participacion.id}: $e");
+        // Opcional: decidir si continuar con otras participaciones o abortar
+      }
+    }
+
+    _log.informacion(
+      "Cálculo de puntajes fantasy finalizado para liga $idLiga, fecha $idFecha",
+    );
   }
 }

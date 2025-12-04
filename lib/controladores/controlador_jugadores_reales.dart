@@ -73,6 +73,7 @@ class ControladorJugadoresReales {
       valorMercado: valorMercado,
       activo: true,
       fechaCreacion: timestamp,
+      nombreEquipoReal: "",
     );
 
     _log.informacion("Creando jugador real en equipo $idEquipoReal ($nombre)");
@@ -94,7 +95,16 @@ class ControladorJugadoresReales {
 
     _log.informacion("Listando jugadores reales del equipo $idEquipoReal");
 
-    return await _servicio.obtenerPorEquipoReal(idEquipoReal);
+    final lista = await _servicio.obtenerPorEquipoReal(idEquipoReal);
+
+    final orden = {"POR": 0, "DEF": 1, "MED": 2, "DEL": 3};
+    lista.sort((a, b) => orden[a.posicion]!.compareTo(orden[b.posicion]!));
+
+    _log.informacion(
+      "Jugadores obtenidos: ${lista.length} del equipo $idEquipoReal (ordenados por posición)",
+    );
+
+    return lista;
   }
 
   /*
@@ -187,11 +197,9 @@ class ControladorJugadoresReales {
     Descripción:
       Recupera jugadores reales activos según una lista de IDs provista. 
       La lista es validada, se eliminan duplicados y luego se consulta
-      el servicio correspondiente. El resultado está ordenado por ID.
-
+      el servicio correspondiente. El resultado está ordenado por posición.
     Entradas:
       - ids: List<String> → Lista de IDs de jugadores reales
-
     Salidas: Future<List<JugadorReal>>
   */
   Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
@@ -205,6 +213,15 @@ class ControladorJugadoresReales {
       "Obteniendo jugadores reales por IDs (solicitados=${ids.length}, unicos=${idsUnicos.length})",
     );
 
-    return await _servicio.obtenerPorIds(idsUnicos);
+    final lista = await _servicio.obtenerPorIds(idsUnicos);
+
+    final orden = {"POR": 0, "DEF": 1, "MED": 2, "DEL": 3};
+    lista.sort((a, b) => orden[a.posicion]!.compareTo(orden[b.posicion]!));
+
+    _log.informacion(
+      "Jugadores obtenidos por IDs: ${lista.length} (ordenados)",
+    );
+
+    return lista;
   }
 }

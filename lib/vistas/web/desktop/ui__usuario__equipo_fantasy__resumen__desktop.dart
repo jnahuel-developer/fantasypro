@@ -106,7 +106,7 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "${j.nombre} — ${j.posicion} — ${j.valorMercado} pts — Equipo real: ${j.idEquipoReal}",
+                      "${j.nombre} — ${j.posicion} — ${j.valorMercado} pts — Equipo real: ${j.nombreEquipoReal}",
                       style: const TextStyle(fontSize: 14),
                     ),
                   );
