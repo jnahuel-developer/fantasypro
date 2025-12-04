@@ -69,17 +69,41 @@ service cloud.firestore {
     // Participaciones de usuario en ligas
     // --------------------------
     match /participaciones_liga/{idPart} {
+
+      // LECTURA:
+      // - Dueño puede leer su participación.
+      // - ADMIN puede leer todas (necesario para aplicar puntajes fantasy).
       allow read:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
 
+      // CREAR:
+      // Solo el dueño puede crear su participación
       allow create:
         if request.auth != null
         && request.auth.uid == request.resource.data.idUsuario;
 
+      // UPDATE / DELETE:
+      // Dueño o admin pueden actualizar.
       allow update, delete:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
+
+      // SUBCOLECCIÓN: puntajes_fantasy
+      match /puntajes_fantasy/{idFecha} {
+        allow read, write:
+          if request.auth != null
+          && (
+              request.auth.uid == resource.data.idUsuario ||
+              get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+            );
+      }
     }
 
     // --------------------------
@@ -87,42 +111,60 @@ service cloud.firestore {
     // --------------------------
     match /equipos_fantasy/{idEq} {
 
-      // LECTURA: solo el dueño del documento
+      // LECTURA:
+      // - Dueño puede leer su equipo.
+      // - ADMIN puede leer todos (necesario para aplicar puntajes fantasy).
       allow read:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
 
-      // ESCRITURA:
-      // - CREATE → validar contra request.resource.data
-      // - UPDATE → validar contra resource.data
+      // CREATE: solo el dueño
       allow create:
         if request.auth != null
         && request.auth.uid == request.resource.data.idUsuario;
 
+      // UPDATE / DELETE:
+      // - Dueño o ADMIN pueden escribir
       allow update, delete:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
     }
 
     // --------------------------
     // Alineaciones Fantasy
     // --------------------------
     match /alineaciones/{idAli} {
-      // LECTURA: solo el dueño del documento
+
+      // LECTURA:
+      // - Dueño puede leer su alineación
+      // - ADMIN puede leer todas (necesario para aplicar puntajes fantasy)
       allow read:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
 
-      // ESCRITURA:
-      // - CREATE → validar contra request.resource.data
-      // - UPDATE → validar contra resource.data
+      // CREATE:
+      // Solo el dueño puede crear
       allow create:
         if request.auth != null
         && request.auth.uid == request.resource.data.idUsuario;
 
+      // UPDATE / DELETE:
+      // - Dueño o admin pueden editar (admin necesario para recalcular o reparar)
       allow update, delete:
         if request.auth != null
-        && request.auth.uid == resource.data.idUsuario;
+        && (
+            request.auth.uid == resource.data.idUsuario ||
+            get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
+          );
     }
 
     // --------------------------

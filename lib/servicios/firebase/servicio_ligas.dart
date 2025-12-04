@@ -31,7 +31,6 @@ class ServicioLigas {
   String _sanitizarTexto(String v) {
     return v
         .trim()
-        .toLowerCase()
         .replaceAll('"', '')
         .replaceAll("'", "")
         .replaceAll("\\", "")

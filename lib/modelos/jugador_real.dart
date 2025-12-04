@@ -2,15 +2,15 @@
   Archivo: jugador_real.dart
   Descripción:
     Modelo de datos que representa un Jugador Real dentro del sistema FantasyPro.
-    Este modelo describe jugadores de equipos reales y es utilizado por secciones
-    administrativas y módulos que consumen datos de fútbol profesional.
+    Describe futbolistas que pertenecen a equipos reales y es utilizado por
+    módulos administrativos, catálogos y lógicas que consumen datos reales.
 
   Dependencias:
     - Ninguna directa.
 
   Archivos que dependen de este:
-    - Servicios y controladores que gestionen jugadores reales.
-    - Cualquier módulo que liste o consulte información de jugadores reales.
+    - Servicios y controladores que gestionan jugadores reales.
+    - Módulos que listan o consultan información de jugadores reales.
 */
 
 class JugadorReal {
@@ -26,7 +26,7 @@ class JugadorReal {
   /// Posición del jugador (POR, DEF, MED, DEL).
   final String posicion;
 
-  /// Nacionalidad del jugador.
+  /// Nacionalidad del jugador real.
   final String nacionalidad;
 
   /// Número de dorsal del jugador (1–99).
@@ -40,6 +40,9 @@ class JugadorReal {
 
   /// Timestamp de creación en milisegundos desde época Unix.
   final int fechaCreacion;
+
+  /// Nombre del equipo real al que pertenece el jugador.
+  final String nombreEquipoReal;
 
   /*
     Nombre: JugadorReal (constructor)
@@ -55,6 +58,7 @@ class JugadorReal {
       - valorMercado (int): valor de mercado del jugador.
       - activo (bool): estado actual.
       - fechaCreacion (int): timestamp de creación.
+      - nombreEquipoReal (String): nombre textual del equipo real.
     Salidas:
       - Instancia de JugadorReal.
   */
@@ -68,6 +72,7 @@ class JugadorReal {
     required this.valorMercado,
     required this.activo,
     required this.fechaCreacion,
+    required this.nombreEquipoReal,
   });
 
   /*
@@ -76,9 +81,11 @@ class JugadorReal {
       Crea una instancia de JugadorReal desde un Map obtenido de Firestore.
     Entradas:
       - id (String): identificador del documento.
-      - datos (Map<String, dynamic>): mapa con los valores serializados.
+      - datos (Map<String, dynamic>): valores serializados.
     Salidas:
       - Instancia de JugadorReal.
+    Ejemplo:
+      final j = JugadorReal.desdeMapa("J1", snapshot.data());
   */
   factory JugadorReal.desdeMapa(String id, Map<String, dynamic> datos) {
     return JugadorReal(
@@ -91,17 +98,21 @@ class JugadorReal {
       valorMercado: datos['valorMercado'] ?? 0,
       activo: datos['activo'] ?? true,
       fechaCreacion: datos['fechaCreacion'] ?? 0,
+      nombreEquipoReal: datos['nombreEquipoReal'] ?? '',
     );
   }
 
   /*
     Nombre: aMapa
     Descripción:
-      Convierte esta instancia de JugadorReal en un mapa serializable.
+      Convierte esta instancia de JugadorReal en un mapa serializable para
+      persistirla en Firestore.
     Entradas:
       - Ninguna.
     Salidas:
-      - Map<String, dynamic> con los datos serializados.
+      - Map<String, dynamic> con los datos del jugador.
+    Ejemplo:
+      firestore.set({...jugadorReal.aMapa()});
   */
   Map<String, dynamic> aMapa() {
     return {
@@ -113,17 +124,21 @@ class JugadorReal {
       'valorMercado': valorMercado,
       'activo': activo,
       'fechaCreacion': fechaCreacion,
+      'nombreEquipoReal': nombreEquipoReal,
     };
   }
 
   /*
     Nombre: copiarCon
     Descripción:
-      Crea una copia de este jugador real modificando solo los campos deseados.
+      Crea una copia del jugador real actual modificando únicamente los campos
+      que se indiquen como parámetros opcionales.
     Entradas:
-      - Campos a reemplazar de manera opcional.
+      - Campos opcionales para modificar.
     Salidas:
-      - Nueva instancia de JugadorReal con los cambios aplicados.
+      - Nueva instancia de JugadorReal con cambios aplicados.
+    Ejemplo:
+      final actualizado = jugador.copiarCon(valorMercado: 120);
   */
   JugadorReal copiarCon({
     String? id,
@@ -135,6 +150,7 @@ class JugadorReal {
     int? valorMercado,
     bool? activo,
     int? fechaCreacion,
+    String? nombreEquipoReal,
   }) {
     return JugadorReal(
       id: id ?? this.id,
@@ -146,6 +162,7 @@ class JugadorReal {
       valorMercado: valorMercado ?? this.valorMercado,
       activo: activo ?? this.activo,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      nombreEquipoReal: nombreEquipoReal ?? this.nombreEquipoReal,
     );
   }
 }

@@ -15,6 +15,7 @@
     - Vistas administrativas que gestionan fechas por liga.
 */
 
+import 'package:fantasypro/controladores/controlador_participaciones.dart';
 import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/liga.dart';
 
@@ -159,6 +160,9 @@ class ControladorFechas {
     Salidas:
       Future<void>
   */
+  // ---------------------------------------------------------------------------
+  // Cerrar fecha
+  // ---------------------------------------------------------------------------
   Future<void> cerrarFecha(FechaLiga fecha) async {
     _log.informacion("Intentando cerrar fecha ${fecha.id}");
 
@@ -175,8 +179,20 @@ class ControladorFechas {
       throw Exception("Faltan puntajes para cerrar la fecha.");
     }
 
+    // 1) Cerrar fecha en Firestore
     await _servicioFechas.cerrarFecha(fecha.id);
 
+    // 2) Aplicar puntajes fantasy (EL PASO QUE FALTABA)
+    _log.informacion(
+      "Aplicando puntajes fantasy a participaciónes de la liga ${fecha.idLiga} para la fecha ${fecha.id}",
+    );
+
+    await ControladorParticipaciones().aplicarPuntajesFantasyAFecha(
+      fecha.idLiga,
+      fecha.id,
+    );
+
+    // 3) Archivar liga si corresponde
     final Liga? liga = await _servicioLigas.obtenerLiga(fecha.idLiga);
     if (liga == null) {
       throw Exception("No se encontró la liga asociada.");

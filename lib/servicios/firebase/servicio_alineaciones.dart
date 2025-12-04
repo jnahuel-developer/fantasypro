@@ -355,4 +355,38 @@ class ServicioAlineaciones {
       rethrow;
     }
   }
+
+  /*
+    Nombre: obtenerAlineacionesActivasPorLiga
+    Firma: Future<List<Alineacion>> obtenerAlineacionesActivasPorLiga(String idLiga)
+    Descripción:
+      Devuelve todas las alineaciones activas de una liga, usadas para calcular puntajes fantasy.
+    Ejemplo:
+      final alineaciones = await servicio.obtenerAlineacionesActivasPorLiga("liga123");
+  */
+  Future<List<Alineacion>> obtenerAlineacionesActivasPorLiga(
+    String idLiga,
+  ) async {
+    try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) {
+        throw ArgumentError("ID de liga inválido.");
+      }
+
+      _log.informacion("Listando alineaciones activas de la liga $idLiga");
+
+      final query = await _db
+          .collection("alineaciones")
+          .where("idLiga", isEqualTo: idLiga)
+          .where("activo", isEqualTo: true)
+          .get();
+
+      return query.docs
+          .map((d) => Alineacion.desdeMapa(d.id, d.data()))
+          .toList();
+    } catch (e) {
+      _log.error("Error al obtener alineaciones activas: $e");
+      rethrow;
+    }
+  }
 }

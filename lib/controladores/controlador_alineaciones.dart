@@ -286,4 +286,52 @@ class ControladorAlineaciones {
 
     return actualizada;
   }
+
+  /*
+    Nombre: obtenerAlineacionActivaDeUsuarioEnLiga
+    Descripción:
+      Recupera la alineación activa de un usuario en una liga. Si no hay activa,
+      devuelve la más reciente (por fechaCreacion).
+    Entradas:
+      - idLiga: String — ID de la liga
+      - idUsuario: String — ID del usuario
+    Salidas:
+      - Future<Alineacion?> — Alineación encontrada o null si ninguna
+  */
+  Future<Alineacion?> obtenerAlineacionActivaDeUsuarioEnLiga(
+    String idLiga,
+    String idUsuario,
+  ) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+
+    _log.informacion(
+      "Buscando alineación activa o más reciente para usuario $idUsuario en liga $idLiga",
+    );
+
+    final alineaciones = await _servicio.obtenerPorUsuarioEnLiga(
+      idLiga,
+      idUsuario,
+    );
+    if (alineaciones.isEmpty) return null;
+
+    final alineacionesActivas = alineaciones.where((a) => a.activo).toList();
+    if (alineacionesActivas.isNotEmpty) {
+      final activa = alineacionesActivas.first;
+      _log.informacion("Alineación activa encontrada: ${activa.id}");
+      return activa;
+    }
+
+    // Si no hay activa, devolver la más reciente
+    alineaciones.sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
+    final reciente = alineaciones.first;
+    _log.informacion(
+      "No hay alineación activa — devolviendo la más reciente: ${reciente.id}",
+    );
+    return reciente;
+  }
 }
