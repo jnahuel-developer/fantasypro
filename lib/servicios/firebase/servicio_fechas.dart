@@ -25,8 +25,16 @@ class ServicioFechas {
   /// Servicio de logging interno.
   final ServicioLog _log = ServicioLog();
 
-  /// Nombre de la colección en Firestore.
-  final String _coleccion = "fechas_liga";
+  /// Sanitización universal de IDs
+  String _sanitizarId(String v) {
+    return v
+        .trim()
+        .replaceAll('"', '')
+        .replaceAll("'", "")
+        .replaceAll("\\", "")
+        .replaceAll("\n", "")
+        .replaceAll("\r", "");
+  }
 
   /*
     Nombre: crearFecha
@@ -41,18 +49,24 @@ class ServicioFechas {
   */
   Future<FechaLiga> crearFecha(FechaLiga fecha) async {
     try {
-      _log.informacion("Creando fecha para liga ${fecha.idLiga}");
+      final idLiga = _sanitizarId(fecha.idLiga);
+      if (idLiga.isEmpty) {
+        throw ArgumentError("ID de liga inválido.");
+      }
+
+      _log.informacion("Creando fecha para liga $idLiga");
 
       // Obtener cuántas fechas existen actualmente para asignar numeroFecha.
       final existentes = await _db
-          .collection(_coleccion)
-          .where("idLiga", isEqualTo: fecha.idLiga)
+          .collection("fechas_liga")
+          .where("idLiga", isEqualTo: idLiga)
           .get();
 
       final numeroGenerado = existentes.docs.length + 1;
       final nombreGenerado = "Fecha $numeroGenerado";
 
       final nuevaFecha = fecha.copiarCon(
+        idLiga: idLiga,
         numeroFecha: numeroGenerado,
         nombre: nombreGenerado,
         activa: true,
@@ -60,11 +74,11 @@ class ServicioFechas {
         fechaCreacion: DateTime.now().millisecondsSinceEpoch,
       );
 
-      final doc = await _db.collection(_coleccion).add(nuevaFecha.aMapa());
+      final doc = await _db.collection("fechas_liga").add(nuevaFecha.aMapa());
       final guardada = nuevaFecha.copiarCon(id: doc.id);
 
       _log.informacion(
-        "Fecha creada: liga=${fecha.idLiga} fecha=${guardada.numeroFecha} id=${guardada.id}",
+        "Fecha creada: liga=$idLiga fecha=${guardada.numeroFecha} id=${guardada.id}",
       );
 
       return guardada;
@@ -75,30 +89,52 @@ class ServicioFechas {
   }
 
   /*
-    Nombre: obtenerPorLiga
-    Descripción:
-      Devuelve todas las fechas pertenecientes a una liga dada.
-    Entradas:
-      - idLiga (String): identificador de la liga.
-    Salidas:
-      - Lista de instancias FechaLiga.
-  */
+  Nombre: obtenerPorLiga
+  Descripción:
+    Devuelve todas las fechas pertenecientes a una liga dada.
+    En caso de que la colección no exista o no tenga índice, retorna lista vacía.
+  Entradas:
+    - idLiga (String): identificador de la liga.
+  Salidas:
+    - Lista de instancias FechaLiga.
+*/
   Future<List<FechaLiga>> obtenerPorLiga(String idLiga) async {
     try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) {
+        throw ArgumentError("ID de liga inválido.");
+      }
+
       _log.informacion("Obteniendo fechas de la liga $idLiga");
 
       final query = await _db
-          .collection(_coleccion)
+          .collection("fechas_liga")
           .where("idLiga", isEqualTo: idLiga)
           .orderBy("numeroFecha")
           .get();
 
+      if (query.docs.isEmpty) {
+        _log.advertencia("No hay fechas registradas para la liga $idLiga");
+      }
+
       return query.docs
           .map((d) => FechaLiga.desdeMapa(d.id, d.data()))
           .toList();
+    } on FirebaseException catch (e) {
+      if (e.message?.contains("index") == true) {
+        _log.advertencia(
+          "Colección existente pero sin índice — devolviendo lista vacía.",
+        );
+        return [];
+      } else {
+        _log.error("Error Firebase al obtener fechas de liga $idLiga: $e");
+        rethrow;
+      }
     } catch (e) {
-      _log.error("Error obteniendo fechas de liga: $e");
-      rethrow;
+      _log.advertencia(
+        "Colección de fechas inexistente o vacía para liga $idLiga — devolviendo lista vacía.",
+      );
+      return [];
     }
   }
 
@@ -114,9 +150,14 @@ class ServicioFechas {
   */
   Future<void> cerrarFecha(String idFecha) async {
     try {
+      idFecha = _sanitizarId(idFecha);
+      if (idFecha.isEmpty) {
+        throw ArgumentError("ID de fecha inválido.");
+      }
+
       _log.informacion("Cerrando fecha $idFecha");
 
-      await _db.collection(_coleccion).doc(idFecha).update({
+      await _db.collection("fechas_liga").doc(idFecha).update({
         "activa": false,
         "cerrada": true,
       });

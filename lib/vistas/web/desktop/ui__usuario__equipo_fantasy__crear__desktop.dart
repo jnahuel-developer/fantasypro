@@ -79,7 +79,7 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
     }
 
     try {
-      await _controladorFantasy.crearEquipoFantasy(
+      await _controladorFantasy.crearEquipoParaLiga(
         usuario.uid,
         widget.liga.id,
         nombre,

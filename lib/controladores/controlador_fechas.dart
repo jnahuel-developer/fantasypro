@@ -188,5 +188,7 @@ class ControladorFechas {
       );
       await _controladorLigas.archivar(liga.id);
     }
+
+    _log.informacion("Fecha ${fecha.id} cerrada correctamente.");
   }
 }

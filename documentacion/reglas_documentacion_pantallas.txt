@@ -1,0 +1,95 @@
+✅ PLANTILLA OFICIAL DE DOCUMENTACIÓN
+
+🔹 Standard unificado para todos los archivos de pantallas del proyecto Fantasy MVP
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+📁 Encabezado del archivo
+
+Cada archivo de UI debe comenzar con un bloque de encabezado estructurado con los siguientes elementos obligatorios:
+
+/*
+  Archivo: <nombre_archivo>.dart
+  Descripción:
+    <Resumen funcional de la pantalla. Qué flujo permite, qué operaciones ejecuta el usuario, qué acciones dispara, y cuál es su objetivo en el sistema.>
+
+  Dependencias:
+    - <modelos utilizados>
+    - <servicios utilizados (si se accede directamente, aunque no es lo común)>
+    - <controladores utilizados>
+
+  Pantallas destino:
+    - <pantalla_1.dart>: <explicación de cómo o por qué se navega hacia ella desde esta pantalla>
+    - <pantalla_2.dart>: <explicación si corresponde>
+*/
+
+📌 Notas adicionales:
+
+Si la pantalla no tiene pantallas destino, debe indicar explícitamente:
+
+Pantallas destino: ninguna
+
+Este bloque debe aparecer antes de cualquier import.
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+🧱 Variables internas de clase
+
+Cada variable interna debe ir precedida de una línea descriptiva:
+
+/// Controlador de alineaciones, usado para guardar los cambios realizados.
+final ControladorAlineaciones _controlador = ControladorAlineaciones();
+
+/// Controlador de texto para los IDs de jugadores.
+late TextEditingController _ctrlJugadores;
+
+/// Indica si hay cambios sin guardar.
+bool hayCambios = false;
+
+📌 Se recomienda usar el mismo formato para final, late y variables de estado locales.
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+🔧 Encabezado por método
+
+Cada método o función en una pantalla debe incluir un bloque de documentación estructurado del siguiente modo:
+
+/*
+  Nombre: <nombreMetodo>
+  Descripción:
+    <Explica claramente qué hace la función. Qué parte del flujo controla, qué efecto tiene y por qué es importante.>
+
+  Entradas:
+    - <parametro1> (<tipo>): <explicación>
+    - <parametro2> (<tipo>): <explicación>
+    - Si no tiene entradas: "Entradas: ninguna"
+
+  Salidas:
+    - <tipo>: <qué devuelve y en qué contexto>
+    - Si no devuelve nada: "void: sin valor devuelto"
+*/
+
+📌 Este bloque debe ir inmediatamente antes del método, sin líneas intermedias.
+
+📌 En funciones con acceso asincrónico, dejar claro si la operación requiere que el widget esté montado (if (mounted)) al finalizar.
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+
+✅ CONSIDERACIONES ADICIONALES
+
+Toda la documentación debe estar en español.
+
+Evitar descripciones genéricas como "función que guarda datos". Siempre explicar qué guarda y por qué.
+
+En métodos de navegación (Navigator.push(...)), se recomienda explicar a qué parte del flujo dirige al usuario.
+
+Si hay eventos visuales (snackbars, popups), documentar su intención en la descripción.
+
+✅ USO OBLIGATORIO
+
+Esta plantilla es de uso obligatorio para todas las pantallas UI del proyecto.
+
+En cada revisión del módulo UI, se validará el cumplimiento de estas reglas.
+
+Cualquier pantalla que no las cumpla deberá ser corregida antes de aprobación final.
