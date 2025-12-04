@@ -314,7 +314,7 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
             .map(
               (j) => CheckboxListTile(
                 title: Text("${j.nombre} (${j.posicion})"),
-                subtitle: Text("Equipo real: ${j.idEquipoReal}"),
+                subtitle: Text("Equipo real: ${j.nombreEquipoReal}"),
                 value: seleccionados.contains(j.id),
                 onChanged: (_) => onToggle(j),
               ),

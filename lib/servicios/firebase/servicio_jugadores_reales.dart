@@ -25,6 +25,9 @@ class ServicioJugadoresReales {
   /// Servicio de logs para auditoría.
   final ServicioLog _log = ServicioLog();
 
+  /// Cache temporal de nombres de equipos reales.
+  final Map<String, String> _cacheEquipos = {};
+
   /*
     Nombre: crearJugadorReal
     Descripción:
@@ -58,18 +61,70 @@ class ServicioJugadoresReales {
   */
   Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal) async {
     try {
+      _log.informacion("Obteniendo jugadores reales del equipo $idEquipoReal");
+
       final query = await _db
           .collection("jugadores_reales")
           .where("idEquipoReal", isEqualTo: idEquipoReal)
           .get();
 
-      _log.informacion("Listar jugadores reales de equipo: $idEquipoReal");
+      final nombreEquipo = await _obtenerNombreEquipoReal(idEquipoReal);
 
-      return query.docs
-          .map((d) => JugadorReal.desdeMapa(d.id, d.data()))
-          .toList();
+      return query.docs.map((d) {
+        final jugador = JugadorReal.desdeMapa(d.id, d.data());
+        return jugador.copiarCon(nombreEquipoReal: nombreEquipo);
+      }).toList();
     } catch (e) {
       _log.error("Error al obtener jugadores reales: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: obtenerPorIds
+    Descripción:
+      Obtiene una lista de jugadores reales activos según sus IDs.
+      Usa paginación para evitar límites de Firestore y cachea nombres de equipos.
+    Entradas:
+      - ids (List<String>): lista de IDs de jugadores reales.
+    Salidas:
+      - Lista de instancias JugadorReal.
+  */
+  Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
+    try {
+      if (ids.isEmpty) return [];
+
+      final idsFiltrados = ids.toSet().toList(); // Quitar duplicados
+      final List<JugadorReal> jugadores = [];
+
+      _log.informacion(
+        "Obteniendo jugadores reales por IDs (total=${idsFiltrados.length})",
+      );
+
+      for (var i = 0; i < idsFiltrados.length; i += 10) {
+        final batch = idsFiltrados.skip(i).take(10).toList();
+
+        final query = await _db
+            .collection("jugadores_reales")
+            .where(FieldPath.documentId, whereIn: batch)
+            .get();
+
+        for (var doc in query.docs) {
+          final jugador = JugadorReal.desdeMapa(doc.id, doc.data());
+
+          if (jugador.activo) {
+            final nombreEquipo = await _obtenerNombreEquipoReal(
+              jugador.idEquipoReal,
+            );
+            jugadores.add(jugador.copiarCon(nombreEquipoReal: nombreEquipo));
+          }
+        }
+      }
+
+      jugadores.sort((a, b) => a.id.compareTo(b.id)); // Orden alfabético por ID
+      return jugadores;
+    } catch (e) {
+      _log.error("Error al obtener jugadores por IDs: $e");
       rethrow;
     }
   }
@@ -162,59 +217,31 @@ class ServicioJugadoresReales {
   }
 
   /*
-  Nombre: obtenerPorIds
-  Descripción:
-    Recupera un subconjunto de jugadores reales filtrando por una lista de IDs.
-    Solo se incluyen jugadores activos. El resultado final se ordena alfabéticamente
-    por ID para mantener consistencia visual. Si la lista está vacía, lanza excepción.
+    Nombre: _obtenerNombreEquipoReal
+    Descripción:
+      Consulta Firestore (o cache) para obtener el nombre del equipo real.
+    Entradas:
+      - idEquipo (String): ID del equipo real.
+    Salidas:
+      - String con el nombre del equipo (o vacío si no existe).
+  */
+  Future<String> _obtenerNombreEquipoReal(String idEquipo) async {
+    if (_cacheEquipos.containsKey(idEquipo)) {
+      return _cacheEquipos[idEquipo]!;
+    }
 
-  Entradas:
-    - ids (List<String>): lista de IDs de jugadores reales a recuperar.
-
-  Salidas:
-    - Futuro que retorna una lista de instancias de JugadorReal activas encontradas.
-*/
-  Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
     try {
-      // Validación de lista vacía
-      if (ids.isEmpty) {
-        _log.advertencia("obtenerPorIds: lista de IDs vacía");
-        throw ArgumentError("La lista de IDs no puede estar vacía.");
-      }
+      _log.informacion("Consultando nombre del equipo real $idEquipo");
 
-      // Quitar duplicados
-      final idsUnicos = ids.toSet().toList();
+      final doc = await _db.collection("equipos_reales").doc(idEquipo).get();
 
-      final List<JugadorReal> resultado = [];
-
-      // Paginación en lotes de 10
-      const int lote = 10;
-      final coleccion = _db.collection("jugadores_reales");
-
-      for (int i = 0; i < idsUnicos.length; i += lote) {
-        final sublista = idsUnicos.skip(i).take(lote).toList();
-
-        final query = await coleccion
-            .where(FieldPath.documentId, whereIn: sublista)
-            .where("activo", isEqualTo: true)
-            .get();
-
-        resultado.addAll(
-          query.docs.map((d) => JugadorReal.desdeMapa(d.id, d.data())),
-        );
-      }
-
-      // Ordenar por ID alfabéticamente
-      resultado.sort((a, b) => a.id.compareTo(b.id));
-
-      _log.informacion(
-        "obtenerPorIds: solicitados=${idsUnicos.length} recuperados=${resultado.length}",
-      );
-
-      return resultado;
+      final nombre = doc.exists ? (doc.data()?["nombre"] ?? "") : "";
+      _cacheEquipos[idEquipo] = nombre;
+      return nombre;
     } catch (e) {
-      _log.error("Error al obtener jugadores por IDs: $e");
-      rethrow;
+      _log.error("Error al obtener nombre del equipo $idEquipo: $e");
+      _cacheEquipos[idEquipo] = "";
+      return "";
     }
   }
 }

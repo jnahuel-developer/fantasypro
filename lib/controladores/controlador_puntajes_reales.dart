@@ -20,6 +20,7 @@ import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_puntajes_reales.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
 import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
+import 'package:fantasypro/servicios/firebase/servicio_puntajes_reales.dart';
 
 class ControladorPuntajesReales {
   /// Servicio para persistir puntajes reales.
@@ -182,5 +183,29 @@ class ControladorPuntajesReales {
       }
     }
     return false;
+  }
+
+  /*
+    Nombre: obtenerMapaPorLigaYFecha
+    Descripción:
+      Recupera un mapa de puntajes reales de jugadores para una liga y fecha dadas.
+      Devuelve un Map idJugadorReal → puntaje.
+    Entradas:
+      - idLiga: String — ID de la liga
+      - idFecha: String — ID de la fecha
+    Salidas:
+      - Future<Map<String, int>>
+  */
+  Future<Map<String, int>> obtenerMapaPorLigaYFecha(
+    String idLiga,
+    String idFecha,
+  ) async {
+    _log.informacion(
+      "Obteniendo mapa de puntajes reales para liga $idLiga, fecha $idFecha",
+    );
+    return await _servicioPuntajes.obtenerMapaPuntajesPorLigaYFecha(
+      idLiga,
+      idFecha,
+    );
   }
 }

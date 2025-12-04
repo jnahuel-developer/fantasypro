@@ -297,4 +297,65 @@ class ServicioParticipaciones {
       rethrow;
     }
   }
+
+  /*
+    Nombre: obtenerActivasPorLiga
+    Firma: Future<List<ParticipacionLiga>> obtenerActivasPorLiga(String idLiga)
+    Descripción:
+      Devuelve todas las participaciones activas de una liga.
+    Ejemplo:
+      final participantes = await servicio.obtenerActivasPorLiga("ligaABC");
+  */
+  Future<List<ParticipacionLiga>> obtenerActivasPorLiga(String idLiga) async {
+    try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) {
+        throw ArgumentError("ID de liga inválido.");
+      }
+
+      _log.informacion("Listando participaciones activas de la liga $idLiga");
+
+      final query = await _db
+          .collection("participaciones_liga")
+          .where("idLiga", isEqualTo: idLiga)
+          .where("activo", isEqualTo: true)
+          .get();
+
+      return query.docs
+          .map((d) => ParticipacionLiga.desdeMapa(d.id, d.data()))
+          .toList();
+    } catch (e) {
+      _log.error("Error al obtener participaciones activas: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: incrementarPuntosParticipacion
+    Firma: Future<void> incrementarPuntosParticipacion(String idParticipacion, int delta)
+    Descripción:
+      Incrementa de forma atómica el campo "puntos" en una participación de liga.
+    Ejemplo:
+      await servicio.incrementarPuntosParticipacion("part123", 18);
+  */
+  Future<void> incrementarPuntosParticipacion(
+    String idParticipacion,
+    int delta,
+  ) async {
+    try {
+      final idSan = _sanitizarId(idParticipacion);
+      if (idSan.isEmpty) {
+        throw ArgumentError("ID de participación inválido.");
+      }
+
+      _log.informacion("Incrementando $delta puntos en participación $idSan");
+
+      await _db.collection("participaciones_liga").doc(idSan).update({
+        "puntos": FieldValue.increment(delta),
+      });
+    } catch (e) {
+      _log.error("Error al incrementar puntos en participación: $e");
+      rethrow;
+    }
+  }
 }

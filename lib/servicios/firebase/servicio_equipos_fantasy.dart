@@ -298,4 +298,59 @@ class ServicioEquiposFantasy {
       rethrow;
     }
   }
+
+  /*
+    Nombre: obtenerActivosPorLiga
+    Firma: Future<List<EquipoFantasy>> obtenerActivosPorLiga(String idLiga)
+    Descripción:
+      Devuelve todos los equipos fantasy activos asociados a una liga dada.
+    Ejemplo:
+      final equipos = await servicio.obtenerActivosPorLiga("liga123");
+  */
+  Future<List<EquipoFantasy>> obtenerActivosPorLiga(String idLiga) async {
+    try {
+      idLiga = _sanitizarId(idLiga);
+      if (idLiga.isEmpty) {
+        throw ArgumentError("ID de liga inválido.");
+      }
+
+      _log.informacion("Listando equipos fantasy activos de la liga $idLiga");
+
+      final query = await _db
+          .collection("equipos_fantasy")
+          .where("idLiga", isEqualTo: idLiga)
+          .where("activo", isEqualTo: true)
+          .get();
+
+      return query.docs
+          .map((d) => EquipoFantasy.desdeMapa(d.id, d.data()))
+          .toList();
+    } catch (e) {
+      _log.error("Error al obtener equipos fantasy activos: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> actualizarPlantel(
+    String idEquipoFantasy,
+    List<String> idsJugadores,
+    int presupuestoRestante,
+  ) async {
+    try {
+      final idSan = _sanitizarId(idEquipoFantasy);
+      if (idSan.isEmpty) throw ArgumentError("ID de equipo inválido.");
+
+      await _db.collection("equipos_fantasy").doc(idSan).update({
+        "idsJugadoresPlantel": idsJugadores,
+        "presupuestoRestante": presupuestoRestante,
+      });
+
+      _log.informacion(
+        "EquipoFantasy actualizado (plantel inicial): $idEquipoFantasy",
+      );
+    } catch (e) {
+      _log.error("Error actualizando plantel inicial: $e");
+      rethrow;
+    }
+  }
 }

@@ -110,26 +110,23 @@ class ServicioFechas {
       final query = await _db
           .collection("fechas_liga")
           .where("idLiga", isEqualTo: idLiga)
-          .orderBy("numeroFecha")
           .get();
 
       if (query.docs.isEmpty) {
         _log.advertencia("No hay fechas registradas para la liga $idLiga");
+        return [];
       }
 
-      return query.docs
+      final lista = query.docs
           .map((d) => FechaLiga.desdeMapa(d.id, d.data()))
           .toList();
+
+      lista.sort((a, b) => a.numeroFecha.compareTo(b.numeroFecha));
+
+      return lista;
     } on FirebaseException catch (e) {
-      if (e.message?.contains("index") == true) {
-        _log.advertencia(
-          "Colección existente pero sin índice — devolviendo lista vacía.",
-        );
-        return [];
-      } else {
-        _log.error("Error Firebase al obtener fechas de liga $idLiga: $e");
-        rethrow;
-      }
+      _log.error("Error Firebase al obtener fechas de liga $idLiga: $e");
+      rethrow;
     } catch (e) {
       _log.advertencia(
         "Colección de fechas inexistente o vacía para liga $idLiga — devolviendo lista vacía.",
@@ -165,6 +162,36 @@ class ServicioFechas {
       _log.informacion("Fecha cerrada correctamente: $idFecha");
     } catch (e) {
       _log.error("Error cerrando fecha: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: obtenerFechaPorId
+    Descripción:
+      Recupera una fecha de liga a partir de su ID.
+    Entradas:
+      - idFecha: String → ID de la fecha
+    Salidas:
+      - Future<FechaLiga> → Instancia recuperada
+  */
+  Future<FechaLiga> obtenerFechaPorId(String idFecha) async {
+    if (idFecha.isEmpty) {
+      throw ArgumentError("El ID de la fecha no puede estar vacío.");
+    }
+
+    _log.informacion("Buscando fecha por ID: $idFecha");
+
+    try {
+      final doc = await _db.collection("fechas_liga").doc(idFecha).get();
+
+      if (!doc.exists) {
+        throw Exception("Fecha no encontrada: $idFecha");
+      }
+
+      return FechaLiga.desdeMapa(doc.id, doc.data()!);
+    } catch (e) {
+      _log.error("Error al obtener fecha $idFecha: $e");
       rethrow;
     }
   }
