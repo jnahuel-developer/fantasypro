@@ -18,6 +18,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioPuntajesFantasy {
   /// Instancia de Firestore.
@@ -62,9 +63,9 @@ class ServicioPuntajesFantasy {
       );
 
       await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idParticipacion)
-          .collection("puntajes_fantasy")
+          .collection(ColFirebase.puntajesFantasy)
           .doc(idFecha)
           .set(modelo.aMapa());
     } catch (e) {
@@ -100,9 +101,9 @@ class ServicioPuntajesFantasy {
       );
 
       final doc = await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idParticipacion)
-          .collection("puntajes_fantasy")
+          .collection(ColFirebase.puntajesFantasy)
           .doc(idFecha)
           .get();
 
@@ -139,10 +140,10 @@ class ServicioPuntajesFantasy {
       );
 
       final query = await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idParticipacion)
-          .collection("puntajes_fantasy")
-          .orderBy("timestampAplicacion")
+          .collection(ColFirebase.puntajesFantasy)
+          .orderBy(CamposFirebase.timestampAplicacion)
           .get();
 
       return query.docs

@@ -17,13 +17,13 @@
   Pantallas destino: ninguna
 */
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__dashboard__desktop.dart';
 
 class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
@@ -133,7 +133,9 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
     final int presupuestoRestante = presupuestoInicial - costoPlantel;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Resumen del equipo — ${liga.nombre}")),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Resumen del equipo — ${liga.nombre}",
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -176,16 +178,10 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                final usuarioActual = FirebaseAuth.instance.currentUser;
-                if (usuarioActual == null) return;
-
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => UiUsuarioDashboardDesktop(
-                      liga: liga,
-                      usuario: usuarioActual,
-                    ),
+                    builder: (_) => const UiUsuarioDashboardDesktop(),
                   ),
                   (route) => false,
                 );

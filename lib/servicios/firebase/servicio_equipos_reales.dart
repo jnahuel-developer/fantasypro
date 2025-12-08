@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioEquiposReales {
   /// Instancia del cliente Firestore.
@@ -36,7 +37,8 @@ class ServicioEquiposReales {
   */
   Future<EquipoReal> crearEquipoReal(EquipoReal equipo) async {
     try {
-      final doc = await _db.collection("equipos_reales").add(equipo.aMapa());
+      final doc =
+          await _db.collection(ColFirebase.equiposReales).add(equipo.aMapa());
       final creado = equipo.copiarCon(id: doc.id);
 
       _log.informacion("EquipoReal creado: ${creado.id}");
@@ -59,8 +61,8 @@ class ServicioEquiposReales {
   Future<List<EquipoReal>> obtenerEquiposDeLiga(String idLiga) async {
     try {
       final query = await _db
-          .collection("equipos_reales")
-          .where('idLiga', isEqualTo: idLiga)
+          .collection(ColFirebase.equiposReales)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
       _log.informacion("Listar equipos reales de liga: $idLiga");
@@ -86,7 +88,7 @@ class ServicioEquiposReales {
   Future<void> editarEquipoReal(EquipoReal equipo) async {
     try {
       await _db
-          .collection("equipos_reales")
+          .collection(ColFirebase.equiposReales)
           .doc(equipo.id)
           .update(equipo.aMapa());
 
@@ -108,7 +110,10 @@ class ServicioEquiposReales {
   */
   Future<void> archivarEquipoReal(String id) async {
     try {
-      await _db.collection("equipos_reales").doc(id).update({'activo': false});
+      await _db
+          .collection(ColFirebase.equiposReales)
+          .doc(id)
+          .update({CamposFirebase.activo: false});
 
       _log.informacion("EquipoReal archivado: $id");
     } catch (e) {
@@ -128,7 +133,10 @@ class ServicioEquiposReales {
   */
   Future<void> activarEquipoReal(String id) async {
     try {
-      await _db.collection("equipos_reales").doc(id).update({'activo': true});
+      await _db
+          .collection(ColFirebase.equiposReales)
+          .doc(id)
+          .update({CamposFirebase.activo: true});
 
       _log.informacion("EquipoReal activado: $id");
     } catch (e) {
@@ -148,7 +156,7 @@ class ServicioEquiposReales {
   */
   Future<void> eliminarEquipoReal(String id) async {
     try {
-      await _db.collection("equipos_reales").doc(id).delete();
+      await _db.collection(ColFirebase.equiposReales).doc(id).delete();
 
       _log.informacion("EquipoReal eliminado: $id");
     } catch (e) {

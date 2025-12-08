@@ -9,7 +9,7 @@
 
 import 'package:fantasypro/vistas/web/desktop/ui__admin__panel__dashboard__desktop.dart';
 import 'package:fantasypro/vistas/web/desktop/ui__comun__autenticacion__login__desktop.dart';
-import 'package:fantasypro/vistas/web/desktop/ui__usuario__inicio__lista__desktop.dart';
+import 'package:fantasypro/vistas/web/desktop/ui__usuario__dashboard__desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -68,7 +68,7 @@ class ControladorRouter extends StatelessWidget {
             if (esAdmin) {
               return const UiAdminPanelDashboardDesktop();
             } else {
-              return const UiUsuarioInicioListaDesktop();
+              return const UiUsuarioDashboardDesktop();
             }
           },
         );

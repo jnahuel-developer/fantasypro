@@ -20,6 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fantasypro/modelos/roles.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 import '../utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioAutenticacion {
   /// Instancia de Firebase Auth para operaciones de autenticación.
@@ -58,12 +59,12 @@ class ServicioAutenticacion {
 
       final uid = cred.user!.uid;
 
-      await _db.collection("usuarios").doc(uid).set({
-        "uid": uid,
-        "nombre": nombre,
-        "email": email,
-        "rol": rolDB,
-        "creado": DateTime.now().millisecondsSinceEpoch,
+      await _db.collection(ColFirebase.usuarios).doc(uid).set({
+        CamposFirebase.uid: uid,
+        CamposFirebase.nombre: nombre,
+        CamposFirebase.email: email,
+        CamposFirebase.rol: rolDB,
+        CamposFirebase.creado: DateTime.now().millisecondsSinceEpoch,
       });
 
       _log.informacion(
@@ -140,10 +141,10 @@ class ServicioAutenticacion {
   */
   Future<bool> esAdmin(String uid) async {
     try {
-      final doc = await _db.collection("usuarios").doc(uid).get();
+      final doc = await _db.collection(ColFirebase.usuarios).doc(uid).get();
       if (!doc.exists) return false;
 
-      final rolDB = (doc["rol"] ?? "") as String;
+      final rolDB = (doc[CamposFirebase.rol] ?? "") as String;
       return RolUsuarioExt.desdeValorDB(rolDB) == RolUsuario.admin;
     } catch (e) {
       _log.error("${TextosApp.LOG_AUTH_ERROR_ROL} $e");

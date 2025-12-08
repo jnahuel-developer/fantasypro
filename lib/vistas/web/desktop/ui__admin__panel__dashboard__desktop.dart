@@ -193,6 +193,38 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                 },
                 child: const Text("Carga Masiva – España"),
               ),
+
+              const SizedBox(height: 30),
+
+              //----------------------------------------------
+              // CARGA MASIVA – LIGA ITALIA
+              //----------------------------------------------
+              ElevatedButton(
+                onPressed: () {
+                  _cargarLigaDesdeJson(
+                    context,
+                    "assets/data/carga_inicial/carga_italia.json",
+                    "Liga Italiana",
+                  );
+                },
+                child: const Text("Carga Masiva – Italia"),
+              ),
+
+              const SizedBox(height: 30),
+
+              //----------------------------------------------
+              // CARGA MASIVA – LIGA INGLATERRA
+              //----------------------------------------------
+              ElevatedButton(
+                onPressed: () {
+                  _cargarLigaDesdeJson(
+                    context,
+                    "assets/data/carga_inicial/carga_inglaterra.json",
+                    "Liga Inglesa",
+                  );
+                },
+                child: const Text("Carga Masiva – Inglaterra"),
+              ),
             ],
           ),
         ),

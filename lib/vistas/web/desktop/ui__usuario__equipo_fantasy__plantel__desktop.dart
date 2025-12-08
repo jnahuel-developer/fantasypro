@@ -39,6 +39,7 @@ import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart';
 
 class UiUsuarioEquipoFantasyPlantelDesktop extends StatefulWidget {
@@ -394,7 +395,9 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Armado del plantel — ${widget.liga.nombre}")),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Armado del plantel — ${widget.liga.nombre}",
+      ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
           : Column(

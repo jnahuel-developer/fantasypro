@@ -19,6 +19,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 import 'package:fantasypro/textos/textos_app.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioLigas {
   /// Instancia de Firestore para acceder a la colección "ligas".
@@ -50,9 +51,9 @@ class ServicioLigas {
   Future<Liga> crearLiga(Liga liga) async {
     try {
       final datos = liga.aMapa();
-      datos['nombreBusqueda'] = _sanitizarTexto(liga.nombre);
+      datos[CamposFirebase.nombreBusqueda] = _sanitizarTexto(liga.nombre);
 
-      final doc = await _db.collection("ligas").add(datos);
+      final doc = await _db.collection(ColFirebase.ligas).add(datos);
       final nuevaLiga = liga.copiarCon(id: doc.id);
 
       _log.informacion("${TextosApp.LOG_LIGA_CREADA} ${nuevaLiga.id}");
@@ -76,7 +77,7 @@ class ServicioLigas {
     try {
       id = _sanitizarTexto(id);
 
-      final doc = await _db.collection("ligas").doc(id).get();
+      final doc = await _db.collection(ColFirebase.ligas).doc(id).get();
 
       if (!doc.exists) {
         _log.advertencia("${TextosApp.LOG_LIGA_NO_ENCONTRADA} $id");
@@ -102,8 +103,8 @@ class ServicioLigas {
   Future<List<Liga>> obtenerLigasActivas() async {
     try {
       final consulta = await _db
-          .collection("ligas")
-          .where('activa', isEqualTo: true)
+          .collection(ColFirebase.ligas)
+          .where(CamposFirebase.activa, isEqualTo: true)
           .get();
 
       return consulta.docs.map((d) => Liga.desdeMapa(d.id, d.data())).toList();
@@ -128,9 +129,9 @@ class ServicioLigas {
       if (texto.isEmpty) return [];
 
       final query = await _db
-          .collection("ligas")
-          .where('nombreBusqueda', isGreaterThanOrEqualTo: texto)
-          .where('nombreBusqueda', isLessThan: '${texto}z')
+          .collection(ColFirebase.ligas)
+          .where(CamposFirebase.nombreBusqueda, isGreaterThanOrEqualTo: texto)
+          .where(CamposFirebase.nombreBusqueda, isLessThan: '${texto}z')
           .get();
 
       _log.informacion("Buscar ligas por nombre: '$texto'");
@@ -153,7 +154,7 @@ class ServicioLigas {
   */
   Future<List<Liga>> obtenerTodasLasLigas() async {
     try {
-      final consulta = await _db.collection("ligas").get();
+      final consulta = await _db.collection(ColFirebase.ligas).get();
 
       return consulta.docs
           .map((doc) => Liga.desdeMapa(doc.id, doc.data()))
@@ -176,9 +177,9 @@ class ServicioLigas {
   Future<void> editarLiga(Liga liga) async {
     try {
       final datos = liga.aMapa();
-      datos['nombreBusqueda'] = _sanitizarTexto(liga.nombre);
+      datos[CamposFirebase.nombreBusqueda] = _sanitizarTexto(liga.nombre);
 
-      await _db.collection("ligas").doc(liga.id).update(datos);
+      await _db.collection(ColFirebase.ligas).doc(liga.id).update(datos);
       _log.informacion("${TextosApp.LOG_LIGA_EDITADA} ${liga.id}");
     } catch (e) {
       _log.error("${TextosApp.LOG_LIGA_ERROR_EDITAR} $e");
@@ -198,7 +199,10 @@ class ServicioLigas {
   Future<void> archivarLiga(String id) async {
     try {
       id = _sanitizarTexto(id);
-      await _db.collection("ligas").doc(id).update({'activa': false});
+      await _db
+          .collection(ColFirebase.ligas)
+          .doc(id)
+          .update({CamposFirebase.activa: false});
       _log.informacion("${TextosApp.LOG_LIGA_ARCHIVADA} $id");
     } catch (e) {
       _log.error("${TextosApp.LOG_LIGA_ERROR_ARCHIVAR} $e");
@@ -218,7 +222,10 @@ class ServicioLigas {
   Future<void> activarLiga(String id) async {
     try {
       id = _sanitizarTexto(id);
-      await _db.collection("ligas").doc(id).update({'activa': true});
+      await _db
+          .collection(ColFirebase.ligas)
+          .doc(id)
+          .update({CamposFirebase.activa: true});
       _log.informacion("${TextosApp.LOG_LIGA_ACTIVADA} $id");
     } catch (e) {
       _log.error("${TextosApp.LOG_LIGA_ERROR_ACTIVAR} $e");
@@ -238,7 +245,7 @@ class ServicioLigas {
   Future<void> eliminarLiga(String id) async {
     try {
       id = _sanitizarTexto(id);
-      await _db.collection("ligas").doc(id).delete();
+      await _db.collection(ColFirebase.ligas).doc(id).delete();
       _log.informacion("${TextosApp.LOG_LIGA_ELIMINADA} $id");
     } catch (e) {
       _log.error("${TextosApp.LOG_LIGA_ERROR_ELIMINAR} $e");

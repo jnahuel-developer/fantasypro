@@ -7,7 +7,6 @@
   Dependencias:
     - modelos/liga.dart
     - controladores/controlador_ligas.dart
-    - servicios/servicio_autenticacion.dart
 
   Pantallas que navegan hacia esta:
     - ui__comun__autenticacion__login__desktop.dart
@@ -17,12 +16,11 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__liga__detalle__desktop.dart';
-import 'ui__comun__autenticacion__login__desktop.dart';
 
 class UiUsuarioInicioListaDesktop extends StatefulWidget {
   const UiUsuarioInicioListaDesktop({super.key});
@@ -155,28 +153,8 @@ class _UiUsuarioInicioListaDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("FantasyPro — Ligas activas"),
-        actions: [
-          IconButton(
-            tooltip: "Cerrar sesión",
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final servicio = ServicioAutenticacion();
-              await servicio.cerrarSesion();
-
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const UiComunAutenticacionLoginDesktop(),
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(width: 12),
-        ],
+      appBar: const UiUsuarioAppBarDesktop(
+        titulo: "FantasyPro — Ligas activas",
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),

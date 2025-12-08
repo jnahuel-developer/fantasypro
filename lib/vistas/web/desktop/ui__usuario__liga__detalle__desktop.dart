@@ -45,6 +45,7 @@ import 'package:fantasypro/controladores/controlador_fechas.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__equipo_fantasy__plantel__desktop.dart';
 import 'ui__usuario__equipo_fantasy__resumen__desktop.dart';
 
@@ -346,7 +347,9 @@ class _UiUsuarioLigaDetalleDesktopEstado
     final liga = widget.liga;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Liga: ${liga.nombre}")),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Liga: ${liga.nombre}",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: _cargando

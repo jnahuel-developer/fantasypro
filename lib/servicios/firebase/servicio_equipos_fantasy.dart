@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/equipo_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioEquiposFantasy {
   /// Instancia de Firestore.
@@ -100,7 +101,8 @@ class ServicioEquiposFantasy {
         activo: true,
       );
 
-      final doc = await _db.collection("equipos_fantasy").add(equipo.aMapa());
+      final doc =
+          await _db.collection(ColFirebase.equiposFantasy).add(equipo.aMapa());
       final creado = equipo.copiarCon(id: doc.id);
 
       _log.informacion(
@@ -135,9 +137,9 @@ class ServicioEquiposFantasy {
       _validarIdsObligatorios(idUsuario, idLiga);
 
       final query = await _db
-          .collection("equipos_fantasy")
-          .where('idUsuario', isEqualTo: idUsuario)
-          .where('idLiga', isEqualTo: idLiga)
+          .collection(ColFirebase.equiposFantasy)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .limit(1)
           .get();
 
@@ -182,9 +184,9 @@ class ServicioEquiposFantasy {
       _validarIdsObligatorios(idUsuario, idLiga);
 
       final query = await _db
-          .collection("equipos_fantasy")
-          .where('idUsuario', isEqualTo: idUsuario)
-          .where('idLiga', isEqualTo: idLiga)
+          .collection(ColFirebase.equiposFantasy)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
       _log.informacion(
@@ -219,7 +221,7 @@ class ServicioEquiposFantasy {
       _validarIdsObligatorios(datos.idUsuario, datos.idLiga);
 
       await _db
-          .collection("equipos_fantasy")
+          .collection(ColFirebase.equiposFantasy)
           .doc(datos.id)
           .update(datos.aMapa());
 
@@ -244,7 +246,10 @@ class ServicioEquiposFantasy {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("equipos_fantasy").doc(id).update({'activo': false});
+      await _db
+          .collection(ColFirebase.equiposFantasy)
+          .doc(id)
+          .update({CamposFirebase.activo: false});
 
       _log.informacion("EquipoFantasy archivado: $id");
     } catch (e) {
@@ -267,7 +272,10 @@ class ServicioEquiposFantasy {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("equipos_fantasy").doc(id).update({'activo': true});
+      await _db
+          .collection(ColFirebase.equiposFantasy)
+          .doc(id)
+          .update({CamposFirebase.activo: true});
 
       _log.informacion("EquipoFantasy activado: $id");
     } catch (e) {
@@ -290,7 +298,7 @@ class ServicioEquiposFantasy {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("equipos_fantasy").doc(id).delete();
+      await _db.collection(ColFirebase.equiposFantasy).doc(id).delete();
 
       _log.informacion("EquipoFantasy eliminado: $id");
     } catch (e) {
@@ -317,9 +325,9 @@ class ServicioEquiposFantasy {
       _log.informacion("Listando equipos fantasy activos de la liga $idLiga");
 
       final query = await _db
-          .collection("equipos_fantasy")
-          .where("idLiga", isEqualTo: idLiga)
-          .where("activo", isEqualTo: true)
+          .collection(ColFirebase.equiposFantasy)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.activo, isEqualTo: true)
           .get();
 
       return query.docs
@@ -340,9 +348,9 @@ class ServicioEquiposFantasy {
       final idSan = _sanitizarId(idEquipoFantasy);
       if (idSan.isEmpty) throw ArgumentError("ID de equipo inválido.");
 
-      await _db.collection("equipos_fantasy").doc(idSan).update({
-        "idsJugadoresPlantel": idsJugadores,
-        "presupuestoRestante": presupuestoRestante,
+      await _db.collection(ColFirebase.equiposFantasy).doc(idSan).update({
+        CamposFirebase.idsJugadoresPlantel: idsJugadores,
+        CamposFirebase.presupuestoRestante: presupuestoRestante,
       });
 
       _log.informacion(

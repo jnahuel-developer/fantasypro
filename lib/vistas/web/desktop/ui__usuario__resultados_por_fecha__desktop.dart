@@ -22,6 +22,7 @@ import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
+import 'widgets/ui__usuario__appbar__desktop.dart';
 
 class UiUsuarioResultadosPorFechaDesktop extends StatefulWidget {
   /// Liga seleccionada.
@@ -169,8 +170,8 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Resultados por fecha — ${widget.liga.nombre}"),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Resultados por fecha — ${widget.liga.nombre}",
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
