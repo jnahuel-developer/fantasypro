@@ -23,6 +23,7 @@ import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
 import 'widgets/ui__usuario__appbar__desktop.dart';
+import 'ui__usuario__resultados__detalle_jugadores__desktop.dart';
 
 class UiUsuarioResultadosPorFechaDesktop extends StatefulWidget {
   /// Liga seleccionada.
@@ -150,6 +151,7 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
     final subtitulo = _participacion == null
         ? "El usuario no tiene participación en la liga"
         : (fecha.cerrada ? "Fecha cerrada" : "Fecha pendiente");
+    final puntaje = _puntajesPorFecha[fecha.id];
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -159,9 +161,33 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(subtitulo),
-        trailing: Text(
-          _puntajeDeFecha(fecha),
-          style: const TextStyle(fontSize: 16),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              _puntajeDeFecha(fecha),
+              style: const TextStyle(fontSize: 16),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UiUsuarioResultadosDetalleJugadoresDesktop(
+                      liga: widget.liga,
+                      usuario: widget.usuario,
+                      fecha: fecha,
+                      puntajeFantasy: puntaje,
+                      nombreEquipoFantasy:
+                          _participacion?.nombreEquipoFantasy ?? "",
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Ver detalle de jugadores"),
+            ),
+          ],
         ),
       ),
     );
