@@ -81,41 +81,42 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
     Salidas: Future<void>
   */
   Future<void> _cargarDatos() async {
-    setState(() {
-      _cargando = true;
-      _mensajeError = null;
-      _puntajesPorFecha.clear();
-    });
+    setState(() => _cargando = true);
 
     try {
+      // 1) Obtener todas las fechas de la liga
       final fechas = await _controladorFechas.obtenerPorLiga(widget.liga.id);
-      fechas.sort((a, b) => a.numeroFecha.compareTo(b.numeroFecha));
+
+      // 2) Obtener puntajes fantasy del usuario en esta liga
+      final listaPuntajes =
+          await _controladorParticipaciones.obtenerPuntajesFantasyDeUsuarioEnLiga(
+        widget.liga.id,
+        widget.usuario.uid,
+      );
+
+      // 3) Mapear por idFecha para acceder rápido
+      _puntajesPorFecha
+        ..clear()
+        ..addAll({for (final p in listaPuntajes) p.idFecha: p});
 
       final participacion = await _controladorParticipaciones
-          .obtenerPorUsuarioYLiga(widget.usuario.uid, widget.liga.id);
-
-      if (participacion != null) {
-        for (final fecha in fechas) {
-          final puntaje = await _controladorParticipaciones
-              .obtenerPuntajePorParticipacionYFecha(
-            participacion.id,
-            fecha.id,
-          );
-          _puntajesPorFecha[fecha.id] = puntaje;
-        }
-      }
+          .obtenerParticipacionUsuarioEnLiga(widget.liga.id, widget.usuario.uid);
 
       setState(() {
         _fechas = fechas;
         _participacion = participacion;
-        _cargando = false;
+        _mensajeError = null;
       });
-    } catch (e) {
+    } catch (_) {
       setState(() {
+        _fechas = [];
+        _participacion = null;
+        _puntajesPorFecha.clear();
         _mensajeError = "No se pudieron cargar los resultados.";
-        _cargando = false;
       });
     }
+
+    setState(() => _cargando = false);
   }
 
   /*

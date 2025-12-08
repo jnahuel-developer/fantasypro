@@ -160,6 +160,81 @@ class ControladorParticipaciones {
     return await _servicio.obtenerParticipacion(idUsuario, idLiga);
   }
 
+  /*
+    Nombre: obtenerParticipacionUsuarioEnLiga
+    Descripción:
+      Recupera la participación de un usuario en una liga específica.
+      Si no existe participación, devuelve null.
+    Entradas:
+      - idLiga (String)
+      - idUsuario (String)
+    Salidas:
+      - Future<ParticipacionLiga?>
+  */
+  Future<ParticipacionLiga?> obtenerParticipacionUsuarioEnLiga(
+    String idLiga,
+    String idUsuario,
+  ) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+
+    _log.informacion(
+      "Obteniendo participación de usuario $idUsuario en liga $idLiga",
+    );
+
+    return await _servicio.obtenerParticipacion(idUsuario, idLiga);
+  }
+
+  /*
+    Nombre: obtenerPuntajesFantasyDeUsuarioEnLiga
+    Descripción:
+      Devuelve la lista de puntajes fantasy de un usuario en una liga,
+      buscando primero su participación y luego consultando la subcolección
+      "puntajes_fantasy" asociada.
+    Entradas:
+      - idLiga (String)
+      - idUsuario (String)
+    Salidas:
+      - Future<List<PuntajeEquipoFantasy>>
+  */
+  Future<List<PuntajeEquipoFantasy>> obtenerPuntajesFantasyDeUsuarioEnLiga(
+    String idLiga,
+    String idUsuario,
+  ) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El idUsuario no puede estar vacío.");
+    }
+
+    _log.informacion(
+      "Obteniendo puntajes fantasy para usuario $idUsuario en liga $idLiga",
+    );
+
+    final participacion = await obtenerParticipacionUsuarioEnLiga(
+      idLiga,
+      idUsuario,
+    );
+
+    if (participacion == null) {
+      _log.advertencia(
+        "No se encontró participación para usuario $idUsuario en liga $idLiga",
+      );
+      return [];
+    }
+
+    final servicioPuntajes = ServicioPuntajesFantasy();
+
+    return await servicioPuntajes.obtenerPuntajesPorParticipacion(
+      participacion.id,
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Archivar participación
   // ---------------------------------------------------------------------------

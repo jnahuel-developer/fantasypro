@@ -114,4 +114,43 @@ class ServicioPuntajesFantasy {
       rethrow;
     }
   }
+
+  /*
+    Nombre: obtenerPuntajesPorParticipacion
+    Descripción:
+      Devuelve todos los puntajes fantasy registrados para una participación
+      de liga determinada, ordenados por timestamp de aplicación.
+    Entradas:
+      - idParticipacion (String): identificador de la participación en la liga.
+    Salidas:
+      - Future<List<PuntajeEquipoFantasy>>: lista de puntajes fantasy.
+  */
+  Future<List<PuntajeEquipoFantasy>> obtenerPuntajesPorParticipacion(
+    String idParticipacion,
+  ) async {
+    try {
+      idParticipacion = _sanitizarId(idParticipacion);
+      if (idParticipacion.isEmpty) {
+        throw ArgumentError("ID de participación inválido.");
+      }
+
+      _log.informacion(
+        "Listando puntajes fantasy para participación $idParticipacion",
+      );
+
+      final query = await _db
+          .collection("participaciones_liga")
+          .doc(idParticipacion)
+          .collection("puntajes_fantasy")
+          .orderBy("timestampAplicacion")
+          .get();
+
+      return query.docs
+          .map((d) => PuntajeEquipoFantasy.desdeMapa(d.id, d.data()))
+          .toList();
+    } catch (e) {
+      _log.error("Error al listar puntajes fantasy: $e");
+      rethrow;
+    }
+  }
 }
