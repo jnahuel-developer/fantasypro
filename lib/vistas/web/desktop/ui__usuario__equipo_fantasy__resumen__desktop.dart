@@ -17,11 +17,14 @@
   Pantallas destino: ninguna
 */
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
+
+import 'ui__usuario__dashboard__desktop.dart';
 
 class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
   /// Liga actual en la que participa el usuario.
@@ -170,6 +173,26 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                final usuarioActual = FirebaseAuth.instance.currentUser;
+                if (usuarioActual == null) return;
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UiUsuarioDashboardDesktop(
+                      liga: liga,
+                      usuario: usuarioActual,
+                    ),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: const Text("Volver al inicio"),
+            ),
+          ),
         ],
       ),
     );

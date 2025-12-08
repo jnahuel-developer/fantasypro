@@ -135,6 +135,31 @@ class ControladorParticipaciones {
     return await _servicio.obtenerPorUsuario(idUsuario);
   }
 
+  /*
+    Nombre: obtenerPorUsuarioYLiga
+    Descripción:
+      Recupera la participación de un usuario específica para una liga.
+      Devuelve null si el usuario no está inscrito.
+    Entradas:
+      - idUsuario (String): identificador del usuario.
+      - idLiga (String): identificador de la liga.
+    Salidas:
+      - Future<ParticipacionLiga?>
+  */
+  Future<ParticipacionLiga?> obtenerPorUsuarioYLiga(
+    String idUsuario,
+    String idLiga,
+  ) async {
+    if (idUsuario.trim().isEmpty) {
+      throw ArgumentError("El ID del usuario no puede estar vacío.");
+    }
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El ID de la liga no puede estar vacío.");
+    }
+
+    return await _servicio.obtenerParticipacion(idUsuario, idLiga);
+  }
+
   // ---------------------------------------------------------------------------
   // Archivar participación
   // ---------------------------------------------------------------------------
@@ -173,6 +198,35 @@ class ControladorParticipaciones {
     _log.informacion("Editando participación ${participacion.id}");
 
     await _servicio.editarParticipacion(participacion);
+  }
+
+  /*
+    Nombre: obtenerPuntajePorParticipacionYFecha
+    Descripción:
+      Retorna el puntaje fantasy registrado para una participación en
+      una fecha específica. Si no existe registro, devuelve null.
+    Entradas:
+      - idParticipacion (String): identificador de la participación.
+      - idFecha (String): identificador de la fecha de liga.
+    Salidas:
+      - Future<PuntajeEquipoFantasy?>
+  */
+  Future<PuntajeEquipoFantasy?> obtenerPuntajePorParticipacionYFecha(
+    String idParticipacion,
+    String idFecha,
+  ) async {
+    if (idParticipacion.trim().isEmpty) {
+      throw ArgumentError("El ID de la participación no puede estar vacío.");
+    }
+    if (idFecha.trim().isEmpty) {
+      throw ArgumentError("El ID de la fecha no puede estar vacío.");
+    }
+
+    final servicio = ServicioPuntajesFantasy();
+    return await servicio.obtenerPorParticipacionYFecha(
+      idParticipacion,
+      idFecha,
+    );
   }
 
   /*
