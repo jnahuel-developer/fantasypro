@@ -21,6 +21,7 @@ import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 import 'widgets/ui__usuario__appbar__desktop.dart';
 
@@ -80,7 +81,8 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
     if (puntaje == null) {
       setState(() {
         _cargando = false;
-        _mensajeError = "No hay puntaje registrado para esta fecha.";
+        _mensajeError =
+            TextosApp.USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_SIN_PUNTAJE;
       });
       return;
     }
@@ -88,7 +90,8 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
     if (puntaje.detalleJugadores.isEmpty) {
       setState(() {
         _cargando = false;
-        _mensajeError = "No hay puntaje registrado para esta fecha.";
+        _mensajeError =
+            TextosApp.USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_SIN_PUNTAJE;
       });
       return;
     }
@@ -108,7 +111,8 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
       if (!mounted) return;
       setState(() {
         _cargando = false;
-        _mensajeError = "Error al cargar el detalle de jugadores.";
+        _mensajeError =
+            TextosApp.USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_ERROR_CARGA;
       });
     }
   }
@@ -132,7 +136,7 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
     final puntaje = widget.puntajeFantasy;
     return Scaffold(
       appBar: const UiUsuarioAppBarDesktop(
-        titulo: "Resultados por jugador",
+        titulo: TextosApp.USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_TITULO,
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
@@ -150,20 +154,32 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "${widget.fecha.numeroFecha}. ${widget.fecha.nombre}",
+                      TextosApp
+                          .USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_TITULO_FECHA
+                          .replaceFirst(
+                            "{NUMERO}",
+                            widget.fecha.numeroFecha.toString(),
+                          )
+                          .replaceFirst("{NOMBRE}", widget.fecha.nombre),
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       widget.nombreEquipoFantasy.isEmpty
-                          ? "Equipo fantasy"
+                          ? TextosApp
+                              .USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_EQUIPO_FANTASY
                           : widget.nombreEquipoFantasy,
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 12),
                     if (puntaje != null)
                       Text(
-                        "Puntaje total: ${puntaje.puntajeTotal}",
+                        TextosApp
+                            .USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_PUNTAJE_TOTAL
+                            .replaceFirst(
+                              "{PUNTAJE}",
+                              puntaje.puntajeTotal.toString(),
+                            ),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -179,7 +195,13 @@ class _UiUsuarioResultadosDetalleJugadoresDesktopEstado
                         child: ListTile(
                           title: Text(jugador.nombre),
                           subtitle: Text(
-                            "Equipo: ${jugador.nombreEquipoReal} — Posición: ${jugador.posicion}",
+                            TextosApp
+                                .USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_SUBTITULO_JUGADOR
+                                .replaceFirst(
+                                  "{EQUIPO}",
+                                  jugador.nombreEquipoReal,
+                                )
+                                .replaceFirst("{POSICION}", jugador.posicion),
                           ),
                           trailing: Text(
                             _puntajeDeJugador(jugador.id).toString(),

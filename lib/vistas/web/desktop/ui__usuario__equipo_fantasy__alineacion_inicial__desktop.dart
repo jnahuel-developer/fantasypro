@@ -34,7 +34,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
   final Liga liga;
   final ParticipacionLiga participacion;
   final String idEquipoFantasy;
-  final String idAlineacion; // ← agregado según requisito oficial
+  final String idAlineacion;
   final List<JugadorReal> plantel;
   final String formacion;
 
@@ -43,7 +43,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
     required this.liga,
     required this.participacion,
     required this.idEquipoFantasy,
-    required this.idAlineacion, // ← parámetro requerido
+    required this.idAlineacion,
     required this.plantel,
     required this.formacion,
   });

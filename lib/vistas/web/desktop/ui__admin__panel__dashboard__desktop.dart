@@ -43,7 +43,7 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text("Cargando datos..."),
+              Text(TextosApp.ADMIN_PANEL_DESKTOP_LOADER_CARGANDO_DATOS),
             ],
           ),
         ),
@@ -114,12 +114,16 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text("Carga completada – $nombreLigaVisible"),
-            content: const Text("Los datos fueron cargados correctamente."),
+            title: Text(
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_TITULO
+                  .replaceFirst("{LIGA}", nombreLigaVisible),
+            ),
+            content:
+                const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_MENSAJE),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
+                child: const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_OK),
               ),
             ],
           ),
@@ -132,12 +136,16 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text("Error"),
-            content: Text("No se pudo completar la carga: $e"),
+            title: const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_TITULO),
+            content: Text(
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_MENSAJE
+                  .replaceFirst("{DETALLE}", "$e"),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cerrar"),
+                child:
+                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_CERRAR),
               ),
             ],
           ),
@@ -188,10 +196,11 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                   _cargarLigaDesdeJson(
                     context,
                     "assets/data/carga_inicial/carga_espana.json",
-                    "Liga Española",
+                    TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ESPANA,
                   );
                 },
-                child: const Text("Carga Masiva – España"),
+                child:
+                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ESPANA),
               ),
 
               const SizedBox(height: 30),
@@ -204,10 +213,11 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                   _cargarLigaDesdeJson(
                     context,
                     "assets/data/carga_inicial/carga_italia.json",
-                    "Liga Italiana",
+                    TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ITALIA,
                   );
                 },
-                child: const Text("Carga Masiva – Italia"),
+                child:
+                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ITALIA),
               ),
 
               const SizedBox(height: 30),
@@ -220,10 +230,12 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                   _cargarLigaDesdeJson(
                     context,
                     "assets/data/carga_inicial/carga_inglaterra.json",
-                    "Liga Inglesa",
+                    TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_INGLATERRA,
                   );
                 },
-                child: const Text("Carga Masiva – Inglaterra"),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_INGLATERRA,
+                ),
               ),
             ],
           ),

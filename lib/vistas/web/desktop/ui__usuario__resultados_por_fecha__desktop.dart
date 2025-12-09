@@ -22,6 +22,7 @@ import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__resultados__detalle_jugadores__desktop.dart';
 
@@ -114,7 +115,8 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
         _fechas = [];
         _participacion = null;
         _puntajesPorFecha.clear();
-        _mensajeError = "No se pudieron cargar los resultados.";
+        _mensajeError =
+            TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_ERROR_CARGA;
       });
     }
 
@@ -133,7 +135,9 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
   */
   String _puntajeDeFecha(FechaLiga fecha) {
     final puntaje = _puntajesPorFecha[fecha.id];
-    if (puntaje == null) return "–";
+    if (puntaje == null) {
+      return TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PUNTAJE;
+    }
     return puntaje.puntajeTotal.toString();
   }
 
@@ -149,15 +153,19 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
   */
   Widget _buildFilaFecha(FechaLiga fecha) {
     final subtitulo = _participacion == null
-        ? "El usuario no tiene participación en la liga"
-        : (fecha.cerrada ? "Fecha cerrada" : "Fecha pendiente");
+        ? TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PARTICIPACION
+        : (fecha.cerrada
+            ? TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_FECHA_CERRADA
+            : TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_FECHA_PENDIENTE);
     final puntaje = _puntajesPorFecha[fecha.id];
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       child: ListTile(
         title: Text(
-          "${fecha.numeroFecha}. ${fecha.nombre}",
+          TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_TITULO_FECHA
+              .replaceFirst("{NUMERO}", fecha.numeroFecha.toString())
+              .replaceFirst("{NOMBRE}", fecha.nombre),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(subtitulo),
@@ -185,7 +193,9 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
                   ),
                 );
               },
-              child: const Text("Ver detalle de jugadores"),
+              child: const Text(
+                TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_BOTON_VER_DETALLE,
+              ),
             ),
           ],
         ),
@@ -197,7 +207,8 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: UiUsuarioAppBarDesktop(
-        titulo: "Resultados por fecha — ${widget.liga.nombre}",
+        titulo: TextosApp.USUARIO_RESULTADOS_POR_FECHA_DESKTOP_TITULO_APPBAR
+            .replaceFirst("{LIGA}", widget.liga.nombre),
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
@@ -205,20 +216,22 @@ class _UiUsuarioResultadosPorFechaDesktopEstado
               ? Center(child: Text(_mensajeError!))
               : ListView(
                   padding: const EdgeInsets.all(16),
-                  children: [
-                    Text(
-                      _participacion?.nombreEquipoFantasy ??
-                          "Sin participación registrada",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                children: [
+                  Text(
+                    _participacion?.nombreEquipoFantasy ??
+                        TextosApp
+                            .USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PARTICIPACION_TITULO,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Puntaje obtenido por fecha",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    TextosApp
+                        .USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SUBTITULO_LISTA,
+                    style: TextStyle(fontSize: 16),
+                  ),
                     const SizedBox(height: 12),
                     for (final fecha in _fechas) _buildFilaFecha(fecha),
                   ],

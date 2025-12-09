@@ -14,13 +14,14 @@
     - controladores/controlador_equipos_reales.dart
 */
 
-import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/fecha_liga.dart';
-import 'package:fantasypro/modelos/liga.dart';
-import 'package:fantasypro/modelos/jugador_real.dart';
-import 'package:fantasypro/modelos/equipo_real.dart';
-import 'package:fantasypro/controladores/controlador_puntajes_reales.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
+import 'package:fantasypro/controladores/controlador_puntajes_reales.dart';
+import 'package:fantasypro/modelos/equipo_real.dart';
+import 'package:fantasypro/modelos/fecha_liga.dart';
+import 'package:fantasypro/modelos/jugador_real.dart';
+import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 
 class UiAdminPuntajesRealesListaDesktop extends StatefulWidget {
   final Liga liga;
@@ -102,7 +103,12 @@ class _UiAdminPuntajesRealesListaDesktopEstado
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text("Puntajes guardados")));
+    ).showSnackBar(
+      const SnackBar(
+        content:
+            Text(TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_SNACKBAR_GUARDADO),
+      ),
+    );
   }
 
   /*
@@ -116,11 +122,26 @@ class _UiAdminPuntajesRealesListaDesktopEstado
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: ListTile(
-        title: Text("${j.nombre} (${j.posicion}${" - #${j.dorsal}"})"),
-        subtitle: const Text("Puntaje real"),
+        title: Text(
+          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TITULO_JUGADOR
+              .replaceFirst("{NOMBRE}", j.nombre)
+              .replaceFirst("{POSICION}", j.posicion)
+              .replaceFirst(
+                "{DORSAL}",
+                j.dorsal != null
+                    ? TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_DORSAL
+                        .replaceFirst("{DORSAL}", j.dorsal.toString())
+                    : "",
+              ),
+        ),
+        subtitle: const Text(
+          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_PUNTAJE_REAL,
+        ),
         trailing: DropdownButton<int>(
           value: puntajeActual,
-          hint: const Text("Seleccione"),
+          hint: const Text(
+            TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_PUNTAJE_JUGADOR,
+          ),
           items: List.generate(
             10,
             (i) =>
@@ -140,7 +161,10 @@ class _UiAdminPuntajesRealesListaDesktopEstado
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Puntajes reales — Fecha ${fecha.numeroFecha}"),
+        title: Text(
+          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TITULO_APPBAR
+              .replaceFirst("{NUMERO}", fecha.numeroFecha.toString()),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -163,14 +187,20 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          "Liga: ${widget.liga.nombre}",
+                          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_LIGA
+                              .replaceFirst("{LIGA}", widget.liga.nombre),
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          "Fecha: ${fecha.nombre} (N° ${fecha.numeroFecha})",
+                          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_FECHA
+                              .replaceFirst("{NOMBRE}", fecha.nombre)
+                              .replaceFirst(
+                                "{NUMERO}",
+                                fecha.numeroFecha.toString(),
+                              ),
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),
@@ -182,7 +212,8 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                         const Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Text(
-                            "La fecha está cerrada. Los puntajes no pueden modificarse.",
+                            TextosApp
+                                .ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_MENSAJE_FECHA_CERRADA,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -195,7 +226,9 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DropdownButton<String>(
                           value: equipoSeleccionado,
-                          hint: const Text("Seleccionar equipo"),
+                          hint: const Text(
+                            TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_EQUIPO,
+                          ),
                           items: equiposOrdenados
                               .map(
                                 (e) => DropdownMenuItem(
@@ -230,7 +263,10 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                       child: ElevatedButton.icon(
                         onPressed: _guardar,
                         icon: const Icon(Icons.save),
-                        label: const Text("Guardar puntajes"),
+                        label: const Text(
+                          TextosApp
+                              .ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_LABEL_GUARDAR_PUNTAJES,
+                        ),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),

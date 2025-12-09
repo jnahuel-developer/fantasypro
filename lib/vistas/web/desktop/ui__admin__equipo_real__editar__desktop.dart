@@ -11,9 +11,10 @@
     - ui__admin__equipo_real__lista__desktop.dart
 */
 
-import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
+import 'package:fantasypro/modelos/equipo_real.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 
 class UiAdminEquipoRealEditarDesktop extends StatefulWidget {
   final EquipoReal equipo;
@@ -74,7 +75,8 @@ class _UiAdminEquipoRealEditarDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Editar equipo real"),
+        title:
+            const Text(TextosApp.ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_TITULO),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context, false),
@@ -92,14 +94,18 @@ class _UiAdminEquipoRealEditarDesktopEstado
                     children: [
                       TextField(
                         controller: ctrlNombre,
-                        decoration: const InputDecoration(labelText: "Nombre"),
+                        decoration: const InputDecoration(
+                          labelText:
+                              TextosApp.ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_LABEL_NOMBRE,
+                        ),
                       ),
                       const SizedBox(height: 16),
 
                       TextField(
                         controller: ctrlDescripcion,
                         decoration: const InputDecoration(
-                          labelText: "Descripción",
+                          labelText: TextosApp
+                              .ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_LABEL_DESCRIPCION,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -108,13 +114,13 @@ class _UiAdminEquipoRealEditarDesktopEstado
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            child: const Text("Cancelar"),
+                            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
                             onPressed: () => Navigator.pop(context, false),
                           ),
                           const SizedBox(width: 12),
                           ElevatedButton(
                             onPressed: _guardar,
-                            child: const Text("Guardar"),
+                            child: const Text(TextosApp.COMUN_BOTON_GUARDAR),
                           ),
                         ],
                       ),

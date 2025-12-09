@@ -20,6 +20,7 @@ import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__inicio__lista__desktop.dart';
@@ -89,7 +90,7 @@ class _UiUsuarioDashboardDesktopEstado
       setState(() {
         _usuario = null;
         _participaciones = [];
-        _mensajeError = "No hay usuario autenticado.";
+        _mensajeError = TextosApp.USUARIO_DASHBOARD_DESKTOP_ERROR_SIN_USUARIO;
         _cargando = false;
       });
       return;
@@ -114,7 +115,8 @@ class _UiUsuarioDashboardDesktopEstado
         }
       }
     } catch (e) {
-      mensajeError = "No se pudieron cargar tus participaciones.";
+      mensajeError =
+          TextosApp.USUARIO_DASHBOARD_DESKTOP_ERROR_CARGA_PARTICIPACIONES;
     }
 
     if (!mounted) return;
@@ -168,7 +170,15 @@ class _UiUsuarioDashboardDesktopEstado
       child: ListTile(
         title: Text(item.liga.nombre),
         subtitle: Text(
-          "Equipo: ${item.participacion.nombreEquipoFantasy} — Puntos: ${item.participacion.puntos}",
+          TextosApp.USUARIO_DASHBOARD_DESKTOP_SUBTITULO_PARTICIPACION
+              .replaceFirst(
+                "{EQUIPO}",
+                item.participacion.nombreEquipoFantasy,
+              )
+              .replaceFirst(
+                "{PUNTOS}",
+                item.participacion.puntos.toString(),
+              ),
         ),
         trailing: ElevatedButton(
           onPressed: usuarioActual == null
@@ -184,7 +194,9 @@ class _UiUsuarioDashboardDesktopEstado
                     ),
                   );
                 },
-          child: const Text("Ver resultados"),
+          child: const Text(
+            TextosApp.USUARIO_DASHBOARD_DESKTOP_BOTON_VER_RESULTADOS,
+          ),
         ),
       ),
     );
@@ -194,7 +206,7 @@ class _UiUsuarioDashboardDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const UiUsuarioAppBarDesktop(
-        titulo: "FantasyPro — Inicio",
+        titulo: TextosApp.USUARIO_DASHBOARD_DESKTOP_TITULO_APPBAR,
         mostrarBotonVolver: false,
       ),
       body: _cargando
@@ -204,7 +216,7 @@ class _UiUsuarioDashboardDesktopEstado
               child: ListView(
                 children: [
                   const Text(
-                    "Bienvenido a FantasyPro",
+                    TextosApp.USUARIO_DASHBOARD_DESKTOP_TEXTO_BIENVENIDA,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -212,7 +224,7 @@ class _UiUsuarioDashboardDesktopEstado
                   ),
                   const SizedBox(height: 16),
                   _botonAccion(
-                    "Crear equipos",
+                    TextosApp.USUARIO_DASHBOARD_DESKTOP_BOTON_CREAR_EQUIPOS,
                     () {
                       Navigator.push(
                         context,
@@ -224,7 +236,7 @@ class _UiUsuarioDashboardDesktopEstado
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    "Ver resultados",
+                    TextosApp.USUARIO_DASHBOARD_DESKTOP_TITULO_VER_RESULTADOS,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -243,7 +255,8 @@ class _UiUsuarioDashboardDesktopEstado
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
-                        "Aún no tienes equipos registrados. Crea uno para comenzar.",
+                        TextosApp
+                            .USUARIO_DASHBOARD_DESKTOP_MENSAJE_SIN_EQUIPOS,
                       ),
                     )
                   else

@@ -14,14 +14,12 @@
 
   Pantallas que navegan hacia esta:
     - ui__admin__alineacion__lista__desktop.dart
-
-  Pantallas destino:
-    - ninguna
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
+import 'package:fantasypro/modelos/alineacion.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class UiAdminAlineacionEditarDesktop extends StatefulWidget {
   /// Alineación a editar.
@@ -46,7 +44,8 @@ class _UiAdminAlineacionEditarDesktopEstado
   late TextEditingController _ctrlPuntos;
 
   /// Formación seleccionada.
-  String formacion = "4-4-2";
+  String formacion =
+      TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_442;
 
   /// Indica si se está guardando.
   bool guardando = false;
@@ -85,17 +84,19 @@ class _UiAdminAlineacionEditarDesktopEstado
     final salir = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Descartar cambios"),
-        content: const Text(
-          "Hay cambios sin guardar. ¿Desea salir igualmente?",
+        title: Text(
+          TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_DIALOGO_DESCARTAR_TITULO,
+        ),
+        content: Text(
+          TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_DIALOGO_DESCARTAR_CONTENIDO,
         ),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Salir"),
+            child: const Text(TextosApp.COMUN_BOTON_SALIR),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -121,7 +122,10 @@ class _UiAdminAlineacionEditarDesktopEstado
 
     if (jugadoresText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Debe incluir al menos un jugador.")),
+        const SnackBar(
+          content:
+              Text(TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_SIN_JUGADORES),
+        ),
       );
       return;
     }
@@ -134,7 +138,11 @@ class _UiAdminAlineacionEditarDesktopEstado
 
     if (jugadores.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Formato inválido de jugadores.")),
+        const SnackBar(
+          content: Text(
+            TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_FORMATO_INVALIDO,
+          ),
+        ),
       );
       return;
     }
@@ -142,7 +150,11 @@ class _UiAdminAlineacionEditarDesktopEstado
     final puntos = int.tryParse(puntosText) ?? 0;
     if (puntos < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Los puntos no pueden ser negativos.")),
+        const SnackBar(
+          content: Text(
+            TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_PUNTOS_NEGATIVOS,
+          ),
+        ),
       );
       return;
     }
@@ -166,10 +178,10 @@ class _UiAdminAlineacionEditarDesktopEstado
       onWillPop: confirmarSalida,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Editar alineación"),
+          title: const Text(TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_TITULO),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            tooltip: "Volver",
+            tooltip: TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_TOOLTIP_VOLVER,
             onPressed: () async {
               final ok = await confirmarSalida();
               if (ok && mounted) Navigator.pop(context);
@@ -188,7 +200,7 @@ class _UiAdminAlineacionEditarDesktopEstado
                   Row(
                     children: [
                       const Text(
-                        "Formación:",
+                        TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_FORMACION,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(width: 12),
@@ -196,12 +208,20 @@ class _UiAdminAlineacionEditarDesktopEstado
                         value: formacion,
                         items: const [
                           DropdownMenuItem(
-                            value: "4-4-2",
-                            child: Text("4-4-2"),
+                            value: TextosApp
+                                .ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_442,
+                            child: Text(
+                              TextosApp
+                                  .ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_442,
+                            ),
                           ),
                           DropdownMenuItem(
-                            value: "4-3-3",
-                            child: Text("4-3-3"),
+                            value: TextosApp
+                                .ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_433,
+                            child: Text(
+                              TextosApp
+                                  .ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_433,
+                            ),
                           ),
                         ],
                         onChanged: (v) {
@@ -220,8 +240,10 @@ class _UiAdminAlineacionEditarDesktopEstado
                   TextField(
                     controller: _ctrlJugadores,
                     decoration: const InputDecoration(
-                      labelText: "IDs de jugadores (separados por coma)",
-                      hintText: "ej: j1,j2,j3,j4",
+                      labelText: TextosApp
+                          .ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_IDS_JUGADORES,
+                      hintText:
+                          TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_HINT_IDS_JUGADORES,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -232,7 +254,8 @@ class _UiAdminAlineacionEditarDesktopEstado
                     controller: _ctrlPuntos,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: "Puntos totales",
+                      labelText:
+                          TextosApp.ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_PUNTOS_TOTALES,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -248,7 +271,7 @@ class _UiAdminAlineacionEditarDesktopEstado
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.save),
-                    label: const Text("Guardar cambios"),
+                    label: const Text(TextosApp.COMUN_BOTON_GUARDAR_CAMBIOS),
                   ),
                 ],
               ),
