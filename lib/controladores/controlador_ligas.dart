@@ -28,8 +28,11 @@ class ControladorLigas {
     Nombre: crearLiga
     Descripción:
       Crea una liga con nombre, descripción y temporada calculada
-      automáticamente. Se validan los nuevos campos introducidos para
-      totalFechasTemporada y se inicializa fechasCreadas en cero.
+      automáticamente.
+      Aplica reglas de negocio:
+        - Validar nombre no vacío.
+        - Exigir totalFechasTemporada entre 34 y 50.
+        - Inicializar fechasCreadas en cero para nuevas ligas.
     Entradas:
       - nombre: String — Nombre de la liga.
       - descripcion: String — Descripción opcional.
@@ -78,6 +81,8 @@ class ControladorLigas {
     Nombre: obtenerActivas
     Descripción:
       Recupera todas las ligas con estado activo.
+      Aplica reglas de negocio:
+        - Sin reglas adicionales, delega al servicio.
     Entradas:
       - ninguna
     Salidas:
@@ -93,6 +98,8 @@ class ControladorLigas {
     Descripción:
       Recupera una liga a partir de su identificador. Devuelve null si
       no existe coincidencia en el repositorio.
+      Aplica reglas de negocio:
+        - Validar el id de liga no vacío.
     Entradas:
       - idLiga (String): identificador de la liga.
     Salidas:
@@ -111,6 +118,8 @@ class ControladorLigas {
     Nombre: buscar
     Descripción:
       Busca ligas cuyo nombre coincida con el texto indicado.
+      Aplica reglas de negocio:
+        - Retorna lista vacía si el texto está vacío en lugar de consultar.
     Entradas:
       - texto: String
     Salidas:
@@ -130,6 +139,8 @@ class ControladorLigas {
     Nombre: obtenerTodas
     Descripción:
       Obtiene todas las ligas sin filtrar estado.
+      Aplica reglas de negocio:
+        - Sin reglas adicionales, entrega todo el catálogo.
     Entradas: ninguna
     Salidas: Future<List<Liga>>
   */
@@ -142,6 +153,9 @@ class ControladorLigas {
     Descripción:
       Actualiza los datos de una liga, permitiendo modificar campos como
       totalFechasTemporada y fechasCreadas. Usado por otros controladores.
+      Aplica reglas de negocio:
+        - Validar que totalFechasTemporada se mantenga en rango permitido.
+        - Verificar que fechasCreadas no sea negativa.
     Entradas:
       - liga: Liga — Instancia modificada.
     Salidas:
@@ -165,6 +179,8 @@ class ControladorLigas {
     Nombre: archivar
     Descripción:
       Marca una liga como inactiva sin eliminarla.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá del registro de log.
     Entradas:
       - id: String — Identificador de liga.
     Salidas:
@@ -179,6 +195,8 @@ class ControladorLigas {
     Nombre: activar
     Descripción:
       Activa una liga específica.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá del registro de log.
     Entradas:
       - id: String
     Salidas:
@@ -193,6 +211,8 @@ class ControladorLigas {
     Nombre: eliminar
     Descripción:
       Elimina una liga del sistema.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá de registrar el evento crítico.
     Entradas:
       - id: String
     Salidas:

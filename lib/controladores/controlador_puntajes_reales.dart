@@ -42,8 +42,12 @@ class ControladorPuntajesReales {
     Descripción:
       Obtiene todos los equipos reales activos de una liga y sus jugadores
       reales activos asociados.
-    Entradas: idLiga (String)
-    Salidas: Future<Map<String, List<JugadorReal>>>
+      Aplica reglas de negocio:
+        - Filtrar solo jugadores activos por equipo.
+    Entradas:
+      - idLiga: String → Identificador de la liga.
+    Salidas:
+      - Future<Map<String, List<JugadorReal>>>: mapa equipo -> jugadores activos.
   */
   Future<Map<String, List<JugadorReal>>> obtenerJugadoresPorEquipo(
     String idLiga,
@@ -80,11 +84,16 @@ class ControladorPuntajesReales {
       Persiste los puntajes asignados a jugadores reales para una fecha.
       Evita duplicados consultando puntaje previo de cada jugador.
       Actualiza el puntaje si ya existe; lo crea si no existe.
+      Aplica reglas de negocio:
+        - Validar rango de puntaje entre 1 y 10.
+        - Verificar existencia de jugador real activo antes de guardar.
+        - Actualizar puntaje existente o crear uno nuevo según corresponda.
     Entradas:
       - idLiga (String)
       - idFecha (String)
       - puntajesPorJugador (Map<String,int>) idJugadorReal -> puntaje
-    Salidas: Future<void>
+    Salidas:
+      - Future<void>: Completa al guardar todos los puntajes.
   */
   Future<void> guardarPuntajesDeFecha(
     String idLiga,
@@ -159,8 +168,14 @@ class ControladorPuntajesReales {
     Nombre: faltanPuntajes
     Descripción:
       Verifica si existen jugadores activos sin puntaje registrado para la fecha indicada.
-    Entradas: idLiga (String), idFecha (String)
-    Salidas: Future<bool>
+      Aplica reglas de negocio:
+        - Considera únicamente jugadores activos de la liga.
+        - Compara jugadores requeridos vs. puntajes existentes.
+    Entradas:
+      - idLiga: String → Identificador de la liga.
+      - idFecha: String → Fecha de la liga a evaluar.
+    Salidas:
+      - Future<bool>: true si falta algún puntaje.
   */
   Future<bool> faltanPuntajes(String idLiga, String idFecha) async {
     _log.informacion(
@@ -192,6 +207,8 @@ class ControladorPuntajesReales {
     Descripción:
       Recupera un mapa de puntajes reales de jugadores para una liga y fecha dadas.
       Devuelve un Map idJugadorReal → puntaje.
+      Aplica reglas de negocio:
+        - Registrar en log la operación de obtención.
     Entradas:
       - idLiga: String — ID de la liga
       - idFecha: String — ID de la fecha

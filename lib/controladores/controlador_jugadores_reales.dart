@@ -1,6 +1,7 @@
 /*
   Archivo: controlador_jugadores_reales.dart
-  Descripción: Controlador encargado de gestionar jugadores reales asociados a equipos reales.
+  Descripción:
+    Controlador encargado de gestionar jugadores reales asociados a equipos reales.
   Dependencias:
     - servicio_jugadores_reales.dart
     - jugador_real.dart
@@ -23,15 +24,21 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: crearJugadorReal
-    Descripción: Crea un jugador real verificando valores válidos de nombre, posición, dorsal y valor de mercado.
+    Descripción:
+      Crea un jugador real validando integridad de datos requeridos.
+      Aplica reglas de negocio:
+        - Validar idEquipoReal, nombre y posición no vacíos.
+        - Asegurar que la posición pertenezca al conjunto {POR, DEF, MED, DEL}.
+        - Verificar rangos permitidos para dorsal (1–99) y valorMercado (1–1000).
     Entradas:
-      - idEquipoReal: String → ID del equipo real al que pertenece el jugador
-      - nombre: String → Nombre del jugador
-      - posicion: String → Debe ser uno de {POR, DEF, MED, DEL}
-      - nacionalidad: String → Nacionalidad del jugador
-      - dorsal: int → Debe estar entre 1 y 99
-      - valorMercado: int → Valor entre 1 y 1000
-    Salidas: Future<JugadorReal>
+      - idEquipoReal: String → ID del equipo real al que pertenece el jugador.
+      - nombre: String → Nombre del jugador.
+      - posicion: String → Posición del jugador (POR, DEF, MED, DEL).
+      - nacionalidad: String → Nacionalidad del jugador (opcional).
+      - dorsal: int → Número de camiseta entre 1 y 99.
+      - valorMercado: int → Valor entre 1 y 1000.
+    Salidas:
+      - Future<JugadorReal>: Jugador creado con ID asignado.
   */
   Future<JugadorReal> crearJugadorReal(
     String idEquipoReal,
@@ -86,10 +93,15 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: obtenerPorEquipoReal
-    Descripción: Lista todos los jugadores reales pertenecientes a un equipo real.
+    Descripción:
+      Lista todos los jugadores reales pertenecientes a un equipo real.
+      Aplica reglas de negocio:
+        - Validar idEquipoReal no vacío.
+        - Ordenar jugadores por posición para entrega consistente.
     Entradas:
-      - idEquipoReal: String → ID del equipo real
-    Salidas: Future<List<JugadorReal>>
+      - idEquipoReal: String → ID del equipo real.
+    Salidas:
+      - Future<List<JugadorReal>>: Jugadores activos del equipo ordenados por posición.
   */
   Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal) async {
     if (idEquipoReal.trim().isEmpty) {
@@ -115,10 +127,16 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: editar
-    Descripción: Edita los datos de un jugador real existente.
+    Descripción:
+      Edita los datos de un jugador real existente aplicando validaciones
+      consistentes con la creación.
+      Aplica reglas de negocio:
+        - Mantener validación de posición permitida.
+        - Rechazar dorsales y valores de mercado fuera de rango.
     Entradas:
-      - jugador: JugadorReal → Datos completos del jugador a editar
-    Salidas: Future<void>
+      - jugador: JugadorReal → Datos completos del jugador a editar.
+    Salidas:
+      - Future<void>: Completa al persistir la actualización.
   */
   Future<void> editar(JugadorReal jugador) async {
     if (jugador.id.trim().isEmpty) {
@@ -151,10 +169,15 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: archivar
-    Descripción: Archiva un jugador real, marcándolo como inactivo.
+    Descripción:
+      Archiva un jugador real marcándolo como inactivo para excluirlo de
+      futuras alineaciones.
+      Aplica reglas de negocio:
+        - Requiere idJugador no vacío antes de proceder.
     Entradas:
-      - idJugador: String → ID del jugador real
-    Salidas: Future<void>
+      - idJugador: String → ID del jugador real.
+    Salidas:
+      - Future<void>: Completa al marcar el jugador como inactivo.
   */
   Future<void> archivar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
@@ -170,10 +193,14 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: activar
-    Descripción: Activa un jugador real previamente archivado.
+    Descripción:
+      Activa un jugador real previamente archivado.
+      Aplica reglas de negocio:
+        - Requiere un identificador válido del jugador.
     Entradas:
-      - idJugador: String → ID del jugador real
-    Salidas: Future<void>
+      - idJugador: String → ID del jugador real.
+    Salidas:
+      - Future<void>: Completa al reactivar el jugador.
   */
   Future<void> activar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
@@ -189,10 +216,14 @@ class ControladorJugadoresReales {
 
   /*
     Nombre: eliminar
-    Descripción: Elimina un jugador real en forma definitiva.
+    Descripción:
+      Elimina un jugador real en forma definitiva.
+      Aplica reglas de negocio:
+        - Exige idJugador no vacío.
     Entradas:
-      - idJugador: String → ID del jugador real
-    Salidas: Future<void>
+      - idJugador: String → ID del jugador real.
+    Salidas:
+      - Future<void>: Completa al remover el registro.
   */
   Future<void> eliminar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
@@ -207,12 +238,16 @@ class ControladorJugadoresReales {
   /*
     Nombre: obtenerPorIds
     Descripción:
-      Recupera jugadores reales activos según una lista de IDs provista. 
+      Recupera jugadores reales activos según una lista de IDs provista.
       La lista es validada, se eliminan duplicados y luego se consulta
       el servicio correspondiente. El resultado está ordenado por posición.
+      Aplica reglas de negocio:
+        - Exigir lista no vacía y sin duplicados antes de consultar.
+        - Ordenar la salida por posición para consistencia.
     Entradas:
-      - ids: List<String> → Lista de IDs de jugadores reales
-    Salidas: Future<List<JugadorReal>>
+      - ids: List<String> → Lista de IDs de jugadores reales.
+    Salidas:
+      - Future<List<JugadorReal>>: Jugadores encontrados y ordenados.
   */
   Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
     if (ids.isEmpty) {

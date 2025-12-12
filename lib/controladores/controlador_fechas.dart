@@ -51,18 +51,22 @@ class ControladorFechas {
   /*
     Nombre: crearFecha
     Descripción:
-      Crea una nueva fecha para una liga, aplicando validaciones:
-      - idLiga no puede estar vacío
-      - La liga debe tener totalFechasTemporada definido
-      - fechasCreadas < totalFechasTemporada
-      - No puede existir una fecha activa en la liga
-      - numeroFecha = fechasCreadas + 1
-      - nombre = "Fecha $numeroFecha"
-      Luego incrementa fechasCreadas en la liga.
+      Crea una nueva fecha para una liga, aplicando validaciones de datos
+      obligatorios y consistencia de estado.
+      Aplica reglas de negocio:
+        - Validar idLiga no vacío.
+        - Verificar que la liga tenga totalFechasTemporada configurado y
+          que fechasCreadas sea menor al total permitido.
+        - Confirmar que no exista una fecha activa en la liga antes de crear
+          una nueva.
+        - Asignar numeroFecha = fechasCreadas + 1 y nombre formateado
+          como "Fecha {NUMERO}".
+        - Incrementar el contador de fechas creadas en la liga tras la
+          creación exitosa.
     Entradas:
-      idLiga (String)
+      - idLiga: String → Identificador de la liga en la que se crea la fecha.
     Salidas:
-      Future<FechaLiga>
+      - Future<FechaLiga>: Fecha creada con su ID asignado.
   */
   Future<FechaLiga> crearFecha(String idLiga) async {
     if (idLiga.trim().isEmpty) {
@@ -128,11 +132,13 @@ class ControladorFechas {
   /*
     Nombre: obtenerPorLiga
     Descripción:
-      Retorna todas las fechas correspondientes a una liga.
+      Retorna todas las fechas correspondientes a una liga específica.
+      Aplica reglas de negocio:
+        - Validar que el id de liga no sea vacío antes de consultar.
     Entradas:
-      idLiga (String)
+      - idLiga: String → Identificador de la liga a consultar.
     Salidas:
-      Future<List<FechaLiga>>
+      - Future<List<FechaLiga>>: Listado de fechas asociadas a la liga.
   */
   Future<List<FechaLiga>> obtenerPorLiga(String idLiga) async {
     if (idLiga.trim().isEmpty) {
@@ -150,21 +156,20 @@ class ControladorFechas {
   /*
     Nombre: cerrarFecha
     Descripción:
-      Permite cerrar una fecha si:
-        - Está activa
-        - No faltan puntajes (se consulta al ControladorPuntajesReales)
-      Luego:
-        - ServicioFechas.cerrarFecha()
-        - Si es la última fecha de la liga (numeroFecha == totalFechasTemporada)
-          entonces se archiva la liga.
+      Permite cerrar una fecha siempre que esté activa y cuente con todos los
+      puntajes reales necesarios.
+      Aplica reglas de negocio:
+        - Validar que la fecha esté activa antes de cerrarla.
+        - Confirmar mediante ControladorPuntajesReales que no falten puntajes
+          registrados para la fecha.
+        - Registrar el cierre en el servicio y, si corresponde, archivar la
+          liga cuando se cierra la última fecha.
     Entradas:
-      fecha (FechaLiga)
+      - fecha: FechaLiga → Fecha a cerrar, incluyendo idLiga y estado actual.
     Salidas:
-      Future<void>
+      - Future<void>: Completa cuando la fecha ha sido cerrada y la liga
+        actualizada si aplica.
   */
-  // ---------------------------------------------------------------------------
-  // Cerrar fecha
-  // ---------------------------------------------------------------------------
   Future<void> cerrarFecha(FechaLiga fecha) async {
     _log.informacion("${TextosApp.LOG_CTRL_FECHAS_CERRAR} ${fecha.id}");
 
