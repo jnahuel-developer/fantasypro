@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioFechas {
@@ -52,10 +53,10 @@ class ServicioFechas {
     try {
       final idLiga = _sanitizarId(fecha.idLiga);
       if (idLiga.isEmpty) {
-        throw ArgumentError("ID de liga inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
       }
 
-      _log.informacion("Creando fecha para liga $idLiga");
+      _log.informacion("${TextosApp.LOG_FECHAS_CREANDO} $idLiga");
 
       // Obtener cuántas fechas existen actualmente para asignar numeroFecha.
       final existentes = await _db
@@ -81,12 +82,15 @@ class ServicioFechas {
       final guardada = nuevaFecha.copiarCon(id: doc.id);
 
       _log.informacion(
-        "Fecha creada: liga=$idLiga fecha=${guardada.numeroFecha} id=${guardada.id}",
+        TextosApp.LOG_FECHAS_CREADA
+            .replaceFirst('{LIGA}', idLiga)
+            .replaceFirst('{NUMERO}', '${guardada.numeroFecha}')
+            .replaceFirst('{ID}', guardada.id),
       );
 
       return guardada;
     } catch (e) {
-      _log.error("Error creando fecha: $e");
+      _log.error("${TextosApp.LOG_FECHAS_ERROR_CREAR} $e");
       rethrow;
     }
   }
@@ -105,10 +109,12 @@ class ServicioFechas {
     try {
       idLiga = _sanitizarId(idLiga);
       if (idLiga.isEmpty) {
-        throw ArgumentError("ID de liga inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
       }
 
-      _log.informacion("Obteniendo fechas de la liga $idLiga");
+      _log.informacion(
+        TextosApp.LOG_FECHAS_OBTENIENDO_LIGA.replaceFirst('{LIGA}', idLiga),
+      );
 
       final query = await _db
           .collection(ColFirebase.fechasLiga)
@@ -116,7 +122,9 @@ class ServicioFechas {
           .get();
 
       if (query.docs.isEmpty) {
-        _log.advertencia("No hay fechas registradas para la liga $idLiga");
+        _log.advertencia(
+          TextosApp.LOG_FECHAS_SIN_REGISTROS.replaceFirst('{LIGA}', idLiga),
+        );
         return [];
       }
 
@@ -128,11 +136,13 @@ class ServicioFechas {
 
       return lista;
     } on FirebaseException catch (e) {
-      _log.error("Error Firebase al obtener fechas de liga $idLiga: $e");
+      _log.error(
+        "${TextosApp.LOG_FECHAS_ERROR_FIREBASE.replaceFirst('{LIGA}', idLiga)} $e",
+      );
       rethrow;
     } catch (e) {
       _log.advertencia(
-        "Colección de fechas inexistente o vacía para liga $idLiga — devolviendo lista vacía.",
+        TextosApp.LOG_FECHAS_COLECCION_INEXISTENTE.replaceFirst('{LIGA}', idLiga),
       );
       return [];
     }
@@ -152,19 +162,19 @@ class ServicioFechas {
     try {
       idFecha = _sanitizarId(idFecha);
       if (idFecha.isEmpty) {
-        throw ArgumentError("ID de fecha inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_FECHA_INVALIDO);
       }
 
-      _log.informacion("Cerrando fecha $idFecha");
+      _log.informacion("${TextosApp.LOG_FECHAS_CERRANDO} $idFecha");
 
       await _db.collection(ColFirebase.fechasLiga).doc(idFecha).update({
         CamposFirebase.activa: false,
         CamposFirebase.cerrada: true,
       });
 
-      _log.informacion("Fecha cerrada correctamente: $idFecha");
+      _log.informacion("${TextosApp.LOG_FECHAS_CERRADA} $idFecha");
     } catch (e) {
-      _log.error("Error cerrando fecha: $e");
+      _log.error("${TextosApp.LOG_FECHAS_ERROR_CERRAR} $e");
       rethrow;
     }
   }
@@ -180,22 +190,22 @@ class ServicioFechas {
   */
   Future<FechaLiga> obtenerFechaPorId(String idFecha) async {
     if (idFecha.isEmpty) {
-      throw ArgumentError("El ID de la fecha no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_FECHAS_ID_VACIO);
     }
 
-    _log.informacion("Buscando fecha por ID: $idFecha");
+    _log.informacion("${TextosApp.LOG_FECHAS_BUSCANDO_ID} $idFecha");
 
     try {
       final doc =
           await _db.collection(ColFirebase.fechasLiga).doc(idFecha).get();
 
       if (!doc.exists) {
-        throw Exception("Fecha no encontrada: $idFecha");
+        throw Exception("${TextosApp.LOG_FECHAS_NO_ENCONTRADA} $idFecha");
       }
 
       return FechaLiga.desdeMapa(doc.id, doc.data()!);
     } catch (e) {
-      _log.error("Error al obtener fecha $idFecha: $e");
+      _log.error("${TextosApp.LOG_FECHAS_ERROR_OBTENER_ID} $idFecha: $e");
       rethrow;
     }
   }
