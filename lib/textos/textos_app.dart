@@ -172,6 +172,7 @@ class TextosApp {
   // Usuario Final
   // ---------------------------------------------------------------------------
   static const TEXTO_BIENVENIDA_GENERAL = "Bienvenido al panel de usuario.";
+  static const USUARIO_NO_AUTENTICADO = "No hay usuario autenticado.";
 
   // ---------------------------------------------------------------------------
   // Pantalla: Inicio Desktop para usuarios
@@ -225,6 +226,21 @@ class TextosApp {
   static const REGISTRO_DESKTOP_MENSAJE_OK = "Usuario creado correctamente";
   static const REGISTRO_DESKTOP_MENSAJE_ERROR = "Error al crear usuario";
   static const REGISTRO_DESKTOP_TOOLTIP_VOLVER = "Volver";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Creación de equipo fantasy (Usuario)
+  // Archivo: ui__usuario__equipo_fantasy__crear__desktop.dart
+  // Prefijo: EQUIPO_FANTASY_CREAR_
+  // ---------------------------------------------------------------------------
+
+  static const EQUIPO_FANTASY_CREAR_APPBAR_TITULO = "Crear equipo fantasy";
+  static const EQUIPO_FANTASY_CREAR_LABEL_LIGA = "Liga: {LIGA}";
+  static const EQUIPO_FANTASY_CREAR_LABEL_NOMBRE = "Nombre del equipo";
+  static const EQUIPO_FANTASY_CREAR_BOTON_CREAR = "Crear equipo";
+  static const EQUIPO_FANTASY_CREAR_MENSAJE_NOMBRE_VACIO =
+      "El nombre no puede estar vacío.";
+  static const EQUIPO_FANTASY_CREAR_MENSAJE_ERROR =
+      "Error al crear el equipo.";
 
   // ---------------------------------------------------------------------------
   // Pantalla: Administración de Ligas (Desktop)
@@ -313,6 +329,104 @@ class TextosApp {
   // Columnas
   static const EQUIPOS_ADMIN_COLUMNA_ACTIVOS = "Activos ({CANT})";
   static const EQUIPOS_ADMIN_COLUMNA_ARCHIVADOS = "Archivados ({CANT})";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Detalle de liga (Usuario)
+  // Archivo: ui__usuario__liga__detalle__desktop.dart
+  // Prefijo: LIGA_DETALLE_USUARIO_
+  // ---------------------------------------------------------------------------
+
+  static const LIGA_DETALLE_USUARIO_APPBAR_TITULO = "Liga: {LIGA}";
+  static const LIGA_DETALLE_USUARIO_TEXTO_TEMPORADA = "Temporada: {TEMPORADA}";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_ERROR_GENERAL =
+      "Error al cargar los datos de la liga.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_NOMBRE_OBLIGATORIO =
+      "Debés ingresar un nombre para tu equipo fantasy.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_PARTICIPACION_NO_RECUPERADA =
+      "No se pudo recuperar la participación creada.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_ERROR_CREAR_PARTICIPACION =
+      "Error al crear la participación en la liga.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_SIN_ALINEACION =
+      "No se encontró la alineación inicial.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_SIN_EQUIPO =
+      "No se encontró el equipo fantasy.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_ERROR_RESUMEN =
+      "Error al cargar el resumen del equipo.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_FECHA_ACTIVA =
+      "No podés crear ni modificar tu equipo mientras haya una fecha activa en curso.";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_ELEGIR_NOMBRE =
+      "Elegí un nombre para tu equipo fantasy:";
+  static const LIGA_DETALLE_USUARIO_LABEL_NOMBRE = "Nombre del equipo";
+  static const LIGA_DETALLE_USUARIO_BOTON_CREAR = "Crear equipo fantasy";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_PLANTEL_PENDIENTE =
+      "Tenés un equipo fantasy pendiente de completar.";
+  static const LIGA_DETALLE_USUARIO_BOTON_CONTINUAR =
+      "Continuar armado del equipo";
+  static const LIGA_DETALLE_USUARIO_MENSAJE_PLANTEL_COMPLETO =
+      "Tu equipo fantasy ya está completo.";
+  static const LIGA_DETALLE_USUARIO_BOTON_VER_EQUIPO = "Ver mi equipo fantasy";
+
+  static const LOG_LIGA_DETALLE_ID_USUARIO = "idUsuario =";
+  static const LOG_LIGA_DETALLE_FECHAS = "obtenerPorLiga devolvió";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Plantel de equipo fantasy (Usuario)
+  // Archivo: ui__usuario__equipo_fantasy__plantel__desktop.dart
+  // Prefijo: EQUIPO_FANTASY_PLANTEL_
+  // ---------------------------------------------------------------------------
+
+  static const EQUIPO_FANTASY_PLANTEL_APPBAR_TITULO =
+      "Armado del plantel — {LIGA}";
+  static const EQUIPO_FANTASY_PLANTEL_LABEL_FORMACION = "Formación:";
+  static const EQUIPO_FANTASY_PLANTEL_TEXTO_PRESUPUESTO =
+      "Presupuesto restante: {RESTANTE} / {INICIAL}";
+  static const EQUIPO_FANTASY_PLANTEL_SECCION_ARQUEROS = "Arqueros (POR)";
+  static const EQUIPO_FANTASY_PLANTEL_SECCION_DEFENSORES = "Defensores (DEF)";
+  static const EQUIPO_FANTASY_PLANTEL_SECCION_MEDIOCAMPISTAS =
+      "Mediocampistas (MED)";
+  static const EQUIPO_FANTASY_PLANTEL_SECCION_DELANTEROS = "Delanteros (DEL)";
+  static const EQUIPO_FANTASY_PLANTEL_SUBTITULO_JUGADOR =
+      "Equipo: {EQUIPO} · Valor: {VALOR}";
+  static const EQUIPO_FANTASY_PLANTEL_BOTON_CONFIRMAR = "Confirmar plantel";
+
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_LIMITE_POSICION =
+      "Límite alcanzado para {POS}";
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_PRESUPUESTO =
+      "Presupuesto insuficiente.";
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_FORMACION_CAMBIADA =
+      "Formación cambiada. Selección reiniciada.";
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_CANTIDAD_INVALIDA =
+      "Debés seleccionar exactamente 15 jugadores.";
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_SIN_EQUIPO =
+      "No se encontró tu equipo fantasy.";
+  static const EQUIPO_FANTASY_PLANTEL_MENSAJE_ERROR_GUARDAR =
+      "Error al guardar el plantel inicial.";
+
+  static const LOG_EQUIPO_FANTASY_PLANTEL_CONFIRMAR =
+      "Confirmando plantel — idLiga={LIGA}, idUsuario={USUARIO}, idEquipoFantasy={EQUIPO}, jugadores={CANT}, presupuestoRestante={PRESUPUESTO}, formacion={FORMACION}";
+  static const LOG_EQUIPO_FANTASY_PLANTEL_GUARDADO =
+      "Plantel inicial guardado correctamente en EquipoFantasy {EQUIPO}";
+  static const LOG_EQUIPO_FANTASY_PLANTEL_ALINEACION =
+      "Alineación inicial generada: idAlineacion={ALINEACION}";
+
+  // ---------------------------------------------------------------------------
+  // Pantalla: Panel Administrador Web Desktop (Dashboard)
+  // Archivo: ui__admin__panel__dashboard__desktop.dart
+  // Prefijo: ADMIN_PANEL_DASHBOARD_
+  // ---------------------------------------------------------------------------
+
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_CARGANDO = "Cargando datos...";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_OK =
+      "Los datos fueron cargados correctamente.";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_OK_TITULO =
+      "Carga completada – {LIGA}";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_OK_BOTON = "OK";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_TITULO = "Error";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_MENSAJE =
+      "No se pudo completar la carga: {ERROR}";
+  static const ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_BOTON = "Cerrar";
+  static const ADMIN_PANEL_DASHBOARD_BOTON_CARGA_ESPANA =
+      "Carga Masiva – España";
 
   // ---------------------------------------------------------------------------
   // Pantalla: Edición de jugador

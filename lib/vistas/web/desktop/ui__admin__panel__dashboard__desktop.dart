@@ -35,20 +35,20 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Dialog(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text("Cargando datos..."),
-            ],
-          ),
-        ),
-      ),
-    );
+              builder: (_) => const Dialog(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text(TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_CARGANDO),
+                    ],
+                  ),
+                ),
+              ),
+            );
 
     try {
       // Leer JSON
@@ -114,12 +114,16 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text("Carga completada – $nombreLigaVisible"),
-            content: const Text("Los datos fueron cargados correctamente."),
+            title: Text(TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_OK_TITULO
+                .replaceAll("{LIGA}", nombreLigaVisible)),
+            content:
+                const Text(TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_OK),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_OK_BOTON,
+                ),
               ),
             ],
           ),
@@ -132,12 +136,15 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text("Error"),
-            content: Text("No se pudo completar la carga: $e"),
+            title: const Text(TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_TITULO),
+            content: Text(
+              TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_MENSAJE
+                  .replaceAll("{ERROR}", "$e"),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cerrar"),
+                child: const Text(TextosApp.ADMIN_PANEL_DASHBOARD_DIALOGO_ERROR_BOTON),
               ),
             ],
           ),
@@ -191,7 +198,9 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                     "Liga Española",
                   );
                 },
-                child: const Text("Carga Masiva – España"),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DASHBOARD_BOTON_CARGA_ESPANA,
+                ),
               ),
             ],
           ),

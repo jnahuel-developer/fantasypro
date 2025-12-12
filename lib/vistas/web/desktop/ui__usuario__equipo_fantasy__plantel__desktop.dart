@@ -38,6 +38,7 @@ import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 import 'ui__usuario__equipo_fantasy__alineacion_inicial__desktop.dart';
 
@@ -212,13 +213,20 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       final limite = _limitePorPosicion(j.posicion);
       if (cntPos >= limite) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Límite alcanzado para ${j.posicion}")),
+          SnackBar(
+            content: Text(
+              TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_LIMITE_POSICION
+                  .replaceAll("{POS}", j.posicion),
+            ),
+          ),
         );
         return;
       }
       if (_presupuestoRestante - j.valorMercado < 0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Presupuesto insuficiente.")),
+          const SnackBar(
+            content: Text(TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_PRESUPUESTO),
+          ),
         );
         return;
       }
@@ -248,7 +256,8 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Formación cambiada. Selección reiniciada."),
+        content:
+            Text(TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_FORMACION_CAMBIADA),
       ),
     );
   }
@@ -267,7 +276,9 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     if (_seleccionados.length != 15) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Debés seleccionar exactamente 15 jugadores."),
+          content: Text(
+            TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_CANTIDAD_INVALIDA,
+          ),
         ),
       );
       return;
@@ -276,7 +287,7 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     final usuario = ServicioAutenticacion().obtenerUsuarioActual();
     if (usuario == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No hay usuario autenticado.")),
+        const SnackBar(content: Text(TextosApp.USUARIO_NO_AUTENTICADO)),
       );
       return;
     }
@@ -289,15 +300,21 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     final equipo = equipos.isNotEmpty ? equipos.first : null;
     if (equipo == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No se encontró tu equipo fantasy.")),
+        const SnackBar(
+          content: Text(TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_SIN_EQUIPO),
+        ),
       );
       return;
     }
 
     _log.informacion(
-      "Confirmando plantel — idLiga=${widget.liga.id}, idUsuario=${usuario.uid}, "
-      "idEquipoFantasy=${equipo.id}, jugadores=${_seleccionados.length}, "
-      "presupuestoRestante=$_presupuestoRestante, formacion=$_formacion",
+      TextosApp.LOG_EQUIPO_FANTASY_PLANTEL_CONFIRMAR
+          .replaceAll("{LIGA}", widget.liga.id)
+          .replaceAll("{USUARIO}", usuario.uid)
+          .replaceAll("{EQUIPO}", equipo.id)
+          .replaceAll("{CANT}", "${_seleccionados.length}")
+          .replaceAll("{PRESUPUESTO}", "$_presupuestoRestante")
+          .replaceAll("{FORMACION}", _formacion),
     );
 
     try {
@@ -310,9 +327,8 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
         _presupuestoRestante,
       );
 
-      _log.informacion(
-        "Plantel inicial guardado correctamente en EquipoFantasy ${equipo.id}",
-      );
+      _log.informacion(TextosApp.LOG_EQUIPO_FANTASY_PLANTEL_GUARDADO
+          .replaceAll("{EQUIPO}", equipo.id));
 
       // ---------------------------------------------------------------------
       // 2) CREAR ALINEACIÓN INICIAL (como ya hacía antes)
@@ -325,9 +341,8 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
         _formacion,
       );
 
-      _log.informacion(
-        "Alineación inicial generada: idAlineacion=${alineacion.id}",
-      );
+      _log.informacion(TextosApp.LOG_EQUIPO_FANTASY_PLANTEL_ALINEACION
+          .replaceAll("{ALINEACION}", alineacion.id));
 
       // ---------------------------------------------------------------------
       // 3) Cargar la lista de modelos JugadorReal antes de navegar
@@ -353,7 +368,10 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
       _log.error("Error confirmando plantel inicial: $e");
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error al guardar el plantel inicial.")),
+        const SnackBar(
+          content:
+              Text(TextosApp.EQUIPO_FANTASY_PLANTEL_MENSAJE_ERROR_GUARDAR),
+        ),
       );
     }
   }
@@ -378,7 +396,9 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
               (j) => ListTile(
                 title: Text(j.nombre),
                 subtitle: Text(
-                  "Equipo: ${j.nombreEquipoReal} · Valor: ${j.valorMercado}",
+                  TextosApp.EQUIPO_FANTASY_PLANTEL_SUBTITULO_JUGADOR
+                      .replaceAll("{EQUIPO}", j.nombreEquipoReal)
+                      .replaceAll("{VALOR}", "${j.valorMercado}"),
                 ),
                 trailing: Checkbox(
                   value: _seleccionados.contains(j.id),
@@ -394,7 +414,12 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Armado del plantel — ${widget.liga.nombre}")),
+      appBar: AppBar(
+        title: Text(
+          TextosApp.EQUIPO_FANTASY_PLANTEL_APPBAR_TITULO
+              .replaceAll("{LIGA}", widget.liga.nombre),
+        ),
+      ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -404,7 +429,8 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      const Text("Formación:", style: TextStyle(fontSize: 16)),
+                      const Text(TextosApp.EQUIPO_FANTASY_PLANTEL_LABEL_FORMACION,
+                          style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 12),
                       DropdownButton<String>(
                         value: _formacion,
@@ -429,7 +455,9 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    "Presupuesto restante: $_presupuestoRestante / $_presupuestoInicial",
+                    TextosApp.EQUIPO_FANTASY_PLANTEL_TEXTO_PRESUPUESTO
+                        .replaceAll("{RESTANTE}", "$_presupuestoRestante")
+                        .replaceAll("{INICIAL}", "$_presupuestoInicial"),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -440,17 +468,31 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
                 Expanded(
                   child: ListView(
                     children: [
-                      _buildListaPorPosicion("Arqueros (POR)", _por),
-                      _buildListaPorPosicion("Defensores (DEF)", _def),
-                      _buildListaPorPosicion("Mediocampistas (MED)", _med),
-                      _buildListaPorPosicion("Delanteros (DEL)", _del),
+                      _buildListaPorPosicion(
+                        TextosApp.EQUIPO_FANTASY_PLANTEL_SECCION_ARQUEROS,
+                        _por,
+                      ),
+                      _buildListaPorPosicion(
+                        TextosApp.EQUIPO_FANTASY_PLANTEL_SECCION_DEFENSORES,
+                        _def,
+                      ),
+                      _buildListaPorPosicion(
+                        TextosApp.EQUIPO_FANTASY_PLANTEL_SECCION_MEDIOCAMPISTAS,
+                        _med,
+                      ),
+                      _buildListaPorPosicion(
+                        TextosApp.EQUIPO_FANTASY_PLANTEL_SECCION_DELANTEROS,
+                        _del,
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _confirmarPlantel,
-                  child: const Text("Confirmar plantel"),
+                  child: const Text(
+                    TextosApp.EQUIPO_FANTASY_PLANTEL_BOTON_CONFIRMAR,
+                  ),
                 ),
                 const SizedBox(height: 16),
               ],

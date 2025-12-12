@@ -39,6 +39,7 @@ import 'package:fantasypro/modelos/jugador_real.dart';
 
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
 import 'package:fantasypro/controladores/controlador_fechas.dart';
@@ -127,21 +128,21 @@ class _UiUsuarioLigaDetalleDesktopEstado
         "Iniciando _cargar en la pantalla <ui__usuario__liga__detalle__desktop>",
       );
 
-      final usuario = _servicioAuth.obtenerUsuarioActual();
+        final usuario = _servicioAuth.obtenerUsuarioActual();
 
-      log.informacion("obtenerUsuarioActual devolvió $usuario");
+        log.informacion("obtenerUsuarioActual devolvió $usuario");
 
-      if (usuario == null) {
-        setState(() {
-          _mensajeError = "No hay usuario autenticado.";
-          _cargando = false;
-        });
-        return;
-      }
+        if (usuario == null) {
+          setState(() {
+            _mensajeError = TextosApp.USUARIO_NO_AUTENTICADO;
+            _cargando = false;
+          });
+          return;
+        }
 
       final idUsuario = usuario.uid;
 
-      log.informacion("idUsuario = $idUsuario");
+      log.informacion("${TextosApp.LOG_LIGA_DETALLE_ID_USUARIO} $idUsuario");
 
       _participacion = await _servicioParticipaciones.obtenerParticipacion(
         idUsuario,
@@ -150,14 +151,14 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
       final fechas = await _ctrlFechas.obtenerPorLiga(widget.liga.id);
 
-      log.informacion("obtenerPorLiga devolvió $fechas");
+      log.informacion("${TextosApp.LOG_LIGA_DETALLE_FECHAS} $fechas");
 
       _existeFechaActiva = fechas.any((f) => f.activa && !f.cerrada);
 
       setState(() => _cargando = false);
     } catch (e) {
       setState(() {
-        _mensajeError = "Error al cargar los datos de la liga.";
+        _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_ERROR_GENERAL;
         _cargando = false;
       });
     }
@@ -177,7 +178,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
     if (nombreEquipo.isEmpty) {
       setState(() {
-        _mensajeError = "Debés ingresar un nombre para tu equipo fantasy.";
+        _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_NOMBRE_OBLIGATORIO;
       });
       return;
     }
@@ -191,7 +192,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
       final usuario = _servicioAuth.obtenerUsuarioActual();
       if (usuario == null) {
         setState(() {
-          _mensajeError = "No hay usuario autenticado.";
+          _mensajeError = TextosApp.USUARIO_NO_AUTENTICADO;
           _cargando = false;
         });
         return;
@@ -214,7 +215,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
       if (_participacion == null) {
         setState(() {
-          _mensajeError = "No se pudo recuperar la participación creada.";
+          _mensajeError =
+              TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_PARTICIPACION_NO_RECUPERADA;
         });
         return;
       }
@@ -230,7 +232,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
       );
     } catch (e) {
       setState(() {
-        _mensajeError = "Error al crear la participación en la liga.";
+        _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_ERROR_CREAR_PARTICIPACION;
         _cargando = false;
       });
     }
@@ -279,7 +281,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
       final usuario = _servicioAuth.obtenerUsuarioActual();
       if (usuario == null) {
         setState(() {
-          _mensajeError = "No hay usuario autenticado.";
+          _mensajeError = TextosApp.USUARIO_NO_AUTENTICADO;
           _cargando = false;
         });
         return;
@@ -296,7 +298,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
       if (alineacion == null) {
         setState(() {
-          _mensajeError = "No se encontró la alineación inicial.";
+          _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_SIN_ALINEACION;
           _cargando = false;
         });
         return;
@@ -310,7 +312,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
       if (equipo == null) {
         setState(() {
-          _mensajeError = "No se encontró el equipo fantasy.";
+          _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_SIN_EQUIPO;
           _cargando = false;
         });
         return;
@@ -335,7 +337,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
       );
     } catch (e) {
       setState(() {
-        _mensajeError = "Error al cargar el resumen del equipo.";
+        _mensajeError = TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_ERROR_RESUMEN;
         _cargando = false;
       });
     }
@@ -346,7 +348,12 @@ class _UiUsuarioLigaDetalleDesktopEstado
     final liga = widget.liga;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Liga: ${liga.nombre}")),
+      appBar: AppBar(
+        title: Text(
+          TextosApp.LIGA_DETALLE_USUARIO_APPBAR_TITULO
+              .replaceAll("{LIGA}", liga.nombre),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: _cargando
@@ -355,7 +362,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Temporada: ${liga.temporada}",
+                    TextosApp.LIGA_DETALLE_USUARIO_TEXTO_TEMPORADA
+                        .replaceAll("{TEMPORADA}", liga.temporada),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -374,7 +382,7 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
                   if (_existeFechaActiva)
                     const Text(
-                      "No podés crear ni modificar tu equipo mientras haya una fecha activa en curso.",
+                      TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_FECHA_ACTIVA,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -383,41 +391,47 @@ class _UiUsuarioLigaDetalleDesktopEstado
                   else ...[
                     if (_participacion == null) ...[
                       const Text(
-                        "Elegí un nombre para tu equipo fantasy:",
+                        TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_ELEGIR_NOMBRE,
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _campoNombreEquipo,
                         decoration: const InputDecoration(
-                          labelText: "Nombre del equipo",
+                          labelText: TextosApp.LIGA_DETALLE_USUARIO_LABEL_NOMBRE,
                           border: OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _crearParticipacionYContinuar,
-                        child: const Text("Crear equipo fantasy"),
+                        child: const Text(
+                          TextosApp.LIGA_DETALLE_USUARIO_BOTON_CREAR,
+                        ),
                       ),
                     ] else if (_participacion!.plantelCompleto == false) ...[
                       const Text(
-                        "Tenés un equipo fantasy pendiente de completar.",
+                        TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_PLANTEL_PENDIENTE,
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _continuarArmado,
-                        child: const Text("Continuar armado del equipo"),
+                        child: const Text(
+                          TextosApp.LIGA_DETALLE_USUARIO_BOTON_CONTINUAR,
+                        ),
                       ),
                     ] else if (_participacion!.plantelCompleto == true) ...[
                       const Text(
-                        "Tu equipo fantasy ya está completo.",
+                        TextosApp.LIGA_DETALLE_USUARIO_MENSAJE_PLANTEL_COMPLETO,
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _verResumen,
-                        child: const Text("Ver mi equipo fantasy"),
+                        child: const Text(
+                          TextosApp.LIGA_DETALLE_USUARIO_BOTON_VER_EQUIPO,
+                        ),
                       ),
                     ],
                   ],

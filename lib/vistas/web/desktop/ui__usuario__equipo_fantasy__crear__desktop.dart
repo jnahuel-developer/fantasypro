@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'ui__usuario__inicio__lista__desktop.dart';
 
 class UiUsuarioEquipoFantasyCrearDesktop extends StatefulWidget {
@@ -60,7 +61,9 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
     final nombre = _ctrlNombre.text.trim();
 
     if (nombre.isEmpty) {
-      setState(() => mensaje = "El nombre no puede estar vacío.");
+      setState(
+        () => mensaje = TextosApp.EQUIPO_FANTASY_CREAR_MENSAJE_NOMBRE_VACIO,
+      );
       return;
     }
 
@@ -72,7 +75,7 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
     final usuario = _auth.obtenerUsuarioActual();
     if (usuario == null) {
       setState(() {
-        mensaje = "No hay usuario autenticado.";
+        mensaje = TextosApp.USUARIO_NO_AUTENTICADO;
         cargando = false;
       });
       return;
@@ -91,7 +94,7 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
       );
     } catch (e) {
       setState(() {
-        mensaje = "Error al crear el equipo.";
+        mensaje = TextosApp.EQUIPO_FANTASY_CREAR_MENSAJE_ERROR;
         cargando = false;
       });
     }
@@ -100,7 +103,9 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Crear equipo fantasy")),
+      appBar: AppBar(
+        title: const Text(TextosApp.EQUIPO_FANTASY_CREAR_APPBAR_TITULO),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Center(
@@ -110,7 +115,8 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Liga: ${widget.liga.nombre}",
+                  TextosApp.EQUIPO_FANTASY_CREAR_LABEL_LIGA
+                      .replaceAll("{LIGA}", widget.liga.nombre),
                   style: const TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 20),
@@ -121,7 +127,7 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
                 TextField(
                   controller: _ctrlNombre,
                   decoration: const InputDecoration(
-                    labelText: "Nombre del equipo",
+                    labelText: TextosApp.EQUIPO_FANTASY_CREAR_LABEL_NOMBRE,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -130,7 +136,8 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: _crearEquipo,
-                        child: const Text("Crear equipo"),
+                        child:
+                            const Text(TextosApp.EQUIPO_FANTASY_CREAR_BOTON_CREAR),
                       ),
               ],
             ),
