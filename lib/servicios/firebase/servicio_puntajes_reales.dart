@@ -18,6 +18,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/puntaje_jugador_fecha.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioPuntajesReales {
@@ -78,7 +79,7 @@ class ServicioPuntajesReales {
 
       await batch.commit();
       _log.informacion(
-        "Guardar puntajes reales (doc único por jugador): fecha=$idFecha total=${puntajes.length}",
+        "${TextosApp.LOG_PUNTAJES_REALES_GUARDAR} fecha=$idFecha total=${puntajes.length}",
       );
     } catch (e) {
       _log.error("Error guardando puntajes reales: $e");
@@ -106,7 +107,7 @@ class ServicioPuntajesReales {
           .where(CamposFirebase.idFecha, isEqualTo: idFecha)
           .get();
 
-      _log.informacion("Listar puntajes reales de la fecha: $idFecha");
+      _log.informacion("${TextosApp.LOG_PUNTAJES_REALES_LISTAR_FECHA} $idFecha");
 
       final lista = query.docs
           .map((doc) => PuntajeJugadorFecha.desdeMapa(doc.id, doc.data()))
@@ -145,7 +146,7 @@ class ServicioPuntajesReales {
 
       if (!snap.exists) {
         _log.informacion(
-          "Puntaje no encontrado: jugador=$idJugadorReal fecha=$idFecha",
+          "${TextosApp.LOG_PUNTAJE_NO_ENCONTRADO} jugador=$idJugadorReal fecha=$idFecha",
         );
         return null;
       }
@@ -179,7 +180,7 @@ class ServicioPuntajesReales {
       }
 
       _log.informacion(
-        "Obteniendo puntajes reales por liga=$idLiga y fecha=$idFecha",
+        "${TextosApp.LOG_PUNTAJES_REALES_OBTENER_LIGA_FECHA} liga=$idLiga fecha=$idFecha",
       );
 
       final query = await _db

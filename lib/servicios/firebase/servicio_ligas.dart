@@ -134,11 +134,11 @@ class ServicioLigas {
           .where(CamposFirebase.nombreBusqueda, isLessThan: '${texto}z')
           .get();
 
-      _log.informacion("Buscar ligas por nombre: '$texto'");
+      _log.informacion("${TextosApp.LOG_LIGA_BUSCAR_NOMBRE} '$texto'");
 
       return query.docs.map((d) => Liga.desdeMapa(d.id, d.data())).toList();
     } catch (e) {
-      _log.informacion("Buscar ligas por nombre: '$texto'");
+      _log.informacion("${TextosApp.LOG_LIGA_BUSCAR_NOMBRE} '$texto'");
       rethrow;
     }
   }
