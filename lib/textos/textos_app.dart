@@ -97,6 +97,8 @@ class TextosApp {
   static const LOG_LIGA_ERROR_ACTIVAR = "Error al activar liga:";
   static const LOG_LIGA_ELIMINADA = "Liga eliminada:";
   static const LOG_LIGA_ERROR_ELIMINAR = "Error al eliminar liga:";
+  static const LOG_LIGA_LISTAR_ACTIVAS = "Listar ligas activas";
+  static const LOG_LIGA_OBTENER = "Recuperando liga por id:";
 
   // ---------------------------------------------------------------------------
   // Logs – Equipos fantasy
@@ -213,6 +215,12 @@ class TextosApp {
   static const LOG_CTRL_JUGADORES_REALES_ACTIVAR = "Activando jugador real";
   static const LOG_CTRL_JUGADORES_REALES_ARCHIVAR = "Archivando jugador real";
   static const LOG_CTRL_JUGADORES_REALES_ELIMINAR = "Eliminando jugador real";
+  static const LOG_CTRL_JUGADORES_REALES_LISTA_ORDENADA =
+      "Jugadores obtenidos (ordenados por posición)";
+  static const LOG_CTRL_JUGADORES_REALES_OBTENER_IDS =
+      "Obteniendo jugadores reales por IDs";
+  static const LOG_CTRL_JUGADORES_REALES_OBTENIDOS_IDS =
+      "Jugadores obtenidos por IDs";
 
   // ---------------------------------------------------------------------------
   // Logs – Controladores: Participaciones
@@ -227,6 +235,36 @@ class TextosApp {
       "Listando participaciones para liga";
   static const LOG_CTRL_PARTICIPACIONES_APLICAR_PUNTAJES =
       "Aplicando puntajes fantasy a participación";
+  static const LOG_CTRL_PARTICIPACIONES_VERIFICAR =
+      "Verificando participación de usuario en liga";
+  static const LOG_CTRL_PARTICIPACIONES_USUARIO_EXISTE =
+      "El usuario ya participa en la liga";
+  static const LOG_CTRL_PARTICIPACIONES_CREANDO_ETAPA1 =
+      "Creando participación (Etapa 1)";
+  static const LOG_CTRL_PARTICIPACIONES_CREAR_EQUIPO_AUTO =
+      "Creando equipo fantasy automáticamente tras registrar participación";
+  static const LOG_CTRL_PARTICIPACIONES_LISTAR_USUARIO =
+      "Listando participaciones del usuario";
+  static const LOG_CTRL_PARTICIPACIONES_PUNTAJES_USUARIO =
+      "Obteniendo puntajes fantasy para usuario en liga";
+  static const LOG_CTRL_PARTICIPACIONES_SIN_EQUIPO =
+      "No se encuentra equipo fantasy para la participación";
+  static const LOG_CTRL_PARTICIPACIONES_SIN_ALINEACION =
+      "No se encontró alineación para usuario";
+  static const LOG_CTRL_PARTICIPACIONES_PUNTAJE_EXISTENTE =
+      "Puntaje fantasy ya aplicado para participación y fecha";
+  static const LOG_CTRL_PARTICIPACIONES_PUNTAJE_GUARDADO =
+      "Guardando puntaje fantasy para participación";
+  static const LOG_CTRL_PARTICIPACIONES_PUNTAJE_ACTUALIZADO =
+      "Puntos acumulados actualizados para participación";
+  static const LOG_CTRL_PARTICIPACIONES_FINALIZADO =
+      "Cálculo de puntajes fantasy finalizado para liga y fecha";
+  static const LOG_CTRL_PARTICIPACIONES_ARCHIVAR =
+      "Archivando participación";
+  static const LOG_CTRL_PARTICIPACIONES_ACTIVAR =
+      "Activando participación";
+  static const LOG_CTRL_PARTICIPACIONES_ELIMINAR =
+      "Eliminando participación";
 
   // ---------------------------------------------------------------------------
   // Logs – Controladores: Puntajes reales
@@ -239,6 +277,8 @@ class TextosApp {
       "Editando puntaje real";
   static const LOG_CTRL_PUNTAJES_REALES_ELIMINAR =
       "Eliminando puntaje real";
+  static const LOG_CTRL_PUNTAJES_REALES_VERIFICAR =
+      "Verificando completitud de puntajes en fecha";
 
   // ---------------------------------------------------------------------------
   // Logs – Controladores: Router
@@ -265,6 +305,8 @@ class TextosApp {
   static const ERR_CTRL_FORMACION_INVALIDA = "Formación no válida:";
   static const ERR_CTRL_PARTICIPACION_NO_ENCONTRADA =
       "Participación no encontrada.";
+  static const ERR_CTRL_PARTICIPACION_DUPLICADA =
+      "El usuario ya participa en esta liga.";
   static const ERR_CTRL_TITULARES_INSUFICIENTES =
       "Debe seleccionar exactamente 11 titulares.";
   static const ERR_CTRL_SUPLENTES_INSUFICIENTES =
@@ -303,6 +345,23 @@ class TextosApp {
       "No existe participación registrada para el usuario en la liga.";
   static const ERR_CTRL_PUNTAJE_EXISTENTE =
       "Ya existe un puntaje para este jugador en la fecha indicada.";
+  static const ERR_CTRL_ID_FECHA_VACIO = "El ID de la fecha no puede estar vacío.";
+  static const ERR_CTRL_ID_PARTICIPACION_VACIO =
+      "El ID de la participación no puede estar vacío.";
+  static const ERR_CTRL_FECHA_NO_VALIDA =
+      "Fecha no válida para la liga especificada.";
+  static const ERR_CTRL_FECHA_NO_CERRADA = "La fecha no está cerrada.";
+  static const ERR_CTRL_POSICION_JUGADOR_REAL =
+      "La posición debe ser POR, DEF, MED o DEL.";
+  static const ERR_CTRL_JUGADOR_REAL_DORSAL_RANGO =
+      "El dorsal debe estar entre 1 y 99.";
+  static const ERR_CTRL_JUGADOR_REAL_VALOR_RANGO =
+      "El valor de mercado debe estar entre 1 y 1000.";
+  static const ERR_CTRL_LISTA_IDS_VACIA = "La lista de IDs no puede estar vacía.";
+  static const ERR_CTRL_PUNTAJE_JUGADOR_REAL_RANGO =
+      "El puntaje del jugador real debe estar entre 1 y 10.";
+  static const ERR_CTRL_JUGADOR_REAL_NO_ENCONTRADO =
+      "Jugador real no encontrado o no activo.";
 
   // ---------------------------------------------------------------------------
   // Errores – Equipos
@@ -340,6 +399,7 @@ class TextosApp {
   static const LIGA_DESCRIPCION_POR_DEFECTO =
       "Liga generada por el administrador.";
   static const LIGA_TEXTO_TEMPORADA = "Temporada";
+  static const LIGA_NOMBRE_FECHA = "Fecha {NUMERO}";
 
   // ---------------------------------------------------------------------------
   // Logs – Ligas
