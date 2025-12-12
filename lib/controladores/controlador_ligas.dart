@@ -49,7 +49,6 @@ class ControladorLigas {
       throw ArgumentError(TextosApp.ERR_LIGA_NOMBRE_VACIO);
     }
 
-    // Validación obligatoria del nuevo campo
     if (totalFechasTemporada < 34 || totalFechasTemporada > 50) {
       throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }
@@ -69,7 +68,7 @@ class ControladorLigas {
       fechaCreacion: timestamp,
       activa: true,
       totalFechasTemporada: totalFechasTemporada,
-      fechasCreadas: 0, // obligatorio según mod0015
+      fechasCreadas: 0,
     );
 
     _log.informacion("${TextosApp.LOG_LIGA_CREANDO} $nombre");
@@ -162,7 +161,6 @@ class ControladorLigas {
       - Future<void>
   */
   Future<void> editarLiga(Liga liga) async {
-    // Validación de consistencia con el nuevo modelo
     if (liga.totalFechasTemporada < 34 || liga.totalFechasTemporada > 50) {
       throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }

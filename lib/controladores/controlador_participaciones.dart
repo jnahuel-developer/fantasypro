@@ -37,9 +37,6 @@ class ControladorParticipaciones {
   /// Servicio para registrar eventos, advertencias y errores.
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Crear participación (Etapa 1)
-  // ---------------------------------------------------------------------------
   /*
     Nombre: crearParticipacionSiNoExiste
     Descripción:
@@ -102,9 +99,6 @@ class ControladorParticipaciones {
     return await _servicio.crearParticipacion(participacion);
   }
 
-  // ---------------------------------------------------------------------------
-  // registrarParticipacionUsuario — alias / wrapper corregido
-  // ---------------------------------------------------------------------------
   /*
     Nombre: registrarParticipacionUsuario
     Descripción:
@@ -137,7 +131,6 @@ class ControladorParticipaciones {
       "usuario=$idUsuario, liga=$idLiga, nombreEquipo=$nombreEquipoFantasy",
     );
 
-    // Crear equipo fantasy asociado — uso directo del servicio, sin intermediarios
     await ServicioEquiposFantasy().crearEquipoFantasy(
       idUsuario,
       idLiga,
@@ -147,9 +140,6 @@ class ControladorParticipaciones {
     return participacion;
   }
 
-  // ---------------------------------------------------------------------------
-  // Obtener participaciones por liga
-  // ---------------------------------------------------------------------------
   /*
     Nombre: obtenerPorLiga
     Descripción:
@@ -171,9 +161,6 @@ class ControladorParticipaciones {
     return await _servicio.obtenerPorLiga(idLiga);
   }
 
-  // ---------------------------------------------------------------------------
-  // Obtener participaciones por usuario
-  // ---------------------------------------------------------------------------
   /*
     Nombre: obtenerPorUsuario
     Descripción:
@@ -307,9 +294,6 @@ class ControladorParticipaciones {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Archivar participación
-  // ---------------------------------------------------------------------------
   /*
     Nombre: archivar
     Descripción:
@@ -328,9 +312,6 @@ class ControladorParticipaciones {
     await _servicio.archivarParticipacion(idParticipacion);
   }
 
-  // ---------------------------------------------------------------------------
-  // Activar participación
-  // ---------------------------------------------------------------------------
   /*
     Nombre: activar
     Descripción:
@@ -349,9 +330,6 @@ class ControladorParticipaciones {
     await _servicio.activarParticipacion(idParticipacion);
   }
 
-  // ---------------------------------------------------------------------------
-  // Eliminar participación
-  // ---------------------------------------------------------------------------
   /*
     Nombre: eliminar
     Descripción:
@@ -364,13 +342,12 @@ class ControladorParticipaciones {
       - Future<void>: Completa al eliminar el registro.
   */
   Future<void> eliminar(String idParticipacion) async {
-    _log.error("${TextosApp.LOG_CTRL_PARTICIPACIONES_ELIMINAR} $idParticipacion");
+    _log.error(
+      "${TextosApp.LOG_CTRL_PARTICIPACIONES_ELIMINAR} $idParticipacion",
+    );
     await _servicio.eliminarParticipacion(idParticipacion);
   }
 
-  // ---------------------------------------------------------------------------
-  // Editar participación
-  // ---------------------------------------------------------------------------
   /*
     Nombre: editar
     Descripción:
@@ -468,7 +445,7 @@ class ControladorParticipaciones {
 
     // 1) Validar que la fecha existe, pertenece a la liga y está cerrada
     final fecha = await servicioFechas.obtenerFechaPorId(idFecha);
-    if (fecha == null || fecha.idLiga != idLiga) {
+    if (fecha.idLiga != idLiga) {
       throw Exception(TextosApp.ERR_CTRL_FECHA_NO_VALIDA);
     }
     if (!fecha.cerrada) {
@@ -524,7 +501,7 @@ class ControladorParticipaciones {
           detalle[idJ] = pts;
         }
 
-        // 7) Idempotencia: verificar si ya existe puntaje fantasy para esta participación + fecha
+        // 7) Verificar si ya existe puntaje fantasy para esta participación + fecha
         final existente = await servicioPuntajesFantasy
             .obtenerPorParticipacionYFecha(participacion.id, idFecha);
         if (existente != null) {
@@ -566,8 +543,9 @@ class ControladorParticipaciones {
           "${participacion.id}",
         );
       } catch (e) {
-        _log.error("${TextosApp.LOG_CTRL_PARTICIPACIONES_EDITAR} ${participacion.id}: $e");
-        // Opcional: decidir si continuar con otras participaciones o abortar
+        _log.error(
+          "${TextosApp.LOG_CTRL_PARTICIPACIONES_EDITAR} ${participacion.id}: $e",
+        );
       }
     }
 

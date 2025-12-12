@@ -45,9 +45,6 @@ class ControladorFechas {
   /// Servicio de logs.
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Crear fecha
-  // ---------------------------------------------------------------------------
   /*
     Nombre: crearFecha
     Descripción:
@@ -84,23 +81,21 @@ class ControladorFechas {
     final int creadas = liga.fechasCreadas;
 
     if (creadas >= total) {
-      throw Exception(
-        "${TextosApp.ERR_CTRL_LIGA_SIN_TOTAL_FECHAS} ($total)",
-      );
+      throw Exception("${TextosApp.ERR_CTRL_LIGA_SIN_TOTAL_FECHAS} ($total)");
     }
 
     final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
     final existeActiva = fechas.any((f) => f.activa && !f.cerrada);
 
     if (existeActiva) {
-      throw Exception(
-        TextosApp.ERR_CTRL_LIGA_CON_FECHA_ACTIVA_PARA_CREAR,
-      );
+      throw Exception(TextosApp.ERR_CTRL_LIGA_CON_FECHA_ACTIVA_PARA_CREAR);
     }
 
     final int numeroFecha = creadas + 1;
-    final String nombre =
-        TextosApp.LIGA_NOMBRE_FECHA.replaceFirst("{NUMERO}", "$numeroFecha");
+    final String nombre = TextosApp.LIGA_NOMBRE_FECHA.replaceFirst(
+      "{NUMERO}",
+      "$numeroFecha",
+    );
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     final nuevaFecha = FechaLiga(
@@ -126,9 +121,6 @@ class ControladorFechas {
     return creadaFecha;
   }
 
-  // ---------------------------------------------------------------------------
-  // Obtener fechas por liga
-  // ---------------------------------------------------------------------------
   /*
     Nombre: obtenerPorLiga
     Descripción:
@@ -150,9 +142,6 @@ class ControladorFechas {
     return await _servicioFechas.obtenerPorLiga(idLiga);
   }
 
-  // ---------------------------------------------------------------------------
-  // Cerrar fecha
-  // ---------------------------------------------------------------------------
   /*
     Nombre: cerrarFecha
     Descripción:
@@ -189,7 +178,7 @@ class ControladorFechas {
     // 1) Cerrar fecha en Firestore
     await _servicioFechas.cerrarFecha(fecha.id);
 
-    // 2) Aplicar puntajes fantasy (EL PASO QUE FALTABA)
+    // 2) Aplicar puntajes fantasy
     _log.informacion(
       "${TextosApp.LOG_CTRL_FECHAS_APLICAR_PUNTAJES} ${fecha.idLiga} "
       "para la fecha ${fecha.id}",
@@ -207,12 +196,10 @@ class ControladorFechas {
     }
 
     if (fecha.numeroFecha == liga.totalFechasTemporada) {
-      _log.advertencia(
-        "${TextosApp.LOG_CTRL_FECHAS_ARCHIVAR_LIGA} ${liga.id}",
-      );
+      _log.advertencia("${TextosApp.LOG_CTRL_FECHAS_ARCHIVAR_LIGA} ${liga.id}");
       await _controladorLigas.archivar(liga.id);
     }
 
-    _log.informacion("${TextosApp.LOG_CTRL_FECHAS_CERRADA_OK}");
+    _log.informacion(TextosApp.LOG_CTRL_FECHAS_CERRADA_OK);
   }
 }

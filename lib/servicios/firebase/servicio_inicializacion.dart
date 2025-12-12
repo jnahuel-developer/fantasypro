@@ -32,10 +32,7 @@ class ServicioInicializacion {
   /// Servicio de logs para registrar información y errores durante la inicialización.
   final ServicioLog _log = ServicioLog();
 
-  // ---------------------------------------------------------------------------
-  // Constantes para claves del JSON
-  // ---------------------------------------------------------------------------
-
+  /// Constantes para claves del JSON
   static const String _kApiKey = "apiKey";
   static const String _kAppId = "appId";
   static const String _kSenderId = "messagingSenderId";
@@ -82,9 +79,6 @@ class ServicioInicializacion {
 
       _log.informacion(TextosApp.LOG_INICIO_FIREBASE_OK);
 
-      // ---------------------------------------------------------------------
-      // Conexión a emuladores
-      // ---------------------------------------------------------------------
       final bool usarEmulador = cfg[_kUsarEmulador] == true;
 
       if (usarEmulador) {
@@ -94,9 +88,7 @@ class ServicioInicializacion {
 
         try {
           await FirebaseAuth.instance.useAuthEmulator(host, authPort);
-        } catch (_) {
-          // SDK Web a veces ignora esto, no representa error funcional
-        }
+        } catch (_) {}
 
         FirebaseFirestore.instance.settings = Settings(
           host: "$host:$firestorePort",
