@@ -17,8 +17,9 @@
 */
 
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
-import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 import 'ui__admin__alineacion__editar__desktop.dart';
 
 class UiAdminAlineacionListaDesktop extends StatefulWidget {
@@ -96,13 +97,16 @@ class _UiAdminAlineacionListaDesktopEstado
     final ctrlJugadores = TextEditingController();
     final ctrlPuntos = TextEditingController(text: "0");
     final ctrlIdEquipoFantasy = TextEditingController();
-    String seleccionFormacion = "4-4-2";
+    String seleccionFormacion =
+        TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_442;
 
     await showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text("Crear nueva alineación"),
+          title: const Text(
+            TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_DIALOGO_CREAR_TITULO,
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -110,13 +114,29 @@ class _UiAdminAlineacionListaDesktopEstado
                 // Formación
                 Row(
                   children: [
-                    const Text("Formación:"),
+                    const Text(
+                      TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_FORMACION,
+                    ),
                     const SizedBox(width: 12),
                     DropdownButton<String>(
                       value: seleccionFormacion,
                       items: const [
-                        DropdownMenuItem(value: "4-4-2", child: Text("4-4-2")),
-                        DropdownMenuItem(value: "4-3-3", child: Text("4-3-3")),
+                        DropdownMenuItem(
+                          value: TextosApp
+                              .ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_442,
+                          child: Text(
+                            TextosApp
+                                .ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_442,
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: TextosApp
+                              .ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_433,
+                          child: Text(
+                            TextosApp
+                                .ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_433,
+                          ),
+                        ),
                       ],
                       onChanged: (v) {
                         if (v == null) return;
@@ -131,7 +151,8 @@ class _UiAdminAlineacionListaDesktopEstado
                 TextField(
                   controller: ctrlIdEquipoFantasy,
                   decoration: const InputDecoration(
-                    labelText: "ID del equipo fantasy",
+                    labelText: TextosApp
+                        .ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_ID_EQUIPO_FANTASY,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -140,8 +161,10 @@ class _UiAdminAlineacionListaDesktopEstado
                 TextField(
                   controller: ctrlJugadores,
                   decoration: const InputDecoration(
-                    labelText: "IDs de jugadores (separados por coma)",
-                    hintText: "ej: j1,j2,j3,j4,j5",
+                    labelText: TextosApp
+                        .ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_IDS_JUGADORES,
+                    hintText: TextosApp
+                        .ADMIN_ALINEACION_LISTA_DESKTOP_HINT_IDS_JUGADORES,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -151,7 +174,8 @@ class _UiAdminAlineacionListaDesktopEstado
                   controller: ctrlPuntos,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: "Puntos iniciales (opcional)",
+                    labelText: TextosApp
+                        .ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_PUNTOS_INICIALES,
                   ),
                 ),
               ],
@@ -159,11 +183,11 @@ class _UiAdminAlineacionListaDesktopEstado
           ),
           actions: [
             TextButton(
-              child: const Text("Cancelar"),
+              child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              child: const Text("Crear"),
+              child: const Text(TextosApp.COMUN_BOTON_CREAR),
               onPressed: () async {
                 final textoJugadores = ctrlJugadores.text.trim();
                 final puntosText = ctrlPuntos.text.trim();
@@ -175,7 +199,8 @@ class _UiAdminAlineacionListaDesktopEstado
                 if (textoJugadores.isEmpty || idEquipoFantasy.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Debe ingresar jugadores y ID de equipo."),
+                      content: Text(TextosApp
+                          .ADMIN_ALINEACION_LISTA_DESKTOP_ERROR_CAMPOS_REQUERIDOS),
                     ),
                   );
                   return;
@@ -190,9 +215,8 @@ class _UiAdminAlineacionListaDesktopEstado
                 if (idsJugadores.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                        "Formato inválido para los IDs de jugadores.",
-                      ),
+                      content: Text(TextosApp
+                          .ADMIN_ALINEACION_LISTA_DESKTOP_ERROR_FORMATO_JUGADORES),
                     ),
                   );
                   return;
@@ -231,15 +255,15 @@ class _UiAdminAlineacionListaDesktopEstado
     final res = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Confirmación"),
+        title: const Text(TextosApp.COMUN_TITULO_CONFIRMACION),
         content: Text(mensaje),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Aceptar"),
+            child: const Text(TextosApp.COMUN_BOTON_ACEPTAR),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -264,18 +288,25 @@ class _UiAdminAlineacionListaDesktopEstado
       child: ListTile(
         leading: const Icon(Icons.sports_soccer, size: 36),
         title: Text(
-          "Alineación ${a.id}",
+          TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ITEM
+              .replaceFirst("{ID}", a.id),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          "Formación: ${a.formacion} • Jugadores: ${a.jugadoresSeleccionados.length} • Puntos: ${a.puntosTotales}",
+          TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_SUBTITULO_ITEM
+              .replaceFirst("{FORMACION}", a.formacion)
+              .replaceFirst(
+                "{CANT_JUGADORES}",
+                a.jugadoresSeleccionados.length.toString(),
+              )
+              .replaceFirst("{PUNTOS}", a.puntosTotales.toString()),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: "Editar alineación",
+              tooltip: TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_EDITAR,
               onPressed: () async {
                 final resultado = await Navigator.push(
                   context,
@@ -289,12 +320,14 @@ class _UiAdminAlineacionListaDesktopEstado
             ),
             IconButton(
               icon: Icon(a.activo ? Icons.archive : Icons.unarchive),
-              tooltip: a.activo ? "Archivar" : "Activar",
+              tooltip: a.activo
+                  ? TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ARCHIVAR
+                  : TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 final ok = await confirmar(
                   a.activo
-                      ? "¿Desea archivar esta alineación?"
-                      : "¿Desea activar esta alineación?",
+                      ? TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ARCHIVAR
+                      : TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ACTIVAR,
                 );
                 if (!ok) return;
 
@@ -308,10 +341,11 @@ class _UiAdminAlineacionListaDesktopEstado
             ),
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: "Eliminar alineación",
+              tooltip:
+                  TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 final ok = await confirmar(
-                  "¿Eliminar esta alineación definitivamente?",
+                  TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ELIMINAR,
                 );
                 if (!ok) return;
                 await _controlador.eliminar(a.id);
@@ -328,10 +362,13 @@ class _UiAdminAlineacionListaDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Alineaciones — Usuario ${widget.idUsuario}"),
+        title: Text(
+          TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_APPBAR
+              .replaceFirst("{USUARIO}", widget.idUsuario),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: "Volver",
+          tooltip: TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -339,7 +376,7 @@ class _UiAdminAlineacionListaDesktopEstado
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de alineaciones",
+                TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TEXTO_GESTION,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -358,7 +395,11 @@ class _UiAdminAlineacionListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Activas (${activas.length})",
+                        TextosApp.ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ACTIVAS
+                            .replaceFirst(
+                          "{CANT}",
+                          activas.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -376,7 +417,12 @@ class _UiAdminAlineacionListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Archivadas (${archivadas.length})",
+                        TextosApp
+                            .ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ARCHIVADAS
+                            .replaceFirst(
+                          "{CANT}",
+                          archivadas.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

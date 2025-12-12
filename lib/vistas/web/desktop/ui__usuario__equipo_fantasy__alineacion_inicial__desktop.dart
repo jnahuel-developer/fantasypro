@@ -26,6 +26,7 @@ import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'widgets/ui__usuario__appbar__desktop.dart';
 
 import 'ui__usuario__equipo_fantasy__resumen__desktop.dart';
 
@@ -33,7 +34,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
   final Liga liga;
   final ParticipacionLiga participacion;
   final String idEquipoFantasy;
-  final String idAlineacion; // ← agregado según requisito oficial
+  final String idAlineacion;
   final List<JugadorReal> plantel;
   final String formacion;
 
@@ -42,7 +43,7 @@ class UiUsuarioEquipoFantasyAlineacionInicialDesktop extends StatefulWidget {
     required this.liga,
     required this.participacion,
     required this.idEquipoFantasy,
-    required this.idAlineacion, // ← parámetro requerido
+    required this.idAlineacion,
     required this.plantel,
     required this.formacion,
   });
@@ -327,7 +328,9 @@ class _UiUsuarioEquipoFantasyAlineacionInicialDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Alineación inicial — ${widget.liga.nombre}")),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Alineación inicial — ${widget.liga.nombre}",
+      ),
       body: Column(
         children: [
           const SizedBox(height: 12),

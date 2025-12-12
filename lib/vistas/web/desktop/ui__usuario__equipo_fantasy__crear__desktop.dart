@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__inicio__lista__desktop.dart';
 
 class UiUsuarioEquipoFantasyCrearDesktop extends StatefulWidget {
@@ -100,7 +101,9 @@ class _UiUsuarioEquipoFantasyCrearDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Crear equipo fantasy")),
+      appBar: const UiUsuarioAppBarDesktop(
+        titulo: "Crear equipo fantasy",
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Center(

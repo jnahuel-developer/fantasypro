@@ -9,6 +9,26 @@
 */
 
 class TextosApp {
+  TextosApp._(); // Constructor privado
+
+  // -----------------------------------------------------------------------------
+  // Comunes de la aplicación
+  // Archivo: textos_app.dart
+  // Prefijo: COMUN_
+  // -----------------------------------------------------------------------------
+
+  static const String COMUN_BOTON_CANCELAR = "Cancelar";
+  static const String COMUN_BOTON_ACEPTAR = "Aceptar";
+  static const String COMUN_BOTON_SALIR = "Salir";
+  static const String COMUN_BOTON_VOLVER = "Volver";
+  static const String COMUN_BOTON_CERRAR = "Cerrar";
+  static const String COMUN_BOTON_OK = "OK";
+  static const String COMUN_BOTON_CREAR = "Crear";
+  static const String COMUN_BOTON_GUARDAR = "Guardar";
+  static const String COMUN_BOTON_GUARDAR_CAMBIOS = "Guardar cambios";
+  static const String COMUN_TITULO_CONFIRMACION = "Confirmación";
+  static const String COMUN_MENSAJE_ACCION_NO_PERMITIDA =
+      "Acción no permitida.";
   // ---------------------------------------------------------------------------
   // Mensajes de log
   // ---------------------------------------------------------------------------
@@ -141,7 +161,6 @@ class TextosApp {
 
   // ---------------------------------------------------------------------------
   // Valores por defecto – Jugadores
-  // (si en el futuro querés agregar defaults, quedan definidas aquí)
   // ---------------------------------------------------------------------------
   static const JUGADOR_NACIONALIDAD_POR_DEFECTO = "";
   static const JUGADOR_DORSAL_POR_DEFECTO = 0;
@@ -208,6 +227,27 @@ class TextosApp {
   static const ADMIN_PANEL_DESKTOP_BOTON_LIGAS = "Administrar ligas";
   static const ADMIN_PANEL_DESKTOP_TOOLTIP_LOGOUT = "Cerrar sesión";
   static const ADMIN_PANEL_DESKTOP_MENSAJE_SALUDO = "Bienvenido, administrador";
+  static const String ADMIN_PANEL_DESKTOP_LOADER_CARGANDO_DATOS =
+      "Cargando datos...";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_TITULO =
+      "Carga completada – {LIGA}";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_MENSAJE =
+      "Los datos fueron cargados correctamente.";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_OK = "OK";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_TITULO = "Error";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_MENSAJE =
+      "No se pudo completar la carga: {DETALLE}";
+  static const String ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_CERRAR = "Cerrar";
+  static const String ADMIN_PANEL_DESKTOP_BOTON_CARGA_ESPANA =
+      "Carga Masiva – España";
+  static const String ADMIN_PANEL_DESKTOP_BOTON_CARGA_ITALIA =
+      "Carga Masiva – Italia";
+  static const String ADMIN_PANEL_DESKTOP_BOTON_CARGA_INGLATERRA =
+      "Carga Masiva – Inglaterra";
+  static const String ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ESPANA = "Liga Española";
+  static const String ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ITALIA = "Liga Italiana";
+  static const String ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_INGLATERRA =
+      "Liga Inglesa";
 
   // ---------------------------------------------------------------------------
   // Pantalla: Registro de usuario Web Desktop
@@ -327,6 +367,14 @@ class TextosApp {
   static const JUGADOR_EDITAR_LABEL_POSICION = "Posición";
   static const JUGADOR_EDITAR_LABEL_NACIONALIDAD = "Nacionalidad";
   static const JUGADOR_EDITAR_LABEL_DORSAL = "Dorsal (opcional)";
+  static const String JUGADOR_EDITAR_LABEL_VALOR_MERCADO =
+      "Valor de mercado (1 a 1000)";
+  static const String JUGADOR_EDITAR_OPCION_POSICION_POR = "POR";
+  static const String JUGADOR_EDITAR_OPCION_POSICION_DEF = "DEF";
+  static const String JUGADOR_EDITAR_OPCION_POSICION_MED = "MED";
+  static const String JUGADOR_EDITAR_OPCION_POSICION_DEL = "DEL";
+  static const String JUGADOR_EDITAR_VALIDACION_CAMPOS =
+      "Verifique los campos obligatorios.";
 
   static const JUGADOR_EDITAR_BOTON_GUARDAR = "Guardar cambios";
 
@@ -356,12 +404,17 @@ class TextosApp {
   static const JUGADORES_ADMIN_CREAR_LABEL_POSICION = "Posición";
   static const JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD = "Nacionalidad";
   static const JUGADORES_ADMIN_CREAR_LABEL_DORSAL = "Dorsal (opcional)";
+  static const String JUGADORES_ADMIN_CREAR_LABEL_VALOR_MERCADO =
+      "Valor de mercado";
   static const JUGADORES_ADMIN_CREAR_BOTON_CANCELAR = "Cancelar";
   static const JUGADORES_ADMIN_CREAR_BOTON_CREAR = "Crear";
 
   // Validación
   static const JUGADORES_ADMIN_VALIDACION_OBLIGATORIOS =
       "Los campos Nombre y Posición son obligatorios.";
+  static const String
+      JUGADORES_ADMIN_VALIDACION_CAMPOS_OBLIGATORIOS_GENERICO =
+      "Los campos obligatorios deben ser válidos.";
 
   // Confirmaciones
   static const JUGADORES_ADMIN_CONFIRMAR_TITULO = "Confirmación";
@@ -383,4 +436,403 @@ class TextosApp {
   // Columnas
   static const JUGADORES_ADMIN_COLUMNA_ACTIVOS = "Activos ({CANT})";
   static const JUGADORES_ADMIN_COLUMNA_ARCHIVADOS = "Archivados ({CANT})";
+  static const String JUGADORES_ADMIN_SUBTITULO_ITEM =
+      "{POSICION} • {NACIONALIDAD} • {VALOR}";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Dashboard del usuario (versión desktop)
+  // Archivo: ui__usuario__dashboard__desktop.dart
+  // Prefijo: USUARIO_DASHBOARD_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String USUARIO_DASHBOARD_DESKTOP_ERROR_SIN_USUARIO =
+      "No hay usuario autenticado.";
+  static const String USUARIO_DASHBOARD_DESKTOP_ERROR_CARGA_PARTICIPACIONES =
+      "No se pudieron cargar tus participaciones.";
+  static const String USUARIO_DASHBOARD_DESKTOP_SUBTITULO_PARTICIPACION =
+      "Equipo: {EQUIPO} — Puntos: {PUNTOS}";
+  static const String USUARIO_DASHBOARD_DESKTOP_BOTON_VER_RESULTADOS =
+      "Ver resultados";
+  static const String USUARIO_DASHBOARD_DESKTOP_TITULO_APPBAR =
+      "FantasyPro — Inicio";
+  static const String USUARIO_DASHBOARD_DESKTOP_TEXTO_BIENVENIDA =
+      "Bienvenido a FantasyPro";
+  static const String USUARIO_DASHBOARD_DESKTOP_BOTON_CREAR_EQUIPOS =
+      "Crear equipos";
+  static const String USUARIO_DASHBOARD_DESKTOP_TITULO_VER_RESULTADOS =
+      "Ver resultados";
+  static const String USUARIO_DASHBOARD_DESKTOP_MENSAJE_SIN_EQUIPOS =
+      "Aún no tienes equipos registrados. Crea uno para comenzar.";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de ligas activas (versión desktop)
+  // Archivo: ui__usuario__inicio__lista__desktop.dart
+  // Prefijo: USUARIO_INICIO_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String USUARIO_INICIO_DESKTOP_ERROR_CARGA_LIGAS =
+      "Error al cargar las ligas activas.";
+  static const String USUARIO_INICIO_DESKTOP_ERROR_BUSQUEDA =
+      "Error al realizar la búsqueda.";
+  static const String USUARIO_INICIO_DESKTOP_SUBTITULO_TEMPORADA =
+      "Temporada: {TEMPORADA}";
+  static const String USUARIO_INICIO_DESKTOP_BOTON_UNIRSE = "Unirse";
+  static const String USUARIO_INICIO_DESKTOP_TITULO_APPBAR =
+      "FantasyPro — Ligas activas";
+  static const String USUARIO_INICIO_DESKTOP_LABEL_BUSCAR = "Buscar ligas";
+  static const String USUARIO_INICIO_DESKTOP_SIN_LIGAS =
+      "No hay ligas disponibles.";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Resultados por fecha (versión desktop)
+  // Archivo: ui__usuario__resultados_por_fecha__desktop.dart
+  // Prefijo: USUARIO_RESULTADOS_POR_FECHA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_ERROR_CARGA =
+      "No se pudieron cargar los resultados.";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PUNTAJE = "–";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PARTICIPACION =
+      "El usuario no tiene participación en la liga";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_FECHA_CERRADA =
+      "Fecha cerrada";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_FECHA_PENDIENTE =
+      "Fecha pendiente";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_TITULO_FECHA =
+      "{NUMERO}. {NOMBRE}";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_BOTON_VER_DETALLE =
+      "Ver detalle de jugadores";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_TITULO_APPBAR =
+      "Resultados por fecha — {LIGA}";
+  static const String
+  USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SIN_PARTICIPACION_TITULO =
+      "Sin participación registrada";
+  static const String USUARIO_RESULTADOS_POR_FECHA_DESKTOP_SUBTITULO_LISTA =
+      "Puntaje obtenido por fecha";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Resultados por jugador (versión desktop)
+  // Archivo: ui__usuario__resultados__detalle_jugadores__desktop.dart
+  // Prefijo: USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_SIN_PUNTAJE =
+      "No hay puntaje registrado para esta fecha.";
+  static const String USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_ERROR_CARGA =
+      "Error al cargar el detalle de jugadores.";
+  static const String USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_TITULO =
+      "Resultados por jugador";
+  static const String
+  USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_TITULO_FECHA =
+      "{NUMERO}. {NOMBRE}";
+  static const String
+  USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_EQUIPO_FANTASY =
+      "Equipo fantasy";
+  static const String
+  USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_PUNTAJE_TOTAL =
+      "Puntaje total: {PUNTAJE}";
+  static const String
+      USUARIO_RESULTADOS_DETALLE_JUGADORES_DESKTOP_SUBTITULO_JUGADOR =
+      "Equipo: {EQUIPO} — Posición: {POSICION}";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Edición de alineación (admin, desktop)
+  // Archivo: ui__admin__alineacion__editar__desktop.dart
+  // Prefijo: ADMIN_ALINEACION_EDITAR_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_TITULO =
+      "Editar alineación";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_TOOLTIP_VOLVER =
+      "Volver";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_DIALOGO_DESCARTAR_TITULO =
+      "Descartar cambios";
+  static const String
+      ADMIN_ALINEACION_EDITAR_DESKTOP_DIALOGO_DESCARTAR_CONTENIDO =
+      "Hay cambios sin guardar. ¿Desea salir igualmente?";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_SIN_JUGADORES =
+      "Debe incluir al menos un jugador.";
+  static const String
+      ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_FORMATO_INVALIDO =
+      "Formato inválido de jugadores.";
+  static const String
+      ADMIN_ALINEACION_EDITAR_DESKTOP_MENSAJE_PUNTOS_NEGATIVOS =
+      "Los puntos no pueden ser negativos.";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_FORMACION =
+      "Formación:";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_442 =
+      "4-4-2";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_OPCION_FORMACION_433 =
+      "4-3-3";
+  static const String
+      ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_IDS_JUGADORES =
+      "IDs de jugadores (separados por coma)";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_HINT_IDS_JUGADORES =
+      "ej: j1,j2,j3,j4";
+  static const String ADMIN_ALINEACION_EDITAR_DESKTOP_LABEL_PUNTOS_TOTALES =
+      "Puntos totales";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de alineaciones (admin, desktop)
+  // Archivo: ui__admin__alineacion__lista__desktop.dart
+  // Prefijo: ADMIN_ALINEACION_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_DIALOGO_CREAR_TITULO =
+      "Crear nueva alineación";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_FORMACION =
+      "Formación:";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_442 =
+      "4-4-2";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_OPCION_FORMACION_433 =
+      "4-3-3";
+  static const String
+      ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_ID_EQUIPO_FANTASY =
+      "ID del equipo fantasy";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_IDS_JUGADORES =
+      "IDs de jugadores (separados por coma)";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_HINT_IDS_JUGADORES =
+      "ej: j1,j2,j3,j4,j5";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_LABEL_PUNTOS_INICIALES =
+      "Puntos iniciales (opcional)";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_ERROR_CAMPOS_REQUERIDOS =
+      "Debe ingresar jugadores y ID de equipo.";
+  static const String
+      ADMIN_ALINEACION_LISTA_DESKTOP_ERROR_FORMATO_JUGADORES =
+      "Formato inválido para los IDs de jugadores.";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ITEM =
+      "Alineación {ID}";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_SUBTITULO_ITEM =
+      "Formación: {FORMACION} • Jugadores: {CANT_JUGADORES} • Puntos: {PUNTOS}";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_EDITAR =
+      "Editar alineación";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ARCHIVAR =
+      "Archivar";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ACTIVAR =
+      "Activar";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ARCHIVAR =
+      "¿Desea archivar esta alineación?";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ACTIVAR =
+      "¿Desea activar esta alineación?";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_ELIMINAR =
+      "Eliminar alineación";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_MENSAJE_ELIMINAR =
+      "¿Eliminar esta alineación definitivamente?";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_APPBAR =
+      "Alineaciones — Usuario {USUARIO}";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TOOLTIP_VOLVER = "Volver";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TEXTO_GESTION =
+      "Gestión de alineaciones";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ACTIVAS =
+      "Activas ({CANT})";
+  static const String ADMIN_ALINEACION_LISTA_DESKTOP_TITULO_ARCHIVADAS =
+      "Archivadas ({CANT})";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Edición de equipo real (admin, desktop)
+  // Archivo: ui__admin__equipo_real__editar__desktop.dart
+  // Prefijo: ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_TITULO =
+      "Editar equipo real";
+  static const String ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_LABEL_NOMBRE = "Nombre";
+  static const String
+      ADMIN_EQUIPO_REAL_EDITAR_DESKTOP_LABEL_DESCRIPCION = "Descripción";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de equipos reales (admin, desktop)
+  // Archivo: ui__admin__equipo_real__lista__desktop.dart
+  // Prefijo: ADMIN_EQUIPO_REAL_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_APPBAR =
+      "Equipos reales — {LIGA}";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_DIALOGO_CREAR_TITULO =
+      "Crear equipo real";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_LABEL_NOMBRE = "Nombre";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_LABEL_DESCRIPCION =
+      "Descripción";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TOOLTIP_GESTION_JUGADORES =
+      "Gestionar jugadores";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_ACTIVOS =
+      "Activos ({CANT})";
+  static const String ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_ARCHIVADOS =
+      "Archivados ({CANT})";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de fechas (admin, desktop)
+  // Archivo: ui__admin__fecha__lista__desktop.dart
+  // Prefijo: ADMIN_FECHA_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_TITULO =
+      "Cerrar fecha";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_CONTENIDO =
+      "¿Desea cerrar la fecha {NUMERO}? Esta acción no puede revertirse.";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR = "Cerrar";
+  static const String
+      ADMIN_FECHA_LISTA_DESKTOP_SNACKBAR_FECHA_CERRADA_OK =
+      "Fecha cerrada exitosamente";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_ERROR_TITULO =
+      "No se puede cerrar la fecha";
+  static const String
+      ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_ERROR_CONTENIDO =
+      "Faltan puntajes por cargar. Complete los puntajes y vuelva a intentarlo.";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CREAR_TITULO =
+      "Crear nueva fecha";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CREAR_CONTENIDO =
+      "¿Desea abrir una nueva fecha para esta liga?";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_SNACKBAR_SIMULACION_OK =
+      "Simulación completa: todos los jugadores recibieron puntajes.";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_TITULO =
+      "Error durante la simulación";
+  static const String
+      ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_CONTENIDO =
+      "Ocurrió un error al generar o guardar los puntajes simulados:\n{DETALLE}";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_ITEM_FECHA_CERRADA_TITULO =
+      "Fecha {NUMERO} — {NOMBRE}";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_ITEM_FECHA_CERRADA_ESTADO =
+      "Estado: Cerrada";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_TITULO_APPBAR =
+      "Fechas — {LIGA}";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_TITULO_FECHA_ACTIVA =
+      "Fecha activa — {NOMBRE}";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_SUBTITULO_FECHA_ACTIVA =
+      "Número: {NUMERO}";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_BOTON_CARGAR_PUNTAJES =
+      "Cargar puntajes";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR_FECHA =
+      "Cerrar fecha";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_BOTON_SIMULAR_PUNTAJES =
+      "Simular carga de puntajes reales";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_MENSAJE_SIN_FECHA_ACTIVA =
+      "No hay fecha activa";
+  static const String ADMIN_FECHA_LISTA_DESKTOP_TITULO_FECHAS_CERRADAS =
+      "Fechas cerradas";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de ligas (admin, desktop)
+  // Archivo: ui__admin__liga__lista__desktop.dart
+  // Prefijo: ADMIN_LIGA_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_LIGA_LISTA_DESKTOP_TITULO_APPBAR = "Ligas";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_TEXTO_GESTION =
+      "Gestión de ligas";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_DIALOGO_CREAR_TITULO =
+      "Crear liga";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_LABEL_NOMBRE = "Nombre";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_LABEL_DESCRIPCION =
+      "Descripción";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_LABEL_TOTAL_FECHAS =
+      "Total de fechas (34–50)";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_ERROR_NOMBRE_OBLIGATORIO =
+      "El nombre es obligatorio";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_ERROR_RANGO_FECHAS =
+      "Debe estar entre 34 y 50";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_SUBTITULO_FECHAS =
+      "Fechas: {CREADAS}/{TOTAL}";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_TITULO_ACTIVAS =
+      "Activas ({CANT})";
+  static const String ADMIN_LIGA_LISTA_DESKTOP_TITULO_ARCHIVADAS =
+      "Archivadas ({CANT})";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Edición de participación (admin, desktop)
+  // Archivo: ui__admin__participacion__editar__desktop.dart
+  // Prefijo: ADMIN_PARTICIPACION_EDITAR_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_PARTICIPACION_EDITAR_DESKTOP_TITULO =
+      "Editar participación";
+  static const String ADMIN_PARTICIPACION_EDITAR_DESKTOP_ERROR_NOMBRE =
+      "El nombre no puede estar vacío.";
+  static const String ADMIN_PARTICIPACION_EDITAR_DESKTOP_ERROR_PUNTOS =
+      "Los puntos no pueden ser negativos.";
+  static const String ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_ID_USUARIO =
+      "ID Usuario";
+  static const String
+      ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_NOMBRE_EQUIPO_FANTASY =
+      "Nombre del equipo fantasy";
+  static const String ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_PUNTOS =
+      "Puntos";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de participaciones (admin, desktop)
+  // Archivo: ui__admin__participacion__lista__desktop.dart
+  // Prefijo: ADMIN_PARTICIPACION_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_DIALOGO_CREAR_TITULO =
+      "Crear participación en {LIGA}";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_LABEL_ID_USUARIO =
+      "ID de usuario";
+  static const String
+      ADMIN_PARTICIPACION_LISTA_DESKTOP_LABEL_NOMBRE_EQUIPO_FANTASY =
+      "Nombre del equipo fantasy";
+  static const String
+      ADMIN_PARTICIPACION_LISTA_DESKTOP_ERROR_CAMPOS_OBLIGATORIOS =
+      "El usuario y el nombre del equipo no pueden estar vacíos.";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_APPBAR =
+      "Participantes — {LIGA}";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_VOLVER =
+      "Volver";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TEXTO_GESTION =
+      "Gestión de participaciones";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_ACTIVOS =
+      "Activos ({CANT})";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_ARCHIVADOS =
+      "Archivados ({CANT})";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_SUBTITULO_USUARIO =
+      "Usuario: {ID_USUARIO}";
+  static const String
+      ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_GESTION_ALINEACIONES =
+      "Gestionar alineaciones";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_EDITAR =
+      "Editar participación";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ARCHIVAR =
+      "Archivar";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ACTIVAR =
+      "Activar";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ARCHIVAR =
+      "¿Archivar esta participación?";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ACTIVAR =
+      "¿Activar esta participación?";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ELIMINAR =
+      "Eliminar participación";
+  static const String ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ELIMINAR =
+      "¿Eliminar esta participación definitivamente?";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Lista de puntajes reales (admin, desktop)
+  // Archivo: ui__admin__puntajes_reales__lista__desktop.dart
+  // Prefijo: ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_SNACKBAR_GUARDADO =
+      "Puntajes guardados";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TITULO_APPBAR =
+      "Puntajes reales — Fecha {NUMERO}";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_LIGA =
+      "Liga: {LIGA}";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_FECHA =
+      "Fecha: {NOMBRE} (N° {NUMERO})";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TITULO_JUGADOR =
+      "{NOMBRE} ({POSICION}{DORSAL})";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_DORSAL =
+      " - #{DORSAL}";
+  static const String
+      ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_MENSAJE_FECHA_CERRADA =
+      "La fecha está cerrada. Los puntajes no pueden modificarse.";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_EQUIPO =
+      "Seleccionar equipo";
+  static const String ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_PUNTAJE_REAL =
+      "Puntaje real";
+  static const String
+      ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_PUNTAJE_JUGADOR =
+      "Seleccione";
+  static const String
+      ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_LABEL_GUARDAR_PUNTAJES =
+      "Guardar puntajes";
 }

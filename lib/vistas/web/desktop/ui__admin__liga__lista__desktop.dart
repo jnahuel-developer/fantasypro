@@ -21,9 +21,10 @@
     - ui__admin__fecha__lista__desktop.dart
 */
 
-import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
+import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 import 'ui__admin__equipo_real__lista__desktop.dart';
 import 'ui__admin__participacion__lista__desktop.dart';
 import 'ui__admin__fecha__lista__desktop.dart';
@@ -94,23 +95,28 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
       context: context,
       builder: (_) => StatefulBuilder(
         builder: (_, actualizar) => AlertDialog(
-          title: const Text("Crear liga"),
+          title: const Text(TextosApp.ADMIN_LIGA_LISTA_DESKTOP_DIALOGO_CREAR_TITULO),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: ctrlNombre,
-                decoration: const InputDecoration(labelText: "Nombre"),
+                decoration: const InputDecoration(
+                  labelText: TextosApp.ADMIN_LIGA_LISTA_DESKTOP_LABEL_NOMBRE,
+                ),
               ),
               TextField(
                 controller: ctrlDesc,
-                decoration: const InputDecoration(labelText: "Descripción"),
+                decoration: const InputDecoration(
+                  labelText: TextosApp.ADMIN_LIGA_LISTA_DESKTOP_LABEL_DESCRIPCION,
+                ),
               ),
               TextField(
                 controller: ctrlTotalFechas,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: "Total de fechas (34–50)",
+                  labelText:
+                      TextosApp.ADMIN_LIGA_LISTA_DESKTOP_LABEL_TOTAL_FECHAS,
                   errorText: error,
                 ),
               ),
@@ -118,22 +124,24 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
           ),
           actions: [
             TextButton(
-              child: const Text("Cancelar"),
+              child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              child: const Text("Crear"),
+              child: const Text(TextosApp.COMUN_BOTON_CREAR),
               onPressed: () async {
                 final nombre = ctrlNombre.text.trim();
                 final desc = ctrlDesc.text.trim();
                 final tf = int.tryParse(ctrlTotalFechas.text.trim()) ?? 0;
 
                 if (nombre.isEmpty) {
-                  actualizar(() => error = "El nombre es obligatorio");
+                  actualizar(() =>
+                      error = TextosApp.ADMIN_LIGA_LISTA_DESKTOP_ERROR_NOMBRE_OBLIGATORIO);
                   return;
                 }
                 if (tf < 34 || tf > 50) {
-                  actualizar(() => error = "Debe estar entre 34 y 50");
+                  actualizar(() =>
+                      error = TextosApp.ADMIN_LIGA_LISTA_DESKTOP_ERROR_RANGO_FECHAS);
                   return;
                 }
 
@@ -166,7 +174,11 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       child: ListTile(
         title: Text(l.nombre),
-        subtitle: Text("Fechas: ${l.fechasCreadas}/${l.totalFechasTemporada}"),
+        subtitle: Text(
+          TextosApp.ADMIN_LIGA_LISTA_DESKTOP_SUBTITULO_FECHAS
+              .replaceFirst("{CREADAS}", l.fechasCreadas.toString())
+              .replaceFirst("{TOTAL}", l.totalFechasTemporada.toString()),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -240,7 +252,7 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ligas"),
+        title: const Text(TextosApp.ADMIN_LIGA_LISTA_DESKTOP_TITULO_APPBAR),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -250,7 +262,7 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de ligas",
+                TextosApp.ADMIN_LIGA_LISTA_DESKTOP_TEXTO_GESTION,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -269,7 +281,11 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
                   child: Column(
                     children: [
                       Text(
-                        "Activas (${activas.length})",
+                        TextosApp.ADMIN_LIGA_LISTA_DESKTOP_TITULO_ACTIVAS
+                            .replaceFirst(
+                          "{CANT}",
+                          activas.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -285,7 +301,11 @@ class _UiAdminLigaListaDesktopEstado extends State<UiAdminLigaListaDesktop> {
                   child: Column(
                     children: [
                       Text(
-                        "Archivadas (${archivadas.length})",
+                        TextosApp.ADMIN_LIGA_LISTA_DESKTOP_TITULO_ARCHIVADAS
+                            .replaceFirst(
+                          "{CANT}",
+                          archivadas.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

@@ -22,10 +22,11 @@
       para administrar las alineaciones del usuario en la liga actual
 */
 
-import 'package:flutter/material.dart';
+import 'package:fantasypro/controladores/controlador_participaciones.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
-import 'package:fantasypro/controladores/controlador_participaciones.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 
 import 'ui__admin__participacion__editar__desktop.dart';
 import 'ui__admin__alineacion__lista__desktop.dart';
@@ -109,30 +110,37 @@ class _UiAdminParticipacionListaDesktopEstado
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text("Crear participación en ${widget.liga.nombre}"),
+          title: Text(
+            TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_DIALOGO_CREAR_TITULO
+                .replaceFirst("{LIGA}", widget.liga.nombre),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: ctrlIdUsuario,
-                decoration: const InputDecoration(labelText: "ID de usuario"),
+                decoration: const InputDecoration(
+                  labelText: TextosApp
+                      .ADMIN_PARTICIPACION_LISTA_DESKTOP_LABEL_ID_USUARIO,
+                ),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: ctrlNombreEquipo,
                 decoration: const InputDecoration(
-                  labelText: "Nombre del equipo fantasy",
+                  labelText: TextosApp
+                      .ADMIN_PARTICIPACION_LISTA_DESKTOP_LABEL_NOMBRE_EQUIPO_FANTASY,
                 ),
               ),
             ],
           ),
           actions: [
             TextButton(
-              child: const Text("Cancelar"),
+              child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              child: const Text("Crear"),
+              child: const Text(TextosApp.COMUN_BOTON_CREAR),
               onPressed: () async {
                 final idUsuario = ctrlIdUsuario.text.trim();
                 final nombre = ctrlNombreEquipo.text.trim();
@@ -141,7 +149,8 @@ class _UiAdminParticipacionListaDesktopEstado
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        "El usuario y el nombre del equipo no pueden estar vacíos.",
+                        TextosApp
+                            .ADMIN_PARTICIPACION_LISTA_DESKTOP_ERROR_CAMPOS_OBLIGATORIOS,
                       ),
                     ),
                   );
@@ -186,15 +195,15 @@ class _UiAdminParticipacionListaDesktopEstado
     final r = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Confirmación"),
+        title: const Text(TextosApp.COMUN_TITULO_CONFIRMACION),
         content: Text(mensaje),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
             onPressed: () => Navigator.pop(context, false),
           ),
           ElevatedButton(
-            child: const Text("Aceptar"),
+            child: const Text(TextosApp.COMUN_BOTON_ACEPTAR),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -228,14 +237,18 @@ class _UiAdminParticipacionListaDesktopEstado
           p.nombreEquipoFantasy,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text("Usuario: ${p.idUsuario}"),
+        subtitle: Text(
+          TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_SUBTITULO_USUARIO
+              .replaceFirst("{ID_USUARIO}", p.idUsuario),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Alineaciones
             IconButton(
               icon: const Icon(Icons.sports_soccer),
-              tooltip: "Gestionar alineaciones",
+              tooltip: TextosApp
+                  .ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_GESTION_ALINEACIONES,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -252,7 +265,8 @@ class _UiAdminParticipacionListaDesktopEstado
             // Editar
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: "Editar participación",
+              tooltip:
+                  TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_EDITAR,
               onPressed: () async {
                 final result = await Navigator.push(
                   context,
@@ -268,12 +282,14 @@ class _UiAdminParticipacionListaDesktopEstado
             // Archivar / Activar
             IconButton(
               icon: Icon(p.activo ? Icons.archive : Icons.unarchive),
-              tooltip: p.activo ? "Archivar" : "Activar",
+              tooltip: p.activo
+                  ? TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ARCHIVAR
+                  : TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ACTIVAR,
               onPressed: () async {
                 final ok = await confirmar(
                   p.activo
-                      ? "¿Archivar esta participación?"
-                      : "¿Activar esta participación?",
+                      ? TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ARCHIVAR
+                      : TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ACTIVAR,
                 );
                 if (!ok) return;
 
@@ -290,10 +306,11 @@ class _UiAdminParticipacionListaDesktopEstado
             // Eliminar
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: "Eliminar participación",
+              tooltip:
+                  TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_ELIMINAR,
               onPressed: () async {
                 final ok = await confirmar(
-                  "¿Eliminar esta participación definitivamente?",
+                  TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_MENSAJE_ELIMINAR,
                 );
                 if (!ok) return;
 
@@ -311,10 +328,13 @@ class _UiAdminParticipacionListaDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Participantes — ${widget.liga.nombre}"),
+        title: Text(
+          TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_APPBAR
+              .replaceFirst("{LIGA}", widget.liga.nombre),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: "Volver",
+          tooltip: TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TOOLTIP_VOLVER,
           onPressed: () => Navigator.pop(context),
         ),
         actions: const [
@@ -322,7 +342,7 @@ class _UiAdminParticipacionListaDesktopEstado
             padding: EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                "Gestión de participaciones",
+                TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TEXTO_GESTION,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -342,7 +362,11 @@ class _UiAdminParticipacionListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Activos (${activos.length})",
+                        TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_ACTIVOS
+                            .replaceFirst(
+                          "{CANT}",
+                          activos.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -362,7 +386,11 @@ class _UiAdminParticipacionListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Archivados (${archivados.length})",
+                        TextosApp.ADMIN_PARTICIPACION_LISTA_DESKTOP_TITULO_ARCHIVADOS
+                            .replaceFirst(
+                          "{CANT}",
+                          archivados.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

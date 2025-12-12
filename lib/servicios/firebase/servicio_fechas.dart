@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioFechas {
   /// Instancia de Firestore.
@@ -58,8 +59,8 @@ class ServicioFechas {
 
       // Obtener cuántas fechas existen actualmente para asignar numeroFecha.
       final existentes = await _db
-          .collection("fechas_liga")
-          .where("idLiga", isEqualTo: idLiga)
+          .collection(ColFirebase.fechasLiga)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
       final numeroGenerado = existentes.docs.length + 1;
@@ -74,7 +75,9 @@ class ServicioFechas {
         fechaCreacion: DateTime.now().millisecondsSinceEpoch,
       );
 
-      final doc = await _db.collection("fechas_liga").add(nuevaFecha.aMapa());
+      final doc = await _db
+          .collection(ColFirebase.fechasLiga)
+          .add(nuevaFecha.aMapa());
       final guardada = nuevaFecha.copiarCon(id: doc.id);
 
       _log.informacion(
@@ -108,8 +111,8 @@ class ServicioFechas {
       _log.informacion("Obteniendo fechas de la liga $idLiga");
 
       final query = await _db
-          .collection("fechas_liga")
-          .where("idLiga", isEqualTo: idLiga)
+          .collection(ColFirebase.fechasLiga)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
       if (query.docs.isEmpty) {
@@ -154,9 +157,9 @@ class ServicioFechas {
 
       _log.informacion("Cerrando fecha $idFecha");
 
-      await _db.collection("fechas_liga").doc(idFecha).update({
-        "activa": false,
-        "cerrada": true,
+      await _db.collection(ColFirebase.fechasLiga).doc(idFecha).update({
+        CamposFirebase.activa: false,
+        CamposFirebase.cerrada: true,
       });
 
       _log.informacion("Fecha cerrada correctamente: $idFecha");
@@ -183,7 +186,8 @@ class ServicioFechas {
     _log.informacion("Buscando fecha por ID: $idFecha");
 
     try {
-      final doc = await _db.collection("fechas_liga").doc(idFecha).get();
+      final doc =
+          await _db.collection(ColFirebase.fechasLiga).doc(idFecha).get();
 
       if (!doc.exists) {
         throw Exception("Fecha no encontrada: $idFecha");

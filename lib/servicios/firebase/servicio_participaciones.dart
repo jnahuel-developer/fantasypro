@@ -16,6 +16,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioParticipaciones {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -48,9 +49,8 @@ class ServicioParticipaciones {
 
       _validarIdsObligatorios(datos.idUsuario, datos.idLiga);
 
-      final doc = await _db
-          .collection("participaciones_liga")
-          .add(datos.aMapa());
+      final doc =
+          await _db.collection(ColFirebase.participaciones).add(datos.aMapa());
 
       final nueva = datos.copiarCon(id: doc.id);
 
@@ -87,7 +87,7 @@ class ServicioParticipaciones {
       );
 
       final doc = await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .add(participacion.aMapa());
 
       final nueva = participacion.copiarCon(id: doc.id);
@@ -111,10 +111,10 @@ class ServicioParticipaciones {
       _validarIdsObligatorios(idUsuario, idLiga);
 
       final query = await _db
-          .collection("participaciones_liga")
-          .where("idUsuario", isEqualTo: idUsuario)
-          .where("idLiga", isEqualTo: idLiga)
-          .where("activo", isEqualTo: true)
+          .collection(ColFirebase.participaciones)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.activo, isEqualTo: true)
           .limit(1)
           .get();
 
@@ -142,9 +142,9 @@ class ServicioParticipaciones {
       _validarIdsObligatorios(idUsuario, idLiga);
 
       final consulta = await _db
-          .collection("participaciones_liga")
-          .where("idUsuario", isEqualTo: idUsuario)
-          .where("idLiga", isEqualTo: idLiga)
+          .collection(ColFirebase.participaciones)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .limit(1)
           .get();
 
@@ -175,8 +175,8 @@ class ServicioParticipaciones {
       if (idLiga.isEmpty) throw ArgumentError("ID de liga inválido.");
 
       final consulta = await _db
-          .collection("participaciones_liga")
-          .where("idLiga", isEqualTo: idLiga)
+          .collection(ColFirebase.participaciones)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
       _log.informacion("Listar participaciones de liga: $idLiga");
@@ -196,8 +196,8 @@ class ServicioParticipaciones {
       if (idUsuario.isEmpty) throw ArgumentError("ID de usuario inválido.");
 
       final consulta = await _db
-          .collection("participaciones_liga")
-          .where("idUsuario", isEqualTo: idUsuario)
+          .collection(ColFirebase.participaciones)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
           .get();
 
       _log.informacion("Listar participaciones del usuario: $idUsuario");
@@ -231,11 +231,11 @@ class ServicioParticipaciones {
 
       // Construcción explícita de campos editables permitidos
       final actualizacion = {
-        "puntos": participacion.puntos,
-        "plantelCompleto": participacion.plantelCompleto,
-        "nombreEquipoFantasy": participacion.nombreEquipoFantasy
+        CamposFirebase.puntos: participacion.puntos,
+        CamposFirebase.plantelCompleto: participacion.plantelCompleto,
+        CamposFirebase.nombreEquipoFantasy: participacion.nombreEquipoFantasy
             .trim(), // limpieza mínima
-        "activo": participacion.activo,
+        CamposFirebase.activo: participacion.activo,
       };
 
       _log.informacion(
@@ -243,7 +243,7 @@ class ServicioParticipaciones {
       );
 
       await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idSan)
           .update(actualizacion);
     } catch (e) {
@@ -257,8 +257,8 @@ class ServicioParticipaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("participaciones_liga").doc(id).update({
-        "activo": false,
+      await _db.collection(ColFirebase.participaciones).doc(id).update({
+        CamposFirebase.activo: false,
       });
 
       _log.informacion("Archivar participación: $id");
@@ -273,8 +273,8 @@ class ServicioParticipaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("participaciones_liga").doc(id).update({
-        "activo": true,
+      await _db.collection(ColFirebase.participaciones).doc(id).update({
+        CamposFirebase.activo: true,
       });
 
       _log.informacion("Activar participación: $id");
@@ -289,7 +289,7 @@ class ServicioParticipaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("participaciones_liga").doc(id).delete();
+      await _db.collection(ColFirebase.participaciones).doc(id).delete();
 
       _log.informacion("Eliminar participación: $id");
     } catch (e) {
@@ -316,9 +316,9 @@ class ServicioParticipaciones {
       _log.informacion("Listando participaciones activas de la liga $idLiga");
 
       final query = await _db
-          .collection("participaciones_liga")
-          .where("idLiga", isEqualTo: idLiga)
-          .where("activo", isEqualTo: true)
+          .collection(ColFirebase.participaciones)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.activo, isEqualTo: true)
           .get();
 
       return query.docs
@@ -350,8 +350,8 @@ class ServicioParticipaciones {
 
       _log.informacion("Incrementando $delta puntos en participación $idSan");
 
-      await _db.collection("participaciones_liga").doc(idSan).update({
-        "puntos": FieldValue.increment(delta),
+      await _db.collection(ColFirebase.participaciones).doc(idSan).update({
+        CamposFirebase.puntos: FieldValue.increment(delta),
       });
     } catch (e) {
       _log.error("Error al incrementar puntos en participación: $e");

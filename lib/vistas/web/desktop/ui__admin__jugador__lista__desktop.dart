@@ -86,30 +86,53 @@ class _UiAdminJugadorListaDesktopEstado
     final ctrlDorsal = TextEditingController();
     final ctrlValor = TextEditingController();
 
-    String posicionSeleccionada = "POR";
+    String posicionSeleccionada = TextosApp.JUGADOR_EDITAR_OPCION_POSICION_POR;
 
     showDialog(
       context: context,
       builder: (_) => StatefulBuilder(
         builder: (context, setStateDialog) {
           return AlertDialog(
-            title: Text("Crear jugador en ${widget.equipo.nombre}"),
+            title: Text(
+              TextosApp.JUGADORES_ADMIN_CREAR_TITULO
+                  .replaceFirst("{EQUIPO}", widget.equipo.nombre),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: ctrlNombre,
-                    decoration: const InputDecoration(labelText: "Nombre"),
+                    decoration: const InputDecoration(
+                      labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NOMBRE,
+                    ),
                   ),
                   DropdownButtonFormField<String>(
                     initialValue: posicionSeleccionada,
-                    decoration: const InputDecoration(labelText: "Posición"),
+                    decoration: const InputDecoration(
+                      labelText: TextosApp.JUGADORES_ADMIN_CREAR_LABEL_POSICION,
+                    ),
                     items: const [
-                      DropdownMenuItem(value: "POR", child: Text("POR")),
-                      DropdownMenuItem(value: "DEF", child: Text("DEF")),
-                      DropdownMenuItem(value: "MED", child: Text("MED")),
-                      DropdownMenuItem(value: "DEL", child: Text("DEL")),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_POR,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_POR),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEF,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEF),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_MED,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_MED),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEL,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEL),
+                      ),
                     ],
                     onChanged: (v) {
                       if (v != null) {
@@ -120,14 +143,16 @@ class _UiAdminJugadorListaDesktopEstado
                   TextField(
                     controller: ctrlNacionalidad,
                     decoration: const InputDecoration(
-                      labelText: "Nacionalidad",
+                      labelText:
+                          TextosApp.JUGADORES_ADMIN_CREAR_LABEL_NACIONALIDAD,
                     ),
                   ),
                   TextField(
                     controller: ctrlDorsal,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: "Dorsal (opcional)",
+                      labelText:
+                          TextosApp.JUGADORES_ADMIN_CREAR_LABEL_DORSAL,
                     ),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
@@ -135,7 +160,8 @@ class _UiAdminJugadorListaDesktopEstado
                     controller: ctrlValor,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: "Valor de mercado",
+                      labelText:
+                          TextosApp.JUGADORES_ADMIN_CREAR_LABEL_VALOR_MERCADO,
                     ),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
@@ -144,11 +170,11 @@ class _UiAdminJugadorListaDesktopEstado
             ),
             actions: [
               TextButton(
-                child: const Text("Cancelar"),
+                child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
                 onPressed: () => Navigator.pop(context),
               ),
               ElevatedButton(
-                child: const Text("Crear"),
+                child: const Text(TextosApp.COMUN_BOTON_CREAR),
                 onPressed: () async {
                   final nombre = ctrlNombre.text.trim();
                   final nacionalidad = ctrlNacionalidad.text.trim();
@@ -158,9 +184,8 @@ class _UiAdminJugadorListaDesktopEstado
                   if (nombre.isEmpty || valor < 1 || valor > 1000) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(
-                          "Los campos obligatorios deben ser válidos.",
-                        ),
+                        content: Text(TextosApp
+                            .JUGADORES_ADMIN_VALIDACION_CAMPOS_OBLIGATORIOS_GENERICO),
                       ),
                     );
                     return;
@@ -240,7 +265,12 @@ class _UiAdminJugadorListaDesktopEstado
           j.nombre,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text("${j.posicion} • ${j.nacionalidad} • ${j.valorMercado}"),
+        subtitle: Text(
+          TextosApp.JUGADORES_ADMIN_SUBTITULO_ITEM
+              .replaceFirst("{POSICION}", j.posicion)
+              .replaceFirst("{NACIONALIDAD}", j.nacionalidad)
+              .replaceFirst("{VALOR}", j.valorMercado.toString()),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -1,0 +1,150 @@
+{
+  "liga": {
+    "nombre": "Premier League",
+    "temporada": "2023/2024",
+    "descripcion": "Primera división del fútbol inglés",
+    "totalFechasTemporada": 38
+  },
+  "equipos": [
+    {
+      "nombre": "Manchester City",
+      "descripcion": "Manchester City Football Club",
+      "escudoUrl": "",
+      "jugadores": [
+        { "nombre": "Ederson", "posicion": "POR", "nacionalidad": "Brasil", "dorsal": 31, "valorMercado": 66 },
+        { "nombre": "Stefan Ortega", "posicion": "POR", "nacionalidad": "Alemania", "dorsal": 18, "valorMercado": 59 },
+
+        { "nombre": "Kyle Walker", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 2, "valorMercado": 63 },
+        { "nombre": "Rúben Dias", "posicion": "DEF", "nacionalidad": "Portugal", "dorsal": 3, "valorMercado": 68 },
+        { "nombre": "John Stones", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 5, "valorMercado": 65 },
+        { "nombre": "Nathan Aké", "posicion": "DEF", "nacionalidad": "Países Bajos", "dorsal": 6, "valorMercado": 63 },
+        { "nombre": "Joško Gvardiol", "posicion": "DEF", "nacionalidad": "Croacia", "dorsal": 24, "valorMercado": 65 },
+        { "nombre": "Manuel Akanji", "posicion": "DEF", "nacionalidad": "Suiza", "dorsal": 25, "valorMercado": 64 },
+
+        { "nombre": "Rodri", "posicion": "MED", "nacionalidad": "España", "dorsal": 16, "valorMercado": 71 },
+        { "nombre": "Kevin De Bruyne", "posicion": "MED", "nacionalidad": "Bélgica", "dorsal": 17, "valorMercado": 72 },
+        { "nombre": "Bernardo Silva", "posicion": "MED", "nacionalidad": "Portugal", "dorsal": 20, "valorMercado": 68 },
+        { "nombre": "Mateo Kovačić", "posicion": "MED", "nacionalidad": "Croacia", "dorsal": 8, "valorMercado": 63 },
+        { "nombre": "Phil Foden", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 47, "valorMercado": 69 },
+
+        { "nombre": "Erling Haaland", "posicion": "DEL", "nacionalidad": "Noruega", "dorsal": 9, "valorMercado": 73 },
+        { "nombre": "Julián Álvarez", "posicion": "DEL", "nacionalidad": "Argentina", "dorsal": 19, "valorMercado": 67 },
+        { "nombre": "Jérémy Doku", "posicion": "DEL", "nacionalidad": "Bélgica", "dorsal": 11, "valorMercado": 65 },
+        { "nombre": "Jack Grealish", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 10, "valorMercado": 65 },
+        { "nombre": "Oscar Bobb", "posicion": "DEL", "nacionalidad": "Noruega", "dorsal": 52, "valorMercado": 59 }
+      ]
+    },
+    {
+      "nombre": "Arsenal",
+      "descripcion": "Arsenal Football Club",
+      "escudoUrl": "",
+      "jugadores": [
+        { "nombre": "Aaron Ramsdale", "posicion": "POR", "nacionalidad": "Inglaterra", "dorsal": 1, "valorMercado": 63 },
+        { "nombre": "David Raya", "posicion": "POR", "nacionalidad": "España", "dorsal": 22, "valorMercado": 62 },
+
+        { "nombre": "William Saliba", "posicion": "DEF", "nacionalidad": "Francia", "dorsal": 2, "valorMercado": 68 },
+        { "nombre": "Gabriel Magalhães", "posicion": "DEF", "nacionalidad": "Brasil", "dorsal": 6, "valorMercado": 65 },
+        { "nombre": "Ben White", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 4, "valorMercado": 63 },
+        { "nombre": "Oleksandr Zinchenko", "posicion": "DEF", "nacionalidad": "Ucrania", "dorsal": 35, "valorMercado": 62 },
+        { "nombre": "Takehiro Tomiyasu", "posicion": "DEF", "nacionalidad": "Japón", "dorsal": 18, "valorMercado": 60 },
+        { "nombre": "Jakub Kiwior", "posicion": "DEF", "nacionalidad": "Polonia", "dorsal": 15, "valorMercado": 59 },
+
+        { "nombre": "Declan Rice", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 41, "valorMercado": 70 },
+        { "nombre": "Martin Ødegaard", "posicion": "MED", "nacionalidad": "Noruega", "dorsal": 8, "valorMercado": 68 },
+        { "nombre": "Jorginho", "posicion": "MED", "nacionalidad": "Italia", "dorsal": 20, "valorMercado": 60 },
+        { "nombre": "Thomas Partey", "posicion": "MED", "nacionalidad": "Ghana", "dorsal": 5, "valorMercado": 62 },
+        { "nombre": "Kai Havertz", "posicion": "MED", "nacionalidad": "Alemania", "dorsal": 29, "valorMercado": 65 },
+
+        { "nombre": "Bukayo Saka", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 7, "valorMercado": 70 },
+        { "nombre": "Gabriel Jesus", "posicion": "DEL", "nacionalidad": "Brasil", "dorsal": 9, "valorMercado": 65 },
+        { "nombre": "Gabriel Martinelli", "posicion": "DEL", "nacionalidad": "Brasil", "dorsal": 11, "valorMercado": 66 },
+        { "nombre": "Leandro Trossard", "posicion": "DEL", "nacionalidad": "Bélgica", "dorsal": 19, "valorMercado": 63 },
+        { "nombre": "Eddie Nketiah", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 14, "valorMercado": 60 }
+      ]
+    },
+    {
+      "nombre": "Liverpool",
+      "descripcion": "Liverpool Football Club",
+      "escudoUrl": "",
+      "jugadores": [
+        { "nombre": "Alisson Becker", "posicion": "POR", "nacionalidad": "Brasil", "dorsal": 1, "valorMercado": 68 },
+        { "nombre": "Caoimhín Kelleher", "posicion": "POR", "nacionalidad": "Irlanda", "dorsal": 62, "valorMercado": 59 },
+
+        { "nombre": "Virgil van Dijk", "posicion": "DEF", "nacionalidad": "Países Bajos", "dorsal": 4, "valorMercado": 68 },
+        { "nombre": "Ibrahima Konaté", "posicion": "DEF", "nacionalidad": "Francia", "dorsal": 5, "valorMercado": 63 },
+        { "nombre": "Andrew Robertson", "posicion": "DEF", "nacionalidad": "Escocia", "dorsal": 26, "valorMercado": 64 },
+        { "nombre": "Trent Alexander-Arnold", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 66, "valorMercado": 69 },
+        { "nombre": "Joe Gomez", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 2, "valorMercado": 60 },
+        { "nombre": "Kostas Tsimikas", "posicion": "DEF", "nacionalidad": "Grecia", "dorsal": 21, "valorMercado": 59 },
+
+        { "nombre": "Alexis Mac Allister", "posicion": "MED", "nacionalidad": "Argentina", "dorsal": 10, "valorMercado": 66 },
+        { "nombre": "Dominik Szoboszlai", "posicion": "MED", "nacionalidad": "Hungría", "dorsal": 8, "valorMercado": 65 },
+        { "nombre": "Curtis Jones", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 17, "valorMercado": 60 },
+        { "nombre": "Wataru Endo", "posicion": "MED", "nacionalidad": "Japón", "dorsal": 3, "valorMercado": 59 },
+        { "nombre": "Harvey Elliott", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 19, "valorMercado": 61 },
+
+        { "nombre": "Mohamed Salah", "posicion": "DEL", "nacionalidad": "Egipto", "dorsal": 11, "valorMercado": 71 },
+        { "nombre": "Luis Díaz", "posicion": "DEL", "nacionalidad": "Colombia", "dorsal": 7, "valorMercado": 66 },
+        { "nombre": "Darwin Núñez", "posicion": "DEL", "nacionalidad": "Uruguay", "dorsal": 9, "valorMercado": 65 },
+        { "nombre": "Diogo Jota", "posicion": "DEL", "nacionalidad": "Portugal", "dorsal": 20, "valorMercado": 65 },
+        { "nombre": "Cody Gakpo", "posicion": "DEL", "nacionalidad": "Países Bajos", "dorsal": 18, "valorMercado": 65 }
+      ]
+    },
+    {
+      "nombre": "Manchester United",
+      "descripcion": "Manchester United Football Club",
+      "escudoUrl": "",
+      "jugadores": [
+        { "nombre": "André Onana", "posicion": "POR", "nacionalidad": "Camerún", "dorsal": 24, "valorMercado": 65 },
+        { "nombre": "Altay Bayındır", "posicion": "POR", "nacionalidad": "Turquía", "dorsal": 1, "valorMercado": 59 },
+
+        { "nombre": "Lisandro Martínez", "posicion": "DEF", "nacionalidad": "Argentina", "dorsal": 6, "valorMercado": 65 },
+        { "nombre": "Raphaël Varane", "posicion": "DEF", "nacionalidad": "Francia", "dorsal": 19, "valorMercado": 63 },
+        { "nombre": "Harry Maguire", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 5, "valorMercado": 59 },
+        { "nombre": "Luke Shaw", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 23, "valorMercado": 62 },
+        { "nombre": "Diogo Dalot", "posicion": "DEF", "nacionalidad": "Portugal", "dorsal": 20, "valorMercado": 62 },
+        { "nombre": "Aaron Wan-Bissaka", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 29, "valorMercado": 60 },
+
+        { "nombre": "Casemiro", "posicion": "MED", "nacionalidad": "Brasil", "dorsal": 18, "valorMercado": 65 },
+        { "nombre": "Bruno Fernandes", "posicion": "MED", "nacionalidad": "Portugal", "dorsal": 8, "valorMercado": 68 },
+        { "nombre": "Christian Eriksen", "posicion": "MED", "nacionalidad": "Dinamarca", "dorsal": 14, "valorMercado": 62 },
+        { "nombre": "Mason Mount", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 7, "valorMercado": 63 },
+        { "nombre": "Kobbie Mainoo", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 37, "valorMercado": 60 },
+
+        { "nombre": "Marcus Rashford", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 10, "valorMercado": 68 },
+        { "nombre": "Rasmus Højlund", "posicion": "DEL", "nacionalidad": "Dinamarca", "dorsal": 11, "valorMercado": 65 },
+        { "nombre": "Antony", "posicion": "DEL", "nacionalidad": "Brasil", "dorsal": 21, "valorMercado": 62 },
+        { "nombre": "Alejandro Garnacho", "posicion": "DEL", "nacionalidad": "Argentina", "dorsal": 17, "valorMercado": 63 },
+        { "nombre": "Jadon Sancho", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 25, "valorMercado": 63 }
+      ]
+    },
+    {
+      "nombre": "Chelsea",
+      "descripcion": "Chelsea Football Club",
+      "escudoUrl": "",
+      "jugadores": [
+        { "nombre": "Robert Sánchez", "posicion": "POR", "nacionalidad": "España", "dorsal": 1, "valorMercado": 62 },
+        { "nombre": "Djordje Petrović", "posicion": "POR", "nacionalidad": "Serbia", "dorsal": 28, "valorMercado": 60 },
+
+        { "nombre": "Reece James", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 24, "valorMercado": 66 },
+        { "nombre": "Thiago Silva", "posicion": "DEF", "nacionalidad": "Brasil", "dorsal": 6, "valorMercado": 62 },
+        { "nombre": "Benoît Badiashile", "posicion": "DEF", "nacionalidad": "Francia", "dorsal": 5, "valorMercado": 63 },
+        { "nombre": "Levi Colwill", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 26, "valorMercado": 62 },
+        { "nombre": "Marc Cucurella", "posicion": "DEF", "nacionalidad": "España", "dorsal": 3, "valorMercado": 60 },
+        { "nombre": "Ben Chilwell", "posicion": "DEF", "nacionalidad": "Inglaterra", "dorsal": 21, "valorMercado": 62 },
+
+        { "nombre": "Enzo Fernández", "posicion": "MED", "nacionalidad": "Argentina", "dorsal": 8, "valorMercado": 68 },
+        { "nombre": "Moisés Caicedo", "posicion": "MED", "nacionalidad": "Ecuador", "dorsal": 25, "valorMercado": 67 },
+        { "nombre": "Conor Gallagher", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 23, "valorMercado": 63 },
+        { "nombre": "Carney Chukwuemeka", "posicion": "MED", "nacionalidad": "Inglaterra", "dorsal": 17, "valorMercado": 59 },
+        { "nombre": "Roméo Lavia", "posicion": "MED", "nacionalidad": "Bélgica", "dorsal": 45, "valorMercado": 62 },
+
+        { "nombre": "Raheem Sterling", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 7, "valorMercado": 65 },
+        { "nombre": "Nicolas Jackson", "posicion": "DEL", "nacionalidad": "Senegal", "dorsal": 15, "valorMercado": 62 },
+        { "nombre": "Cole Palmer", "posicion": "DEL", "nacionalidad": "Inglaterra", "dorsal": 20, "valorMercado": 65 },
+        { "nombre": "Mykhailo Mudryk", "posicion": "DEL", "nacionalidad": "Ucrania", "dorsal": 10, "valorMercado": 62 },
+        { "nombre": "Christopher Nkunku", "posicion": "DEL", "nacionalidad": "Francia", "dorsal": 18, "valorMercado": 65 }
+      ]
+    }
+  ]
+}

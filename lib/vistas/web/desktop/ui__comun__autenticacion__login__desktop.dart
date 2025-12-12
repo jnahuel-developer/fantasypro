@@ -17,6 +17,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:fantasypro/controladores/controlador_router.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 
@@ -61,15 +62,23 @@ class _UiComunAutenticacionLoginDesktopEstado
     );
 
     setState(() {
-      if (user != null) {
-        mensaje = TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_OK.replaceAll(
-          "{UID}",
-          user.uid,
-        );
-      } else {
-        mensaje = TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_ERROR;
-      }
+      mensaje = user != null
+          ? TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_OK.replaceAll(
+              "{UID}",
+              user.uid,
+            )
+          : TextosApp.LOGIN_DESKTOP_MENSAJE_LOGIN_ERROR;
     });
+
+    if (user != null && mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ControladorRouter(),
+        ),
+        (route) => false,
+      );
+    }
   }
 
   /*

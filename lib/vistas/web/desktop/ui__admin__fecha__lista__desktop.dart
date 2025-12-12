@@ -34,6 +34,7 @@ import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/controladores/controlador_fechas.dart';
 import 'package:fantasypro/servicios/firebase/servicio_puntajes_reales.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 import 'ui__admin__puntajes_reales__lista__desktop.dart';
 
@@ -97,18 +98,24 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Cerrar fecha"),
+        title: const Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_TITULO,
+        ),
         content: Text(
-          "¿Desea cerrar la fecha ${fechaActiva!.numeroFecha}? Esta acción no puede revertirse.",
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_CONTENIDO
+              .replaceFirst(
+            "{NUMERO}",
+            fechaActiva!.numeroFecha.toString(),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Cerrar"),
+            child: const Text(TextosApp.ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR),
           ),
         ],
       ),
@@ -121,7 +128,11 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Fecha cerrada exitosamente")),
+          const SnackBar(
+            content: Text(
+              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_SNACKBAR_FECHA_CERRADA_OK,
+            ),
+          ),
         );
       }
 
@@ -131,14 +142,17 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text("No se puede cerrar la fecha"),
+            title: const Text(
+              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_ERROR_TITULO,
+            ),
             content: const Text(
-              "Faltan puntajes por cargar. Complete los puntajes y vuelva a intentarlo.",
+              TextosApp
+                  .ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_ERROR_CONTENIDO,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Aceptar"),
+                child: const Text(TextosApp.COMUN_BOTON_ACEPTAR),
               ),
             ],
           ),
@@ -158,16 +172,20 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Crear nueva fecha"),
-        content: const Text("¿Desea abrir una nueva fecha para esta liga?"),
+        title: const Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CREAR_TITULO,
+        ),
+        content: const Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CREAR_CONTENIDO,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Crear"),
+            child: const Text(TextosApp.COMUN_BOTON_CREAR),
           ),
         ],
       ),
@@ -268,7 +286,7 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "Simulación completa: todos los jugadores recibieron puntajes.",
+              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_SNACKBAR_SIMULACION_OK,
             ),
           ),
         );
@@ -282,14 +300,18 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text("Error durante la simulación"),
+            title: const Text(
+              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_TITULO,
+            ),
             content: Text(
-              "Ocurrió un error al generar o guardar los puntajes simulados:\n$e",
+              TextosApp
+                  .ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_CONTENIDO
+                  .replaceFirst("{DETALLE}", "$e"),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Aceptar"),
+                child: const Text(TextosApp.COMUN_BOTON_ACEPTAR),
               ),
             ],
           ),
@@ -311,8 +333,14 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: ListTile(
-        title: Text("Fecha ${f.numeroFecha} — ${f.nombre}"),
-        subtitle: const Text("Estado: Cerrada"),
+        title: Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_ITEM_FECHA_CERRADA_TITULO
+              .replaceFirst("{NUMERO}", f.numeroFecha.toString())
+              .replaceFirst("{NOMBRE}", f.nombre),
+        ),
+        subtitle: const Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_ITEM_FECHA_CERRADA_ESTADO,
+        ),
       ),
     );
   }
@@ -325,7 +353,10 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fechas — ${widget.liga.nombre}"),
+        title: Text(
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_APPBAR
+              .replaceFirst("{LIGA}", widget.liga.nombre),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -352,12 +383,20 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                       horizontal: 12,
                       vertical: 6,
                     ),
-                    child: ListTile(
-                      title: Text(
-                        "Fecha activa — ${fechaActiva!.nombre}",
+                  child: ListTile(
+                    title: Text(
+                        TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_FECHA_ACTIVA
+                            .replaceFirst("{NOMBRE}", fechaActiva!.nombre),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text("Número: ${fechaActiva!.numeroFecha}"),
+                      subtitle: Text(
+                        TextosApp
+                            .ADMIN_FECHA_LISTA_DESKTOP_SUBTITULO_FECHA_ACTIVA
+                            .replaceFirst(
+                          "{NUMERO}",
+                          fechaActiva!.numeroFecha.toString(),
+                        ),
+                      ),
                       trailing: Wrap(
                         spacing: 8,
                         children: [
@@ -374,17 +413,22 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                                 ),
                               );
                             },
-                            child: const Text("Cargar puntajes"),
+                            child: const Text(
+                              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_BOTON_CARGAR_PUNTAJES,
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: _cerrarFecha,
-                            child: const Text("Cerrar fecha"),
+                            child: const Text(
+                              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR_FECHA,
+                            ),
                           ),
                           // Botón solo para pruebas (MVP)
                           ElevatedButton(
                             onPressed: _simularPuntajesReales,
                             child: const Text(
-                              "Simular carga de puntajes reales",
+                              TextosApp
+                                  .ADMIN_FECHA_LISTA_DESKTOP_BOTON_SIMULAR_PUNTAJES,
                             ),
                           ),
                         ],
@@ -395,7 +439,7 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                   const Padding(
                     padding: EdgeInsets.all(12),
                     child: Text(
-                      "No hay fecha activa",
+                      TextosApp.ADMIN_FECHA_LISTA_DESKTOP_MENSAJE_SIN_FECHA_ACTIVA,
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
@@ -405,7 +449,7 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Text(
-                    "Fechas cerradas",
+                    TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_FECHAS_CERRADAS,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                 ),

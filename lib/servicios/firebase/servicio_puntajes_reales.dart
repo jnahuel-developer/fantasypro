@@ -18,6 +18,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/puntaje_jugador_fecha.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioPuntajesReales {
   /// Instancia de Firestore.
@@ -59,7 +60,7 @@ class ServicioPuntajesReales {
   ) async {
     try {
       final batch = _db.batch();
-      final coleccion = _db.collection("puntajes_reales");
+      final coleccion = _db.collection(ColFirebase.puntajesReales);
 
       for (final p in puntajes) {
         // ID determinístico: asegura UN SOLO documento por (fecha, jugador).
@@ -69,9 +70,9 @@ class ServicioPuntajesReales {
 
         batch.set(docRef, {
           ...p.aMapa(),
-          "id": idDoc,
-          "idLiga": idLiga,
-          "idFecha": idFecha,
+          CamposFirebase.id: idDoc,
+          CamposFirebase.idLiga: idLiga,
+          CamposFirebase.idFecha: idFecha,
         }, SetOptions(merge: true));
       }
 
@@ -101,8 +102,8 @@ class ServicioPuntajesReales {
   ) async {
     try {
       final query = await _db
-          .collection("puntajes_reales")
-          .where("idFecha", isEqualTo: idFecha)
+          .collection(ColFirebase.puntajesReales)
+          .where(CamposFirebase.idFecha, isEqualTo: idFecha)
           .get();
 
       _log.informacion("Listar puntajes reales de la fecha: $idFecha");
@@ -139,7 +140,8 @@ class ServicioPuntajesReales {
     try {
       final String idDoc = "${idFecha}_$idJugadorReal";
 
-      final snap = await _db.collection("puntajes_reales").doc(idDoc).get();
+      final snap =
+          await _db.collection(ColFirebase.puntajesReales).doc(idDoc).get();
 
       if (!snap.exists) {
         _log.informacion(
@@ -181,17 +183,18 @@ class ServicioPuntajesReales {
       );
 
       final query = await _db
-          .collection("puntajes_reales")
-          .where("idLiga", isEqualTo: idLiga)
-          .where("idFecha", isEqualTo: idFecha)
+          .collection(ColFirebase.puntajesReales)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.idFecha, isEqualTo: idFecha)
           .get();
 
       final mapa = <String, int>{};
 
       for (final doc in query.docs) {
         final data = doc.data();
-        final String idJugador = _sanitizarId(data['idJugadorReal'] ?? '');
-        final int puntaje = data['puntuacion'] ?? 0;
+        final String idJugador =
+            _sanitizarId(data[CamposFirebase.idJugadorReal] ?? '');
+        final int puntaje = data[CamposFirebase.puntuacion] ?? 0;
 
         if (idJugador.isNotEmpty) {
           mapa[idJugador] = puntaje;

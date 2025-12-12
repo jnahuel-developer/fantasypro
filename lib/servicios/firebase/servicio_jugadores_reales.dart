@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioJugadoresReales {
   /// Instancia de Firestore.
@@ -39,7 +40,9 @@ class ServicioJugadoresReales {
   */
   Future<JugadorReal> crearJugadorReal(JugadorReal jugador) async {
     try {
-      final doc = await _db.collection("jugadores_reales").add(jugador.aMapa());
+      final doc = await _db
+          .collection(ColFirebase.jugadoresReales)
+          .add(jugador.aMapa());
       final nuevo = jugador.copiarCon(id: doc.id);
 
       _log.informacion("Crear jugador real: ${nuevo.id}");
@@ -64,8 +67,8 @@ class ServicioJugadoresReales {
       _log.informacion("Obteniendo jugadores reales del equipo $idEquipoReal");
 
       final query = await _db
-          .collection("jugadores_reales")
-          .where("idEquipoReal", isEqualTo: idEquipoReal)
+          .collection(ColFirebase.jugadoresReales)
+          .where(CamposFirebase.idEquipoReal, isEqualTo: idEquipoReal)
           .get();
 
       final nombreEquipo = await _obtenerNombreEquipoReal(idEquipoReal);
@@ -105,7 +108,7 @@ class ServicioJugadoresReales {
         final batch = idsFiltrados.skip(i).take(10).toList();
 
         final query = await _db
-            .collection("jugadores_reales")
+            .collection(ColFirebase.jugadoresReales)
             .where(FieldPath.documentId, whereIn: batch)
             .get();
 
@@ -141,7 +144,7 @@ class ServicioJugadoresReales {
   Future<void> editarJugadorReal(JugadorReal jugador) async {
     try {
       await _db
-          .collection("jugadores_reales")
+          .collection(ColFirebase.jugadoresReales)
           .doc(jugador.id)
           .update(jugador.aMapa());
 
@@ -163,8 +166,8 @@ class ServicioJugadoresReales {
   */
   Future<void> archivarJugadorReal(String idJugador) async {
     try {
-      await _db.collection("jugadores_reales").doc(idJugador).update({
-        "activo": false,
+      await _db.collection(ColFirebase.jugadoresReales).doc(idJugador).update({
+        CamposFirebase.activo: false,
       });
 
       _log.informacion("Archivar jugador real: $idJugador");
@@ -185,8 +188,8 @@ class ServicioJugadoresReales {
   */
   Future<void> activarJugadorReal(String idJugador) async {
     try {
-      await _db.collection("jugadores_reales").doc(idJugador).update({
-        "activo": true,
+      await _db.collection(ColFirebase.jugadoresReales).doc(idJugador).update({
+        CamposFirebase.activo: true,
       });
 
       _log.informacion("Activar jugador real: $idJugador");
@@ -207,7 +210,7 @@ class ServicioJugadoresReales {
   */
   Future<void> eliminarJugadorReal(String idJugador) async {
     try {
-      await _db.collection("jugadores_reales").doc(idJugador).delete();
+      await _db.collection(ColFirebase.jugadoresReales).doc(idJugador).delete();
 
       _log.informacion("Eliminar jugador real: $idJugador");
     } catch (e) {
@@ -233,9 +236,12 @@ class ServicioJugadoresReales {
     try {
       _log.informacion("Consultando nombre del equipo real $idEquipo");
 
-      final doc = await _db.collection("equipos_reales").doc(idEquipo).get();
+      final doc =
+          await _db.collection(ColFirebase.equiposReales).doc(idEquipo).get();
 
-      final nombre = doc.exists ? (doc.data()?["nombre"] ?? "") : "";
+      final nombre = doc.exists
+          ? (doc.data()?[CamposFirebase.nombre] ?? "")
+          : "";
       _cacheEquipos[idEquipo] = nombre;
       return nombre;
     } catch (e) {

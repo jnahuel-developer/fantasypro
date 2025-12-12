@@ -20,6 +20,49 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 import 'package:fantasypro/textos/textos_app.dart';
 
+class ColFirebase {
+  static const usuarios = "usuarios";
+  static const ligas = "ligas";
+  static const equiposReales = "equipos_reales";
+  static const jugadoresReales = "jugadores_reales";
+  static const fechasLiga = "fechas_liga";
+  static const puntajesReales = "puntajes_reales";
+  static const equiposFantasy = "equipos_fantasy";
+  static const participaciones = "participaciones_liga";
+  static const puntajesFantasy = "puntajes_fantasy";
+  static const alineaciones = "alineaciones";
+}
+
+class CamposFirebase {
+  static const uid = "uid";
+  static const nombre = "nombre";
+  static const email = "email";
+  static const rol = "rol";
+  static const creado = "creado";
+  static const idLiga = "idLiga";
+  static const idUsuario = "idUsuario";
+  static const idFecha = "idFecha";
+  static const idJugadorReal = "idJugadorReal";
+  static const idEquipoReal = "idEquipoReal";
+  static const id = "id";
+  static const nombreBusqueda = "nombreBusqueda";
+  static const activa = "activa";
+  static const activo = "activo";
+  static const puntos = "puntos";
+  static const plantelCompleto = "plantelCompleto";
+  static const nombreEquipoFantasy = "nombreEquipoFantasy";
+  static const idsTitulares = "idsTitulares";
+  static const idsSuplentes = "idsSuplentes";
+  static const jugadoresSeleccionados = "jugadoresSeleccionados";
+  static const formacion = "formacion";
+  static const timestampAplicacion = "timestampAplicacion";
+  static const idsJugadoresPlantel = "idsJugadoresPlantel";
+  static const presupuestoRestante = "presupuestoRestante";
+  static const cerrada = "cerrada";
+  static const fechaCreacion = "fechaCreacion";
+  static const puntuacion = "puntuacion";
+}
+
 class ServicioBaseDeDatos {
   /// Instancia de Firestore utilizada para acceder a la base de datos.
   final FirebaseFirestore _bd = FirebaseFirestore.instance;
@@ -41,7 +84,7 @@ class ServicioBaseDeDatos {
   Future<void> guardarUsuario(String uid, Map<String, dynamic> datos) async {
     try {
       await _bd
-          .collection("usuarios")
+          .collection(ColFirebase.usuarios)
           .doc(uid)
           .set(datos, SetOptions(merge: true));
 
@@ -65,7 +108,7 @@ class ServicioBaseDeDatos {
     String uid,
   ) async {
     try {
-      final doc = await _bd.collection("usuarios").doc(uid).get();
+      final doc = await _bd.collection(ColFirebase.usuarios).doc(uid).get();
 
       _log.informacion("${TextosApp.LOG_BD_OBTENER_USUARIO} $uid");
       return doc;
@@ -87,9 +130,9 @@ class ServicioBaseDeDatos {
   */
   Future<String> crearLiga(Map<String, dynamic> datos) async {
     try {
-      final docRef = await _bd.collection("ligas").add({
+      final docRef = await _bd.collection(ColFirebase.ligas).add({
         ...datos,
-        "creado": FieldValue.serverTimestamp(),
+        CamposFirebase.creado: FieldValue.serverTimestamp(),
       });
 
       _log.informacion("${TextosApp.LOG_BD_CREAR_LIGA} ${docRef.id}");
@@ -115,8 +158,8 @@ class ServicioBaseDeDatos {
       _log.informacion(TextosApp.LOG_BD_LISTAR_LIGAS);
 
       return _bd
-          .collection("ligas")
-          .orderBy("creado", descending: true)
+          .collection(ColFirebase.ligas)
+          .orderBy(CamposFirebase.creado, descending: true)
           .snapshots();
     } catch (e) {
       _log.error("${TextosApp.LOG_BD_ERROR} $e");

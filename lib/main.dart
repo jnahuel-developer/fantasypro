@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 // Servicios
 import 'servicios/utilidades/servicio_log.dart';
 import 'servicios/utilidades/servicio_detector_plataforma.dart';
-import 'servicios/utilidades/servicio_traducciones.dart';
 
 // Temas
 import 'temas/tema_web_desktop.dart';
@@ -50,10 +49,8 @@ class AplicacionFantasyPro extends StatefulWidget {
 class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
   final ServicioLog servicioLog = ServicioLog();
   final ServicioDetectorPlataforma detector = ServicioDetectorPlataforma();
-  final ServicioTraducciones servicioTraducciones = ServicioTraducciones();
 
   bool esDesktop = true;
-  Map<String, String> textos = {};
 
   Future<void> inicializarSistema(BuildContext context) async {
     final ancho = MediaQuery.of(context).size.width;
@@ -62,14 +59,6 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
     servicioLog.informacion(
       "Plataforma detectada: ${esDesktop ? "Desktop" : "Mobile"}",
     );
-
-    final String rutaTexto = esDesktop
-        ? "assets/configuracion/textos/web/desktop.txt"
-        : "assets/configuracion/textos/web/mobile.txt";
-
-    textos = await servicioTraducciones.cargarTextos(rutaTexto);
-
-    servicioLog.informacion("Textos cargados: ${textos.length} ítems");
   }
 
   @override
