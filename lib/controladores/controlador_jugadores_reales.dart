@@ -12,6 +12,7 @@
 import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_jugadores_reales.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/core/app_strings.dart';
 
 class ControladorJugadoresReales {
   /// Servicio para operaciones de jugadores reales.
@@ -41,24 +42,34 @@ class ControladorJugadoresReales {
     int valorMercado = 1,
   }) async {
     if (idEquipoReal.trim().isEmpty) {
-      throw ArgumentError("El idEquipoReal no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdEquipoVacio),
+      );
     }
 
     if (nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesNombreVacio),
+      );
     }
 
     const posicionesValidas = {"POR", "DEF", "MED", "DEL"};
     if (!posicionesValidas.contains(posicion.trim())) {
-      throw ArgumentError("La posición debe ser POR, DEF, MED o DEL.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesPosicionInvalida),
+      );
     }
 
     if (dorsal < 1 || dorsal > 99) {
-      throw ArgumentError("El dorsal debe estar entre 1 y 99.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesDorsalRango),
+      );
     }
 
     if (valorMercado < 1 || valorMercado > 1000) {
-      throw ArgumentError("El valor de mercado debe estar entre 1 y 1000.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesValorRango),
+      );
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -76,7 +87,12 @@ class ControladorJugadoresReales {
       nombreEquipoReal: "",
     );
 
-    _log.informacion("Creando jugador real en equipo $idEquipoReal ($nombre)");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogCrear,
+        args: {'idEquipoReal': idEquipoReal, 'nombre': nombre},
+      ),
+    );
 
     return await _servicio.crearJugadorReal(jugador);
   }
@@ -90,10 +106,17 @@ class ControladorJugadoresReales {
   */
   Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal) async {
     if (idEquipoReal.trim().isEmpty) {
-      throw ArgumentError("El idEquipoReal no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdEquipoVacio),
+      );
     }
 
-    _log.informacion("Listando jugadores reales del equipo $idEquipoReal");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogListar,
+        args: {'idEquipoReal': idEquipoReal},
+      ),
+    );
 
     final lista = await _servicio.obtenerPorEquipoReal(idEquipoReal);
 
@@ -101,7 +124,13 @@ class ControladorJugadoresReales {
     lista.sort((a, b) => orden[a.posicion]!.compareTo(orden[b.posicion]!));
 
     _log.informacion(
-      "Jugadores obtenidos: ${lista.length} del equipo $idEquipoReal (ordenados por posición)",
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogOrdenados,
+        args: {
+          'total': '${lista.length}',
+          'idEquipoReal': idEquipoReal,
+        },
+      ),
     );
 
     return lista;
@@ -116,27 +145,42 @@ class ControladorJugadoresReales {
   */
   Future<void> editar(JugadorReal jugador) async {
     if (jugador.id.trim().isEmpty) {
-      throw ArgumentError("El ID del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdJugadorVacio),
+      );
     }
 
     if (jugador.nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesNombreVacio),
+      );
     }
 
     const posicionesValidas = {"POR", "DEF", "MED", "DEL"};
     if (!posicionesValidas.contains(jugador.posicion.trim())) {
-      throw ArgumentError("La posición debe ser POR, DEF, MED o DEL.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesPosicionInvalida),
+      );
     }
 
     if (jugador.dorsal < 1 || jugador.dorsal > 99) {
-      throw ArgumentError("El dorsal debe estar entre 1 y 99.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesDorsalRango),
+      );
     }
 
     if (jugador.valorMercado < 1 || jugador.valorMercado > 1000) {
-      throw ArgumentError("El valor de mercado debe estar entre 1 y 1000.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesValorRango),
+      );
     }
 
-    _log.informacion("Editando jugador real ${jugador.id}");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogEditar,
+        args: {'idJugador': jugador.id},
+      ),
+    );
 
     await _servicio.editarJugadorReal(jugador);
   }
@@ -150,10 +194,17 @@ class ControladorJugadoresReales {
   */
   Future<void> archivar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
-      throw ArgumentError("El ID del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdJugadorVacio),
+      );
     }
 
-    _log.advertencia("Archivando jugador real $idJugador");
+    _log.advertencia(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogArchivar,
+        args: {'idJugador': idJugador},
+      ),
+    );
 
     await _servicio.archivarJugadorReal(idJugador);
   }
@@ -167,10 +218,17 @@ class ControladorJugadoresReales {
   */
   Future<void> activar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
-      throw ArgumentError("El ID del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdJugadorVacio),
+      );
     }
 
-    _log.informacion("Activando jugador real $idJugador");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogActivar,
+        args: {'idJugador': idJugador},
+      ),
+    );
 
     await _servicio.activarJugadorReal(idJugador);
   }
@@ -184,10 +242,17 @@ class ControladorJugadoresReales {
   */
   Future<void> eliminar(String idJugador) async {
     if (idJugador.trim().isEmpty) {
-      throw ArgumentError("El ID del jugador no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdJugadorVacio),
+      );
     }
 
-    _log.error("Eliminando jugador real $idJugador");
+    _log.error(
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogEliminar,
+        args: {'idJugador': idJugador},
+      ),
+    );
 
     await _servicio.eliminarJugadorReal(idJugador);
   }
@@ -204,13 +269,21 @@ class ControladorJugadoresReales {
   */
   Future<List<JugadorReal>> obtenerPorIds(List<String> ids) async {
     if (ids.isEmpty) {
-      throw ArgumentError("La lista de IDs no puede estar vacía.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorJugadoresRealesIdsVacios),
+      );
     }
 
     final idsUnicos = ids.toSet().toList();
 
     _log.informacion(
-      "Obteniendo jugadores reales por IDs (solicitados=${ids.length}, unicos=${idsUnicos.length})",
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogObtenerIds,
+        args: {
+          'solicitados': '${ids.length}',
+          'unicos': '${idsUnicos.length}',
+        },
+      ),
     );
 
     final lista = await _servicio.obtenerPorIds(idsUnicos);
@@ -219,7 +292,10 @@ class ControladorJugadoresReales {
     lista.sort((a, b) => orden[a.posicion]!.compareTo(orden[b.posicion]!));
 
     _log.informacion(
-      "Jugadores obtenidos por IDs: ${lista.length} (ordenados)",
+      AppStrings.text(
+        AppStrings.controladorJugadoresRealesLogIdsOrdenados,
+        args: {'total': '${lista.length}'},
+      ),
     );
 
     return lista;

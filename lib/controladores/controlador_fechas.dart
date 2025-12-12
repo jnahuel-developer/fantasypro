@@ -16,6 +16,7 @@
 */
 
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
+import 'package:fantasypro/core/app_strings.dart';
 import 'package:fantasypro/modelos/fecha_liga.dart';
 import 'package:fantasypro/modelos/liga.dart';
 
@@ -65,14 +66,23 @@ class ControladorFechas {
   */
   Future<FechaLiga> crearFecha(String idLiga) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorFechasIdLigaVacio),
+      );
     }
 
-    _log.informacion("Creando nueva fecha para liga $idLiga");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorFechasLogCreando,
+        args: {'idLiga': idLiga},
+      ),
+    );
 
     final Liga? liga = await _servicioLigas.obtenerLiga(idLiga);
     if (liga == null) {
-      throw Exception("No se encontró la liga solicitada.");
+      throw Exception(
+        AppStrings.text(AppStrings.controladorFechasErrorLigaNoEncontrada),
+      );
     }
 
     final int total = liga.totalFechasTemporada;
@@ -80,7 +90,10 @@ class ControladorFechas {
 
     if (creadas >= total) {
       throw Exception(
-        "La liga ya alcanzó el número máximo de fechas ($total).",
+        AppStrings.text(
+          AppStrings.controladorFechasErrorMaximo,
+          args: {'total': '$total'},
+        ),
       );
     }
 
@@ -89,12 +102,15 @@ class ControladorFechas {
 
     if (existeActiva) {
       throw Exception(
-        "No se puede crear una nueva fecha mientras exista otra activa.",
+        AppStrings.text(AppStrings.controladorFechasErrorActiva),
       );
     }
 
     final int numeroFecha = creadas + 1;
-    final String nombre = "Fecha $numeroFecha";
+    final String nombre = AppStrings.text(
+      AppStrings.controladorFechasNombre,
+      args: {'numeroFecha': '$numeroFecha'},
+    );
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     final nuevaFecha = FechaLiga(
@@ -112,7 +128,13 @@ class ControladorFechas {
     final Liga ligaActualizada = liga.copiarCon(fechasCreadas: creadas + 1);
 
     _log.informacion(
-      "Actualizando contador de fechas de la liga: ${creadas + 1}/$total",
+      AppStrings.text(
+        AppStrings.controladorFechasLogActualizarContador,
+        args: {
+          'creadas': '${creadas + 1}',
+          'total': '$total',
+        },
+      ),
     );
 
     await _servicioLigas.editarLiga(ligaActualizada);
@@ -134,10 +156,17 @@ class ControladorFechas {
   */
   Future<List<FechaLiga>> obtenerPorLiga(String idLiga) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorFechasIdLigaVacio),
+      );
     }
 
-    _log.informacion("Obteniendo fechas de liga $idLiga");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorFechasLogListar,
+        args: {'idLiga': idLiga},
+      ),
+    );
 
     return await _servicioFechas.obtenerPorLiga(idLiga);
   }
@@ -164,10 +193,17 @@ class ControladorFechas {
   // Cerrar fecha
   // ---------------------------------------------------------------------------
   Future<void> cerrarFecha(FechaLiga fecha) async {
-    _log.informacion("Intentando cerrar fecha ${fecha.id}");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorFechasLogCerrar,
+        args: {'idFecha': fecha.id},
+      ),
+    );
 
     if (!fecha.activa) {
-      throw Exception("Solo se pueden cerrar fechas activas.");
+      throw Exception(
+        AppStrings.text(AppStrings.controladorFechasErrorNoActiva),
+      );
     }
 
     final bool faltan = await _controladorPuntajesReales.faltanPuntajes(
@@ -176,7 +212,9 @@ class ControladorFechas {
     );
 
     if (faltan) {
-      throw Exception("Faltan puntajes para cerrar la fecha.");
+      throw Exception(
+        AppStrings.text(AppStrings.controladorFechasErrorFaltanPuntajes),
+      );
     }
 
     // 1) Cerrar fecha en Firestore
@@ -184,7 +222,13 @@ class ControladorFechas {
 
     // 2) Aplicar puntajes fantasy (EL PASO QUE FALTABA)
     _log.informacion(
-      "Aplicando puntajes fantasy a participaciónes de la liga ${fecha.idLiga} para la fecha ${fecha.id}",
+      AppStrings.text(
+        AppStrings.controladorFechasLogAplicarPuntajes,
+        args: {
+          'idLiga': fecha.idLiga,
+          'idFecha': fecha.id,
+        },
+      ),
     );
 
     await ControladorParticipaciones().aplicarPuntajesFantasyAFecha(
@@ -195,16 +239,26 @@ class ControladorFechas {
     // 3) Archivar liga si corresponde
     final Liga? liga = await _servicioLigas.obtenerLiga(fecha.idLiga);
     if (liga == null) {
-      throw Exception("No se encontró la liga asociada.");
+      throw Exception(
+        AppStrings.text(AppStrings.controladorFechasErrorLigaAsociada),
+      );
     }
 
     if (fecha.numeroFecha == liga.totalFechasTemporada) {
       _log.advertencia(
-        "La última fecha fue cerrada; archivando liga ${liga.id}",
+        AppStrings.text(
+          AppStrings.controladorFechasLogArchivarLiga,
+          args: {'idLiga': liga.id},
+        ),
       );
       await _controladorLigas.archivar(liga.id);
     }
 
-    _log.informacion("Fecha ${fecha.id} cerrada correctamente.");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorFechasLogCerradaOk,
+        args: {'idFecha': fecha.id},
+      ),
+    );
   }
 }

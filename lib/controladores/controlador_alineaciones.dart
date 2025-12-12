@@ -15,6 +15,7 @@
 */
 
 import 'package:fantasypro/modelos/alineacion.dart';
+import 'package:fantasypro/core/app_strings.dart';
 import 'package:fantasypro/servicios/firebase/servicio_alineaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
@@ -60,7 +61,8 @@ class ControladorAlineaciones {
     String idUsuario,
     String idEquipoFantasy,
     List<String> jugadoresSeleccionados, {
-    String formacion = "4-4-2",
+    String formacion =
+        AppStrings.text(AppStrings.controladorAlineacionesFormacionDefault),
     int puntosTotales = 0,
     List<String> idsTitulares = const [],
     List<String> idsSuplentes = const [],
@@ -237,7 +239,11 @@ class ControladorAlineaciones {
       - bool → true si la formación es válida.
   */
   bool _validarFormacion(String f) {
-    return f == "4-4-2" || f == "4-3-3";
+    return f ==
+            AppStrings.text(AppStrings.controladorAlineacionesFormacionDefault) ||
+        f == AppStrings.text(
+          AppStrings.controladorAlineacionesFormacionAlternativa,
+        );
   }
 
   /*

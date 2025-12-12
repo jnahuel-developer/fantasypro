@@ -12,6 +12,7 @@
 import 'package:fantasypro/controladores/controlador_alineaciones.dart';
 import 'package:fantasypro/controladores/controlador_equipo_fantasy.dart';
 import 'package:fantasypro/controladores/controlador_puntajes_reales.dart';
+import 'package:fantasypro/core/app_strings.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
@@ -33,17 +34,28 @@ class ControladorParticipaciones {
     String nombreEquipoFantasy,
   ) async {
     if (idLiga.isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
     if (idUsuario.isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdUsuarioVacio),
+      );
     }
     if (nombreEquipoFantasy.isEmpty) {
-      throw ArgumentError("El nombre del equipo fantasy no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(
+          AppStrings.controladorParticipacionesNombreEquipoVacio,
+        ),
+      );
     }
 
     _log.informacion(
-      "Verificando si usuario $idUsuario ya participa en liga $idLiga",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogVerificar,
+        args: {'idUsuario': idUsuario, 'idLiga': idLiga},
+      ),
     );
 
     final bool yaParticipa = await _servicio.usuarioYaParticipa(
@@ -52,8 +64,12 @@ class ControladorParticipaciones {
     );
 
     if (yaParticipa) {
-      _log.advertencia("El usuario ya participa en la liga");
-      throw Exception("El usuario ya participa en esta liga.");
+      _log.advertencia(
+        AppStrings.text(AppStrings.controladorParticipacionesLogDuplicado),
+      );
+      throw Exception(
+        AppStrings.text(AppStrings.controladorParticipacionesErrorDuplicado),
+      );
     }
 
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -69,7 +85,9 @@ class ControladorParticipaciones {
       activo: true,
     );
 
-    _log.informacion("Creando participación (Etapa 1)");
+    _log.informacion(
+      AppStrings.text(AppStrings.controladorParticipacionesLogCrear),
+    );
 
     return await _servicio.crearParticipacion(participacion);
   }
@@ -96,7 +114,14 @@ class ControladorParticipaciones {
     );
 
     _log.informacion(
-      "Creando equipo fantasy automáticamente tras registrar participación: usuario=$idUsuario, liga=$idLiga, nombreEquipo=$nombreEquipoFantasy",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogCrearEquipo,
+        args: {
+          'idUsuario': idUsuario,
+          'idLiga': idLiga,
+          'nombre': nombreEquipoFantasy,
+        },
+      ),
     );
 
     // Crear equipo fantasy asociado — uso directo del servicio, sin intermediarios
@@ -114,10 +139,17 @@ class ControladorParticipaciones {
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
     if (idLiga.isEmpty) {
-      throw ArgumentError("El ID de la liga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
 
-    _log.informacion("Listando participaciones de liga $idLiga");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogListarLiga,
+        args: {'idLiga': idLiga},
+      ),
+    );
 
     return await _servicio.obtenerPorLiga(idLiga);
   }
@@ -127,10 +159,17 @@ class ControladorParticipaciones {
   // ---------------------------------------------------------------------------
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
     if (idUsuario.isEmpty) {
-      throw ArgumentError("El ID del usuario no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdUsuarioVacio),
+      );
     }
 
-    _log.informacion("Listando participaciones del usuario $idUsuario");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogListarUsuario,
+        args: {'idUsuario': idUsuario},
+      ),
+    );
 
     return await _servicio.obtenerPorUsuario(idUsuario);
   }
@@ -151,10 +190,14 @@ class ControladorParticipaciones {
     String idLiga,
   ) async {
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El ID del usuario no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdUsuarioVacio),
+      );
     }
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El ID de la liga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
 
     return await _servicio.obtenerParticipacion(idUsuario, idLiga);
@@ -176,14 +219,21 @@ class ControladorParticipaciones {
     String idUsuario,
   ) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdUsuarioVacio),
+      );
     }
 
     _log.informacion(
-      "Obteniendo participación de usuario $idUsuario en liga $idLiga",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogObtener,
+        args: {'idUsuario': idUsuario, 'idLiga': idLiga},
+      ),
     );
 
     return await _servicio.obtenerParticipacion(idUsuario, idLiga);
@@ -206,14 +256,21 @@ class ControladorParticipaciones {
     String idUsuario,
   ) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdUsuarioVacio),
+      );
     }
 
     _log.informacion(
-      "Obteniendo puntajes fantasy para usuario $idUsuario en liga $idLiga",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogListarPuntajes,
+        args: {'idUsuario': idUsuario, 'idLiga': idLiga},
+      ),
     );
 
     final participacion = await obtenerParticipacionUsuarioEnLiga(
@@ -223,7 +280,10 @@ class ControladorParticipaciones {
 
     if (participacion == null) {
       _log.advertencia(
-        "No se encontró participación para usuario $idUsuario en liga $idLiga",
+        AppStrings.text(
+          AppStrings.controladorParticipacionesLogNoEncontrada,
+          args: {'idUsuario': idUsuario, 'idLiga': idLiga},
+        ),
       );
       return [];
     }
@@ -239,7 +299,12 @@ class ControladorParticipaciones {
   // Archivar participación
   // ---------------------------------------------------------------------------
   Future<void> archivar(String idParticipacion) async {
-    _log.advertencia("Archivando participación $idParticipacion");
+    _log.advertencia(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogArchivar,
+        args: {'idParticipacion': idParticipacion},
+      ),
+    );
     await _servicio.archivarParticipacion(idParticipacion);
   }
 
@@ -247,7 +312,12 @@ class ControladorParticipaciones {
   // Activar participación
   // ---------------------------------------------------------------------------
   Future<void> activar(String idParticipacion) async {
-    _log.informacion("Activando participación $idParticipacion");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogActivar,
+        args: {'idParticipacion': idParticipacion},
+      ),
+    );
     await _servicio.activarParticipacion(idParticipacion);
   }
 
@@ -255,7 +325,12 @@ class ControladorParticipaciones {
   // Eliminar participación
   // ---------------------------------------------------------------------------
   Future<void> eliminar(String idParticipacion) async {
-    _log.error("Eliminando participación $idParticipacion");
+    _log.error(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogEliminar,
+        args: {'idParticipacion': idParticipacion},
+      ),
+    );
     await _servicio.eliminarParticipacion(idParticipacion);
   }
 
@@ -264,13 +339,26 @@ class ControladorParticipaciones {
   // ---------------------------------------------------------------------------
   Future<void> editar(ParticipacionLiga participacion) async {
     if (participacion.id.isEmpty) {
-      throw ArgumentError("El ID de la participación no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(
+          AppStrings.controladorParticipacionesIdParticipacionVacio,
+        ),
+      );
     }
     if (participacion.puntos < 0) {
-      throw ArgumentError("Los puntos no pueden ser negativos.");
+      throw ArgumentError(
+        AppStrings.text(
+          AppStrings.controladorParticipacionesErrorPuntosNegativos,
+        ),
+      );
     }
 
-    _log.informacion("Editando participación ${participacion.id}");
+    _log.informacion(
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogEditar,
+        args: {'idParticipacion': participacion.id},
+      ),
+    );
 
     await _servicio.editarParticipacion(participacion);
   }
@@ -291,10 +379,16 @@ class ControladorParticipaciones {
     String idFecha,
   ) async {
     if (idParticipacion.trim().isEmpty) {
-      throw ArgumentError("El ID de la participación no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(
+          AppStrings.controladorParticipacionesIdParticipacionVacio,
+        ),
+      );
     }
     if (idFecha.trim().isEmpty) {
-      throw ArgumentError("El ID de la fecha no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdFechaVacio),
+      );
     }
 
     final servicio = ServicioPuntajesFantasy();
@@ -322,10 +416,14 @@ class ControladorParticipaciones {
     String idFecha,
   ) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdLigaVacio),
+      );
     }
     if (idFecha.trim().isEmpty) {
-      throw ArgumentError("El idFecha no puede estar vacío.");
+      throw ArgumentError(
+        AppStrings.text(AppStrings.controladorParticipacionesIdFechaVacio),
+      );
     }
 
     final ServicioFechas servicioFechas = ServicioFechas();
@@ -333,28 +431,47 @@ class ControladorParticipaciones {
         ServicioPuntajesFantasy();
 
     _log.informacion(
-      "Iniciando cálculo de puntajes fantasy para liga $idLiga, fecha $idFecha",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogInicioCalculo,
+        args: {'idLiga': idLiga, 'idFecha': idFecha},
+      ),
     );
 
     // 1) Validar que la fecha existe, pertenece a la liga y está cerrada
     final fecha = await servicioFechas.obtenerFechaPorId(idFecha);
     if (fecha == null || fecha.idLiga != idLiga) {
-      throw Exception("Fecha no válida para la liga especificada.");
+      throw Exception(
+        AppStrings.text(AppStrings.controladorParticipacionesErrorFechaInvalida),
+      );
     }
     if (!fecha.cerrada) {
-      throw Exception("La fecha $idFecha no está cerrada.");
+      throw Exception(
+        AppStrings.text(
+          AppStrings.controladorParticipacionesErrorFechaNoCerrada,
+          args: {'idFecha': idFecha},
+        ),
+      );
     }
 
     // 2) Obtener todos los participaciones activas de la liga
     final participaciones = await _servicio.obtenerActivasPorLiga(idLiga);
     _log.informacion(
-      "Participaciones activas encontradas: ${participaciones.length}",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogActivasEncontradas,
+        args: {'total': '${participaciones.length}'},
+      ),
     );
 
     for (final participacion in participaciones) {
       try {
         _log.informacion(
-          "Procesando participación ${participacion.id} (usuario ${participacion.idUsuario})",
+          AppStrings.text(
+            AppStrings.controladorParticipacionesLogProcesando,
+            args: {
+              'idParticipacion': participacion.id,
+              'idUsuario': participacion.idUsuario,
+            },
+          ),
         );
 
         // 3) Obtener equipo fantasy del usuario en la liga
@@ -362,7 +479,10 @@ class ControladorParticipaciones {
             .obtenerEquipoUsuarioEnLiga(participacion.idUsuario, idLiga);
         if (equipo == null) {
           _log.advertencia(
-            "No se encuentra equipo fantasy para participación ${participacion.id} — se saltea.",
+            AppStrings.text(
+              AppStrings.controladorParticipacionesLogEquipoNoEncontrado,
+              args: {'idParticipacion': participacion.id},
+            ),
           );
           continue;
         }
@@ -375,7 +495,10 @@ class ControladorParticipaciones {
             );
         if (alineacion == null) {
           _log.advertencia(
-            "No se encontró alineación para usuario ${participacion.idUsuario} — se saltea.",
+            AppStrings.text(
+              AppStrings.controladorParticipacionesLogAlineacionNoEncontrada,
+              args: {'idUsuario': participacion.idUsuario},
+            ),
           );
           continue;
         }
@@ -398,7 +521,13 @@ class ControladorParticipaciones {
             .obtenerPorParticipacionYFecha(participacion.id, idFecha);
         if (existente != null) {
           _log.informacion(
-            "Puntaje fantasy ya aplicado para participación ${participacion.id}, fecha $idFecha — se saltea.",
+            AppStrings.text(
+              AppStrings.controladorParticipacionesLogPuntajeExistente,
+              args: {
+                'idParticipacion': participacion.id,
+                'idFecha': idFecha,
+              },
+            ),
           );
           continue;
         }
@@ -418,7 +547,13 @@ class ControladorParticipaciones {
         );
 
         _log.informacion(
-          "Guardando puntaje fantasy para participación ${participacion.id}: total=$puntajeTotal",
+          AppStrings.text(
+            AppStrings.controladorParticipacionesLogGuardarPuntaje,
+            args: {
+              'idParticipacion': participacion.id,
+              'puntajeTotal': '$puntajeTotal',
+            },
+          ),
         );
         await servicioPuntajesFantasy.guardarPuntajeEquipoFantasy(registro);
 
@@ -429,16 +564,30 @@ class ControladorParticipaciones {
         );
 
         _log.informacion(
-          "Puntos acumulados actualizados para participación ${participacion.id}",
+          AppStrings.text(
+            AppStrings.controladorParticipacionesLogPuntosActualizados,
+            args: {'idParticipacion': participacion.id},
+          ),
         );
       } catch (e) {
-        _log.error("Error procesando participación ${participacion.id}: $e");
+        _log.error(
+          AppStrings.text(
+            AppStrings.controladorParticipacionesLogError,
+            args: {
+              'idParticipacion': participacion.id,
+              'error': '$e',
+            },
+          ),
+        );
         // Opcional: decidir si continuar con otras participaciones o abortar
       }
     }
 
     _log.informacion(
-      "Cálculo de puntajes fantasy finalizado para liga $idLiga, fecha $idFecha",
+      AppStrings.text(
+        AppStrings.controladorParticipacionesLogCalculoFinalizado,
+        args: {'idLiga': idLiga, 'idFecha': idFecha},
+      ),
     );
   }
 }
