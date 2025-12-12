@@ -20,7 +20,7 @@ import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_puntajes_reales.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
 import 'package:fantasypro/controladores/controlador_jugadores_reales.dart';
-import 'package:fantasypro/servicios/firebase/servicio_puntajes_reales.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ControladorPuntajesReales {
   /// Servicio para persistir puntajes reales.
@@ -49,7 +49,8 @@ class ControladorPuntajesReales {
     String idLiga,
   ) async {
     _log.informacion(
-      "Obteniendo jugadores reales por equipo para liga $idLiga",
+      TextosApp.CTRL_PUNTAJES_REALES_LOG_OBTENER_JUGADORES
+          .replaceAll('{LIGA}', idLiga),
     );
 
     final Map<String, List<JugadorReal>> resultado = {};
@@ -91,7 +92,11 @@ class ControladorPuntajesReales {
     String idFecha,
     Map<String, int> puntajesPorJugador,
   ) async {
-    _log.informacion("Guardando puntajes para fecha $idFecha (Liga $idLiga)");
+    _log.informacion(
+      TextosApp.CTRL_PUNTAJES_REALES_LOG_GUARDAR
+          .replaceAll('{FECHA}', idFecha)
+          .replaceAll('{LIGA}', idLiga),
+    );
 
     final List<PuntajeJugadorFecha> listaFinal = [];
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -107,7 +112,8 @@ class ControladorPuntajesReales {
       // Validación de rango
       if (puntaje < 1 || puntaje > 10) {
         throw ArgumentError(
-          "El puntaje del jugador real $idJugadorReal debe estar entre 1 y 10.",
+          TextosApp.CTRL_PUNTAJES_REALES_ERROR_RANGO
+              .replaceAll('{JUGADOR}', idJugadorReal),
         );
       }
 
@@ -116,7 +122,8 @@ class ControladorPuntajesReales {
         (j) => j.id == idJugadorReal,
         orElse: () {
           throw Exception(
-            "Jugador real no encontrado o no activo: $idJugadorReal",
+            TextosApp.CTRL_PUNTAJES_REALES_ERROR_JUGADOR_NO_ENCONTRADO
+                .replaceAll('{JUGADOR}', idJugadorReal),
           );
         },
       );
@@ -162,7 +169,9 @@ class ControladorPuntajesReales {
   */
   Future<bool> faltanPuntajes(String idLiga, String idFecha) async {
     _log.informacion(
-      "Verificando completitud de puntajes en fecha $idFecha (Liga $idLiga)",
+      TextosApp.CTRL_PUNTAJES_REALES_LOG_COMPLETITUD
+          .replaceAll('{FECHA}', idFecha)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     // Jugadores activos requeridos
@@ -201,7 +210,9 @@ class ControladorPuntajesReales {
     String idFecha,
   ) async {
     _log.informacion(
-      "Obteniendo mapa de puntajes reales para liga $idLiga, fecha $idFecha",
+      TextosApp.CTRL_PUNTAJES_REALES_LOG_OBTENER_MAPA
+          .replaceAll('{LIGA}', idLiga)
+          .replaceAll('{FECHA}', idFecha),
     );
     return await _servicioPuntajes.obtenerMapaPuntajesPorLigaYFecha(
       idLiga,

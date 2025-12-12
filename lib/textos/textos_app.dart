@@ -193,6 +193,319 @@ class TextosApp {
   static const TEXTO_BIENVENIDA_GENERAL = "Bienvenido al panel de usuario.";
 
   // ---------------------------------------------------------------------------
+  // Controladores - Mensajes comunes
+  // Archivos: lib/controladores/*
+  // Prefijo: CTRL_COMUN_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_COMUN_ERROR_ID_LIGA_VACIO =
+      "El identificador de la liga no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_USUARIO_VACIO =
+      "El identificador del usuario no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_EQUIPO_FANTASY_VACIO =
+      "El identificador del equipo fantasy no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_ALINEACION_VACIO =
+      "El identificador de la alineación no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_EQUIPO_REAL_VACIO =
+      "El identificador del equipo real no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_PARTICIPACION_VACIO =
+      "El identificador de la participación no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_FECHA_VACIO =
+      "El identificador de la fecha no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_ID_JUGADOR_VACIO =
+      "El identificador del jugador no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_NOMBRE_EQUIPO_VACIO =
+      "El nombre del equipo no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_TEXTO_BUSQUEDA_VACIO =
+      "El texto de búsqueda no puede estar vacío.";
+  static const String CTRL_COMUN_ERROR_PUNTOS_NEGATIVOS =
+      "Los puntos no pueden ser negativos.";
+  static const String CTRL_COMUN_ERROR_LISTA_IDS_VACIA =
+      "La lista de identificadores no puede estar vacía.";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Alineaciones
+  // Archivo: controlador_alineaciones.dart
+  // Prefijo: CTRL_ALINEACIONES_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_ALINEACIONES_ERROR_JUGADOR_REQUERIDO =
+      "Debe seleccionar al menos un jugador.";
+  static const String CTRL_ALINEACIONES_ERROR_FORMACION_INVALIDA =
+      "Formación no válida: {FORMACION}";
+  static const String CTRL_ALINEACIONES_LOG_CREAR =
+      "Creando alineación para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_ALINEACIONES_LOG_LISTAR_USUARIO_LIGA =
+      "Listando alineaciones de usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_ALINEACIONES_LOG_ARCHIVAR =
+      "Archivando alineación {ALINEACION}";
+  static const String CTRL_ALINEACIONES_LOG_ACTIVAR =
+      "Activando alineación {ALINEACION}";
+  static const String CTRL_ALINEACIONES_LOG_ELIMINAR =
+      "Eliminando alineación {ALINEACION}";
+  static const String CTRL_ALINEACIONES_LOG_EDITAR =
+      "Editando alineación {ALINEACION}";
+  static const String CTRL_ALINEACIONES_ERROR_PLANTEL_INICIAL =
+      "Debe seleccionar exactamente 15 jugadores.";
+  static const String CTRL_ALINEACIONES_ERROR_PLANTEL_CON_FECHA_ACTIVA =
+      "No se puede armar el plantel: la liga tiene una fecha activa.";
+  static const String CTRL_ALINEACIONES_LOG_GUARDAR_PLANTEL =
+      "Guardando plantel inicial para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_ALINEACIONES_ERROR_CAMPOS_OBLIGATORIOS =
+      "Los campos idLiga, idUsuario y idAlineacion son obligatorios.";
+  static const String CTRL_ALINEACIONES_ERROR_TITULARES =
+      "Debe seleccionar exactamente 11 titulares.";
+  static const String CTRL_ALINEACIONES_ERROR_SUPLENTES =
+      "Debe seleccionar exactamente 4 suplentes.";
+  static const String CTRL_ALINEACIONES_ERROR_NO_ENCONTRADA =
+      "Alineación no encontrada.";
+  static const String CTRL_ALINEACIONES_ERROR_JUGADORES_INVALIDOS =
+      "Los jugadores seleccionados no coinciden con el plantel registrado.";
+  static const String CTRL_ALINEACIONES_LOG_BUSCAR_PARTICIPACION =
+      "Buscando participación del usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_ALINEACIONES_ERROR_PARTICIPACION_NO_ENCONTRADA =
+      "Participación no encontrada.";
+  static const String CTRL_ALINEACIONES_LOG_PARTICIPACION_ENCONTRADA =
+      "Participación encontrada: {PARTICIPACION}";
+  static const String CTRL_ALINEACIONES_LOG_PLANTEL_COMPLETO =
+      "Marcando la participación {PARTICIPACION} como plantel completo.";
+  static const String CTRL_ALINEACIONES_LOG_PARTICIPACION_ACTUALIZADA =
+      "Participación actualizada correctamente.";
+  static const String CTRL_ALINEACIONES_LOG_BUSCAR_ACTIVA =
+      "Buscando alineación activa o más reciente para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_ALINEACIONES_LOG_ACTIVA_ENCONTRADA =
+      "Alineación activa encontrada: {ALINEACION}";
+  static const String CTRL_ALINEACIONES_LOG_RECIENTE =
+      "No hay alineación activa; se devuelve la más reciente: {ALINEACION}";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Equipo Fantasy
+  // Archivo: controlador_equipo_fantasy.dart
+  // Prefijo: CTRL_EQUIPO_FANTASY_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_EQUIPO_FANTASY_ERROR_NOMBRE_VACIO =
+      "El nombre del equipo fantasy no puede estar vacío.";
+  static const String CTRL_EQUIPO_FANTASY_LOG_CREAR =
+      "Creando equipo fantasy para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_YA_EXISTE =
+      "El usuario ya tiene un equipo en esta liga.";
+  static const String CTRL_EQUIPO_FANTASY_ERROR_YA_EXISTE =
+      "Ya existe un equipo fantasy para este usuario en esta liga.";
+  static const String CTRL_EQUIPO_FANTASY_LOG_FECHA_ACTIVA =
+      "No se puede crear equipo: ya existe una fecha activa en la liga.";
+  static const String CTRL_EQUIPO_FANTASY_ERROR_FECHA_ACTIVA =
+      "No se puede crear un equipo con fechas activas en la liga.";
+  static const String CTRL_EQUIPO_FANTASY_LOG_CREADO =
+      "Equipo fantasy creado exitosamente: {EQUIPO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_LISTAR_USUARIO =
+      "Listando equipos fantasy del usuario {USUARIO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_LISTAR_USUARIO_LIGA =
+      "Listando equipos fantasy del usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_EQUIPO_FANTASY_ERROR_IDS_OBLIGATORIOS =
+      "El identificador del usuario y el de la liga no pueden estar vacíos.";
+  static const String CTRL_EQUIPO_FANTASY_LOG_EDITAR =
+      "Editando equipo fantasy {EQUIPO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_ARCHIVAR =
+      "Archivando equipo fantasy {EQUIPO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_ACTIVAR =
+      "Activando equipo fantasy {EQUIPO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_ELIMINAR =
+      "Eliminando equipo fantasy {EQUIPO}";
+  static const String CTRL_EQUIPO_FANTASY_LOG_OBTENER =
+      "Obteniendo equipo fantasy para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_EQUIPO_FANTASY_ERROR_ID_EQUIPO_VACIO =
+      "El identificador del equipo no puede estar vacío.";
+  static const String CTRL_EQUIPO_FANTASY_ERROR_PLANTEL_TAMANIO =
+      "El plantel inicial debe tener 15 jugadores.";
+  static const String CTRL_EQUIPO_FANTASY_LOG_GUARDAR_PLANTEL =
+      "Guardando plantel inicial para equipo {EQUIPO} (jugadores={CANTIDAD}, presupuesto={PRESUPUESTO})";
+  static const String CTRL_EQUIPO_FANTASY_LOG_PLANTEL_GUARDADO =
+      "Plantel inicial guardado correctamente.";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Equipos Reales
+  // Archivo: controlador_equipos_reales.dart
+  // Prefijo: CTRL_EQUIPOS_REALES_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_EQUIPOS_REALES_ERROR_NOMBRE_VACIO =
+      "El nombre del equipo no puede estar vacío.";
+  static const String CTRL_EQUIPOS_REALES_LOG_CREAR =
+      "Creando equipo real en liga {LIGA} ({NOMBRE})";
+  static const String CTRL_EQUIPOS_REALES_LOG_LISTAR =
+      "Listando equipos reales de liga {LIGA}";
+  static const String CTRL_EQUIPOS_REALES_LOG_EDITAR =
+      "Editando equipo real {EQUIPO}";
+  static const String CTRL_EQUIPOS_REALES_LOG_ACTIVAR =
+      "Activando equipo real {EQUIPO}";
+  static const String CTRL_EQUIPOS_REALES_LOG_ARCHIVAR =
+      "Archivando equipo real {EQUIPO}";
+  static const String CTRL_EQUIPOS_REALES_LOG_ELIMINAR =
+      "Eliminando equipo real {EQUIPO}";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Fechas
+  // Archivo: controlador_fechas.dart
+  // Prefijo: CTRL_FECHAS_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_FECHAS_LOG_CREAR =
+      "Creando nueva fecha para liga {LIGA}";
+  static const String CTRL_FECHAS_ERROR_LIGA_NO_ENCONTRADA =
+      "No se encontró la liga solicitada.";
+  static const String CTRL_FECHAS_ERROR_LIGA_MAXIMO =
+      "La liga ya alcanzó el número máximo de fechas ({TOTAL}).";
+  static const String CTRL_FECHAS_ERROR_FECHA_ACTIVA =
+      "No se puede crear una nueva fecha mientras exista otra activa.";
+  static const String CTRL_FECHAS_LOG_ACTUALIZAR_CONTADOR =
+      "Actualizando contador de fechas de la liga: {CREADAS}/{TOTAL}";
+  static const String CTRL_FECHAS_LOG_OBTENER_LIGA =
+      "Obteniendo fechas de liga {LIGA}";
+  static const String CTRL_FECHAS_LOG_CERRAR =
+      "Intentando cerrar fecha {FECHA}";
+  static const String CTRL_FECHAS_ERROR_CERRAR_INACTIVA =
+      "Solo se pueden cerrar fechas activas.";
+  static const String CTRL_FECHAS_ERROR_FALTAN_PUNTAJES =
+      "Faltan puntajes para cerrar la fecha.";
+  static const String CTRL_FECHAS_LOG_APLICAR_PUNTAJES =
+      "Aplicando puntajes fantasy a participaciones de la liga {LIGA} para la fecha {FECHA}";
+  static const String CTRL_FECHAS_ERROR_LIGA_ASOCIADA =
+      "No se encontró la liga asociada.";
+  static const String CTRL_FECHAS_LOG_ARCHIVAR_LIGA =
+      "La última fecha fue cerrada; archivando liga {LIGA}";
+  static const String CTRL_FECHAS_LOG_CERRADA =
+      "Fecha {FECHA} cerrada correctamente.";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Participaciones
+  // Archivo: controlador_participaciones.dart
+  // Prefijo: CTRL_PARTICIPACIONES_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_PARTICIPACIONES_ERROR_NOMBRE_EQUIPO_VACIO =
+      "El nombre del equipo fantasy no puede estar vacío.";
+  static const String CTRL_PARTICIPACIONES_LOG_VERIFICAR_EXISTENCIA =
+      "Verificando si usuario {USUARIO} ya participa en liga {LIGA}";
+  static const String CTRL_PARTICIPACIONES_LOG_YA_PARTICIPA =
+      "El usuario ya participa en la liga";
+  static const String CTRL_PARTICIPACIONES_ERROR_YA_PARTICIPA =
+      "El usuario ya participa en esta liga.";
+  static const String CTRL_PARTICIPACIONES_LOG_CREAR =
+      "Creando participación (Etapa 1)";
+  static const String CTRL_PARTICIPACIONES_LOG_CREAR_EQUIPO =
+      "Creando equipo fantasy automáticamente tras registrar participación: usuario={USUARIO}, liga={LIGA}, nombreEquipo={NOMBRE}";
+  static const String CTRL_PARTICIPACIONES_LOG_LISTAR_LIGA =
+      "Listando participaciones de liga {LIGA}";
+  static const String CTRL_PARTICIPACIONES_LOG_LISTAR_USUARIO =
+      "Listando participaciones del usuario {USUARIO}";
+  static const String CTRL_PARTICIPACIONES_LOG_OBTENER =
+      "Obteniendo participación de usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_PARTICIPACIONES_LOG_OBTENER_PUNTAJES =
+      "Obteniendo puntajes fantasy para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_PARTICIPACIONES_LOG_SIN_PARTICIPACION =
+      "No se encontró participación para usuario {USUARIO} en liga {LIGA}";
+  static const String CTRL_PARTICIPACIONES_LOG_ARCHIVAR =
+      "Archivando participación {PARTICIPACION}";
+  static const String CTRL_PARTICIPACIONES_LOG_ACTIVAR =
+      "Activando participación {PARTICIPACION}";
+  static const String CTRL_PARTICIPACIONES_LOG_ELIMINAR =
+      "Eliminando participación {PARTICIPACION}";
+  static const String CTRL_PARTICIPACIONES_LOG_EDITAR =
+      "Editando participación {PARTICIPACION}";
+  static const String CTRL_PARTICIPACIONES_LOG_CALCULO_INICIO =
+      "Iniciando cálculo de puntajes fantasy para liga {LIGA}, fecha {FECHA}";
+  static const String CTRL_PARTICIPACIONES_ERROR_FECHA_INVALIDA =
+      "Fecha no válida para la liga especificada.";
+  static const String CTRL_PARTICIPACIONES_ERROR_FECHA_NO_CERRADA =
+      "La fecha {FECHA} no está cerrada.";
+  static const String CTRL_PARTICIPACIONES_LOG_PARTICIPACIONES_ENCONTRADAS =
+      "Participaciones activas encontradas: {CANTIDAD}";
+  static const String CTRL_PARTICIPACIONES_LOG_PROCESANDO =
+      "Procesando participación {PARTICIPACION} (usuario {USUARIO})";
+  static const String CTRL_PARTICIPACIONES_LOG_SIN_EQUIPO =
+      "No se encuentra equipo fantasy para participación {PARTICIPACION} — se omite.";
+  static const String CTRL_PARTICIPACIONES_LOG_SIN_ALINEACION =
+      "No se encontró alineación para usuario {USUARIO} — se omite.";
+  static const String CTRL_PARTICIPACIONES_LOG_YA_APLICADO =
+      "Puntaje fantasy ya aplicado para participación {PARTICIPACION}, fecha {FECHA} — se omite.";
+  static const String CTRL_PARTICIPACIONES_LOG_GUARDAR_PUNTAJE =
+      "Guardando puntaje fantasy para participación {PARTICIPACION}: total={TOTAL}";
+  static const String CTRL_PARTICIPACIONES_LOG_ACTUALIZAR_PUNTOS =
+      "Puntos acumulados actualizados para participación {PARTICIPACION}";
+  static const String CTRL_PARTICIPACIONES_ERROR_PROCESO =
+      "Error procesando participación {PARTICIPACION}: {DETALLE}";
+  static const String CTRL_PARTICIPACIONES_LOG_CALCULO_FIN =
+      "Cálculo de puntajes fantasy finalizado para liga {LIGA}, fecha {FECHA}";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Jugadores Reales
+  // Archivo: controlador_jugadores_reales.dart
+  // Prefijo: CTRL_JUGADORES_REALES_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_JUGADORES_REALES_ERROR_NOMBRE_VACIO =
+      "El nombre del jugador no puede estar vacío.";
+  static const String CTRL_JUGADORES_REALES_ERROR_POSICION =
+      "La posición debe ser POR, DEF, MED o DEL.";
+  static const String CTRL_JUGADORES_REALES_ERROR_DORSAL =
+      "El dorsal debe estar entre 1 y 99.";
+  static const String CTRL_JUGADORES_REALES_ERROR_VALOR_MERCADO =
+      "El valor de mercado debe estar entre 1 y 1000.";
+  static const String CTRL_JUGADORES_REALES_LOG_CREAR =
+      "Creando jugador real en equipo {EQUIPO} ({NOMBRE})";
+  static const String CTRL_JUGADORES_REALES_LOG_LISTAR =
+      "Listando jugadores reales del equipo {EQUIPO}";
+  static const String CTRL_JUGADORES_REALES_LOG_LISTAR_RESUMEN =
+      "Jugadores obtenidos: {CANTIDAD} del equipo {EQUIPO} (ordenados por posición)";
+  static const String CTRL_JUGADORES_REALES_LOG_EDITAR =
+      "Editando jugador real {JUGADOR}";
+  static const String CTRL_JUGADORES_REALES_LOG_ARCHIVAR =
+      "Archivando jugador real {JUGADOR}";
+  static const String CTRL_JUGADORES_REALES_LOG_ACTIVAR =
+      "Activando jugador real {JUGADOR}";
+  static const String CTRL_JUGADORES_REALES_LOG_ELIMINAR =
+      "Eliminando jugador real {JUGADOR}";
+  static const String CTRL_JUGADORES_REALES_ERROR_IDS_VACIOS =
+      "La lista de IDs no puede estar vacía.";
+  static const String CTRL_JUGADORES_REALES_LOG_OBTENER_IDS =
+      "Obteniendo jugadores reales por IDs (solicitados={SOLICITADOS}, unicos={UNICOS})";
+  static const String CTRL_JUGADORES_REALES_LOG_OBTENIDOS =
+      "Jugadores obtenidos por IDs: {CANTIDAD} (ordenados)";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Ligas
+  // Archivo: controlador_ligas.dart
+  // Prefijo: CTRL_LIGAS_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_LIGAS_ERROR_TOTAL_FECHAS =
+      "El total de fechas debe estar entre 34 y 50.";
+  static const String CTRL_LIGAS_ERROR_FECHAS_CREADAS =
+      "Las fechas creadas no pueden ser negativas.";
+  static const String CTRL_LIGAS_LOG_CREAR = "Creando liga: {NOMBRE}";
+  static const String CTRL_LIGAS_LOG_OBTENER_ACTIVAS =
+      "Obteniendo ligas activas";
+  static const String CTRL_LIGAS_LOG_RECUPERAR =
+      "Recuperando liga por id: {LIGA}";
+  static const String CTRL_LIGAS_LOG_BUSCAR =
+      "Buscando ligas con texto: '{TEXTO}'";
+  static const String CTRL_LIGAS_LOG_EDITAR = "Editando liga: {LIGA}";
+  static const String CTRL_LIGAS_LOG_ARCHIVAR = "Archivando liga: {LIGA}";
+  static const String CTRL_LIGAS_LOG_ACTIVAR = "Activando liga: {LIGA}";
+  static const String CTRL_LIGAS_LOG_ELIMINAR = "Eliminando liga: {LIGA}";
+
+  // ---------------------------------------------------------------------------
+  // Controlador: Puntajes Reales
+  // Archivo: controlador_puntajes_reales.dart
+  // Prefijo: CTRL_PUNTAJES_REALES_
+  // ---------------------------------------------------------------------------
+  static const String CTRL_PUNTAJES_REALES_LOG_OBTENER_JUGADORES =
+      "Obteniendo jugadores reales por equipo para liga {LIGA}";
+  static const String CTRL_PUNTAJES_REALES_LOG_GUARDAR =
+      "Guardando puntajes para fecha {FECHA} (Liga {LIGA})";
+  static const String CTRL_PUNTAJES_REALES_ERROR_RANGO =
+      "El puntaje del jugador real {JUGADOR} debe estar entre 1 y 10.";
+  static const String CTRL_PUNTAJES_REALES_ERROR_JUGADOR_NO_ENCONTRADO =
+      "Jugador real no encontrado o no activo: {JUGADOR}";
+  static const String CTRL_PUNTAJES_REALES_LOG_COMPLETITUD =
+      "Verificando completitud de puntajes en fecha {FECHA} (Liga {LIGA})";
+  static const String CTRL_PUNTAJES_REALES_LOG_OBTENER_MAPA =
+      "Obteniendo mapa de puntajes reales para liga {LIGA}, fecha {FECHA}";
+
+  // ---------------------------------------------------------------------------
   // Pantalla: Inicio Desktop para usuarios
   // Archivo: pagina_inicio_desktop.dart
   // Prefijo: INICIO_DESKTOP_

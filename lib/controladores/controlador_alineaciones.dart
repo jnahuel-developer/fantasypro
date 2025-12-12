@@ -10,6 +10,7 @@ import 'package:fantasypro/servicios/firebase/servicio_alineaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
 import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ControladorAlineaciones {
   final ServicioAlineaciones _servicio = ServicioAlineaciones();
@@ -31,27 +32,30 @@ class ControladorAlineaciones {
     List<String> idsSuplentes = const [],
   }) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El ID de la liga no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_LIGA_VACIO);
     }
 
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El ID del usuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_USUARIO_VACIO);
     }
 
     if (idEquipoFantasy.trim().isEmpty) {
-      throw ArgumentError("El ID del equipo fantasy no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_EQUIPO_FANTASY_VACIO);
     }
 
     if (jugadoresSeleccionados.isEmpty) {
-      throw ArgumentError("Debe seleccionar al menos un jugador.");
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_JUGADOR_REQUERIDO);
     }
 
     if (puntosTotales < 0) {
-      throw ArgumentError("Los puntos no pueden ser negativos.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_PUNTOS_NEGATIVOS);
     }
 
     if (!_validarFormacion(formacion)) {
-      throw ArgumentError("Formación no válida: $formacion");
+      throw ArgumentError(
+        TextosApp.CTRL_ALINEACIONES_ERROR_FORMACION_INVALIDA
+            .replaceAll('{FORMACION}', formacion),
+      );
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -71,7 +75,9 @@ class ControladorAlineaciones {
     );
 
     _log.informacion(
-      "Creando alineación para usuario $idUsuario en liga $idLiga",
+      TextosApp.CTRL_ALINEACIONES_LOG_CREAR
+          .replaceAll('{USUARIO}', idUsuario)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     return await _servicio.crearAlineacion(alineacion);
@@ -85,14 +91,16 @@ class ControladorAlineaciones {
     String idUsuario,
   ) async {
     if (idLiga.isEmpty) {
-      throw ArgumentError("El ID de la liga no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_LIGA_VACIO);
     }
     if (idUsuario.isEmpty) {
-      throw ArgumentError("El ID del usuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_USUARIO_VACIO);
     }
 
     _log.informacion(
-      "Listando alineaciones de usuario $idUsuario en liga $idLiga",
+      TextosApp.CTRL_ALINEACIONES_LOG_LISTAR_USUARIO_LIGA
+          .replaceAll('{USUARIO}', idUsuario)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     return await _servicio.obtenerPorUsuarioEnLiga(idLiga, idUsuario);
@@ -102,7 +110,10 @@ class ControladorAlineaciones {
   // Archivar
   // ---------------------------------------------------------------------------
   Future<void> archivar(String idAlineacion) async {
-    _log.advertencia("Archivando alineación $idAlineacion");
+    _log.advertencia(
+      TextosApp.CTRL_ALINEACIONES_LOG_ARCHIVAR
+          .replaceAll('{ALINEACION}', idAlineacion),
+    );
     await _servicio.archivarAlineacion(idAlineacion);
   }
 
@@ -110,7 +121,10 @@ class ControladorAlineaciones {
   // Activar
   // ---------------------------------------------------------------------------
   Future<void> activar(String idAlineacion) async {
-    _log.informacion("Activando alineación $idAlineacion");
+    _log.informacion(
+      TextosApp.CTRL_ALINEACIONES_LOG_ACTIVAR
+          .replaceAll('{ALINEACION}', idAlineacion),
+    );
     await _servicio.activarAlineacion(idAlineacion);
   }
 
@@ -118,7 +132,10 @@ class ControladorAlineaciones {
   // Eliminar
   // ---------------------------------------------------------------------------
   Future<void> eliminar(String idAlineacion) async {
-    _log.error("Eliminando alineación $idAlineacion");
+    _log.error(
+      TextosApp.CTRL_ALINEACIONES_LOG_ELIMINAR
+          .replaceAll('{ALINEACION}', idAlineacion),
+    );
     await _servicio.eliminarAlineacion(idAlineacion);
   }
 
@@ -127,22 +144,28 @@ class ControladorAlineaciones {
   // ---------------------------------------------------------------------------
   Future<void> editar(Alineacion alineacion) async {
     if (alineacion.id.isEmpty) {
-      throw ArgumentError("El ID de la alineación no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_ALINEACION_VACIO);
     }
 
     if (alineacion.jugadoresSeleccionados.isEmpty) {
-      throw ArgumentError("Debe seleccionar al menos un jugador.");
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_JUGADOR_REQUERIDO);
     }
 
     if (alineacion.puntosTotales < 0) {
-      throw ArgumentError("Los puntos no pueden ser negativos.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_PUNTOS_NEGATIVOS);
     }
 
     if (!_validarFormacion(alineacion.formacion)) {
-      throw ArgumentError("Formación no válida: ${alineacion.formacion}");
+      throw ArgumentError(
+        TextosApp.CTRL_ALINEACIONES_ERROR_FORMACION_INVALIDA
+            .replaceAll('{FORMACION}', alineacion.formacion),
+      );
     }
 
-    _log.informacion("Editando alineación ${alineacion.id}");
+    _log.informacion(
+      TextosApp.CTRL_ALINEACIONES_LOG_EDITAR
+          .replaceAll('{ALINEACION}', alineacion.id),
+    );
 
     await _servicio.editarAlineacion(alineacion);
   }
@@ -165,27 +188,28 @@ class ControladorAlineaciones {
     String formacion,
   ) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_LIGA_VACIO);
     }
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_USUARIO_VACIO);
     }
     if (idEquipoFantasy.trim().isEmpty) {
-      throw ArgumentError("El idEquipoFantasy no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_EQUIPO_FANTASY_VACIO);
     }
     if (!_validarFormacion(formacion)) {
-      throw ArgumentError("Formación no válida: $formacion");
+      throw ArgumentError(
+        TextosApp.CTRL_ALINEACIONES_ERROR_FORMACION_INVALIDA
+            .replaceAll('{FORMACION}', formacion),
+      );
     }
     if (idsJugadoresSeleccionados.length != 15) {
-      throw ArgumentError("Debe seleccionar exactamente 15 jugadores.");
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_PLANTEL_INICIAL);
     }
 
     final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
     final existeActiva = fechas.any((f) => f.activa && !f.cerrada);
     if (existeActiva) {
-      throw Exception(
-        "No se puede armar el plantel: la liga tiene una fecha activa.",
-      );
+      throw Exception(TextosApp.CTRL_ALINEACIONES_ERROR_PLANTEL_CON_FECHA_ACTIVA);
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -205,7 +229,9 @@ class ControladorAlineaciones {
     );
 
     _log.informacion(
-      "Guardando plantel inicial para usuario $idUsuario en liga $idLiga",
+      TextosApp.CTRL_ALINEACIONES_LOG_GUARDAR_PLANTEL
+          .replaceAll('{USUARIO}', idUsuario)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     return await _servicio.crearAlineacion(alineacion);
@@ -224,15 +250,13 @@ class ControladorAlineaciones {
     if (idLiga.trim().isEmpty ||
         idUsuario.trim().isEmpty ||
         idAlineacion.trim().isEmpty) {
-      throw ArgumentError(
-        "Los campos idLiga, idUsuario y idAlineacion son obligatorios.",
-      );
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_CAMPOS_OBLIGATORIOS);
     }
     if (idsTitulares.length != 11) {
-      throw ArgumentError("Debe seleccionar exactamente 11 titulares.");
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_TITULARES);
     }
     if (idsSuplentes.length != 4) {
-      throw ArgumentError("Debe seleccionar exactamente 4 suplentes.");
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_SUPLENTES);
     }
 
     final alineaciones = await _servicio.obtenerPorUsuarioEnLiga(
@@ -241,15 +265,14 @@ class ControladorAlineaciones {
     );
     final alineacion = alineaciones.firstWhere(
       (a) => a.id == idAlineacion,
-      orElse: () => throw Exception("Alineación no encontrada."),
+      orElse: () =>
+          throw Exception(TextosApp.CTRL_ALINEACIONES_ERROR_NO_ENCONTRADA),
     );
 
     final todos = {...idsTitulares, ...idsSuplentes};
     final setPlantel = alineacion.jugadoresSeleccionados.toSet();
     if (!setPlantel.containsAll(todos)) {
-      throw ArgumentError(
-        "Jugadores seleccionados no coinciden con el plantel.",
-      );
+      throw ArgumentError(TextosApp.CTRL_ALINEACIONES_ERROR_JUGADORES_INVALIDOS);
     }
 
     final actualizada = alineacion.copiarCon(
@@ -260,7 +283,9 @@ class ControladorAlineaciones {
     await _servicio.editarAlineacion(actualizada);
 
     _log.informacion(
-      "Buscando participación del usuario $idUsuario en liga $idLiga",
+      TextosApp.CTRL_ALINEACIONES_LOG_BUSCAR_PARTICIPACION
+          .replaceAll('{USUARIO}', idUsuario)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     final participacion = await _servicioPart.obtenerParticipacion(
@@ -269,20 +294,26 @@ class ControladorAlineaciones {
     );
 
     if (participacion == null) {
-      throw Exception("Participación no encontrada.");
+      throw Exception(
+        TextosApp.CTRL_ALINEACIONES_ERROR_PARTICIPACION_NO_ENCONTRADA,
+      );
     }
 
-    _log.informacion("Participación encontrada: ${participacion.id}");
+    _log.informacion(
+      TextosApp.CTRL_ALINEACIONES_LOG_PARTICIPACION_ENCONTRADA
+          .replaceAll('{PARTICIPACION}', participacion.id),
+    );
 
     final actualizadaPart = participacion.copiarCon(plantelCompleto: true);
 
     _log.informacion(
-      "Marcando participación como plantelCompleto=true para ${participacion.id}",
+      TextosApp.CTRL_ALINEACIONES_LOG_PLANTEL_COMPLETO
+          .replaceAll('{PARTICIPACION}', participacion.id),
     );
 
     await _servicioPart.editarParticipacion(actualizadaPart);
 
-    _log.informacion("Participación actualizada correctamente.");
+    _log.informacion(TextosApp.CTRL_ALINEACIONES_LOG_PARTICIPACION_ACTUALIZADA);
 
     return actualizada;
   }
@@ -303,14 +334,16 @@ class ControladorAlineaciones {
     String idUsuario,
   ) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_LIGA_VACIO);
     }
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.CTRL_COMUN_ERROR_ID_USUARIO_VACIO);
     }
 
     _log.informacion(
-      "Buscando alineación activa o más reciente para usuario $idUsuario en liga $idLiga",
+      TextosApp.CTRL_ALINEACIONES_LOG_BUSCAR_ACTIVA
+          .replaceAll('{USUARIO}', idUsuario)
+          .replaceAll('{LIGA}', idLiga),
     );
 
     final alineaciones = await _servicio.obtenerPorUsuarioEnLiga(
@@ -322,7 +355,10 @@ class ControladorAlineaciones {
     final alineacionesActivas = alineaciones.where((a) => a.activo).toList();
     if (alineacionesActivas.isNotEmpty) {
       final activa = alineacionesActivas.first;
-      _log.informacion("Alineación activa encontrada: ${activa.id}");
+      _log.informacion(
+        TextosApp.CTRL_ALINEACIONES_LOG_ACTIVA_ENCONTRADA
+            .replaceAll('{ALINEACION}', activa.id),
+      );
       return activa;
     }
 
@@ -330,7 +366,8 @@ class ControladorAlineaciones {
     alineaciones.sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
     final reciente = alineaciones.first;
     _log.informacion(
-      "No hay alineación activa — devolviendo la más reciente: ${reciente.id}",
+      TextosApp.CTRL_ALINEACIONES_LOG_RECIENTE
+          .replaceAll('{ALINEACION}', reciente.id),
     );
     return reciente;
   }
