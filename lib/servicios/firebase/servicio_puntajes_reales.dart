@@ -82,7 +82,7 @@ class ServicioPuntajesReales {
         "${TextosApp.LOG_PUNTAJES_REALES_GUARDAR} fecha=$idFecha total=${puntajes.length}",
       );
     } catch (e) {
-      _log.error("Error guardando puntajes reales: $e");
+      _log.error("${TextosApp.LOG_PUNTAJES_REALES_ERROR_GUARDAR} $e");
       rethrow;
     }
   }
@@ -118,7 +118,7 @@ class ServicioPuntajesReales {
 
       return lista;
     } catch (e) {
-      _log.error("Error obteniendo puntajes reales de fecha: $e");
+      _log.error("${TextosApp.LOG_PUNTAJES_REALES_ERROR_OBTENER} $e");
       rethrow;
     }
   }
@@ -153,7 +153,7 @@ class ServicioPuntajesReales {
 
       return PuntajeJugadorFecha.desdeMapa(snap.id, snap.data()!);
     } catch (e) {
-      _log.error("Error obteniendo puntaje individual: $e");
+      _log.error("${TextosApp.LOG_PUNTAJES_REALES_ERROR_INDIVIDUAL} $e");
       rethrow;
     }
   }
@@ -176,7 +176,7 @@ class ServicioPuntajesReales {
       idFecha = _sanitizarId(idFecha);
 
       if (idLiga.isEmpty || idFecha.isEmpty) {
-        throw ArgumentError("ID de liga o fecha inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_O_FECHA_INVALIDO);
       }
 
       _log.informacion(
@@ -204,7 +204,7 @@ class ServicioPuntajesReales {
 
       return mapa;
     } catch (e) {
-      _log.error("Error al obtener puntajes reales: $e");
+      _log.error("${TextosApp.LOG_PUNTAJES_REALES_ERROR_MAPA} $e");
       rethrow;
     }
   }

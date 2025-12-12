@@ -29,6 +29,26 @@ class TextosApp {
   static const String COMUN_TITULO_CONFIRMACION = "Confirmación";
   static const String COMUN_MENSAJE_ACCION_NO_PERMITIDA =
       "Acción no permitida.";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Servicios Firebase
+  // ---------------------------------------------------------------------------
+
+  static const String ERR_SERVICIO_ID_SANITIZADO_INVALIDO =
+      "ID sanitizado inválido.";
+  static const String ERR_SERVICIO_ID_INVALIDO = "ID inválido.";
+  static const String ERR_SERVICIO_ID_LIGA_INVALIDO = "ID de liga inválido.";
+  static const String ERR_SERVICIO_ID_USUARIO_INVALIDO =
+      "ID de usuario inválido.";
+  static const String ERR_SERVICIO_ID_FECHA_INVALIDO = "ID de fecha inválido.";
+  static const String ERR_SERVICIO_ID_PARTICIPACION_INVALIDO =
+      "ID de participación inválido.";
+  static const String ERR_SERVICIO_ID_PARTICIPACION_O_FECHA_INVALIDO =
+      "ID de participación o fecha inválido.";
+  static const String ERR_SERVICIO_ID_LIGA_O_FECHA_INVALIDO =
+      "ID de liga o fecha inválido.";
+  static const String ERR_SERVICIO_ID_EQUIPO_INVALIDO =
+      "ID de equipo inválido.";
   // ---------------------------------------------------------------------------
   // Mensajes de log
   // ---------------------------------------------------------------------------
@@ -112,6 +132,29 @@ class TextosApp {
       "Listando equipos fantasy activos de la liga";
   static const LOG_EQUIPO_FANTASY_PLANTEL_ACTUALIZADO =
       "EquipoFantasy actualizado (plantel inicial):";
+  static const LOG_EQUIPO_FANTASY_NO_ENCONTRADO =
+      "EquipoFantasy no encontrado:";
+  static const LOG_EQUIPO_FANTASY_ADVERTENCIA_MULTIPLES =
+      "Múltiples equipos fantasy encontrados para usuario={USUARIO} y liga={LIGA}. Usando el primero.";
+  static const LOG_EQUIPO_FANTASY_LISTAR_USUARIO_LIGA =
+      "Listar equipos fantasy: usuario={USUARIO} liga={LIGA}";
+  static const LOG_EQUIPO_FANTASY_ERROR_CREAR = "Error creando EquipoFantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_OBTENER =
+      "Error obteniendo EquipoFantasy de usuario:";
+  static const LOG_EQUIPO_FANTASY_ERROR_LISTAR =
+      "Error listando equipos fantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_EDITAR =
+      "Error editando EquipoFantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_ARCHIVAR =
+      "Error archivando EquipoFantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_ACTIVAR =
+      "Error activando EquipoFantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_ELIMINAR =
+      "Error eliminando EquipoFantasy:";
+  static const LOG_EQUIPO_FANTASY_ERROR_ACTIVOS =
+      "Error al obtener equipos fantasy activos:";
+  static const LOG_EQUIPO_FANTASY_ERROR_PLANTEL =
+      "Error actualizando plantel inicial:";
 
   // ---------------------------------------------------------------------------
   // Logs - Jugadores
@@ -189,6 +232,22 @@ class TextosApp {
   static const LOG_CTRL_EQUIPO_REAL_ACTIVAR = "Activando equipo real";
   static const LOG_CTRL_EQUIPO_REAL_ARCHIVAR = "Archivando equipo real";
   static const LOG_CTRL_EQUIPO_REAL_ELIMINAR = "Eliminando equipo real";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Servicios: Equipos reales
+  // ---------------------------------------------------------------------------
+  static const LOG_EQUIPO_REAL_CREADO = "EquipoReal creado:";
+  static const LOG_EQUIPO_REAL_LISTAR_LIGA = "Listar equipos reales de liga:";
+  static const LOG_EQUIPO_REAL_EDITADO = "EquipoReal editado:";
+  static const LOG_EQUIPO_REAL_ARCHIVADO = "EquipoReal archivado:";
+  static const LOG_EQUIPO_REAL_ACTIVADO = "EquipoReal activado:";
+  static const LOG_EQUIPO_REAL_ELIMINADO = "EquipoReal eliminado:";
+  static const LOG_EQUIPO_REAL_ERROR_CREAR = "Error creando EquipoReal:";
+  static const LOG_EQUIPO_REAL_ERROR_LISTAR = "Error listando equipos reales:";
+  static const LOG_EQUIPO_REAL_ERROR_EDITAR = "Error editando EquipoReal:";
+  static const LOG_EQUIPO_REAL_ERROR_ARCHIVAR = "Error archivando EquipoReal:";
+  static const LOG_EQUIPO_REAL_ERROR_ACTIVAR = "Error activando EquipoReal:";
+  static const LOG_EQUIPO_REAL_ERROR_ELIMINAR = "Error eliminando EquipoReal:";
 
   // ---------------------------------------------------------------------------
   // Logs – Controladores: Fechas
@@ -438,6 +497,66 @@ class TextosApp {
   static const LOG_JUGADOR_EDITANDO = "Editando jugador";
 
   // ---------------------------------------------------------------------------
+  // Logs – Servicios: Jugadores reales
+  // ---------------------------------------------------------------------------
+  static const LOG_JUGADOR_REAL_CREAR = "Crear jugador real:";
+  static const LOG_JUGADOR_REAL_OBTENER_EQUIPO =
+      "Obteniendo jugadores reales del equipo";
+  static const LOG_JUGADOR_REAL_OBTENER_IDS =
+      "Obteniendo jugadores reales por IDs (total={TOTAL})";
+  static const LOG_JUGADOR_REAL_EDITAR = "Editar jugador real:";
+  static const LOG_JUGADOR_REAL_ARCHIVAR = "Archivar jugador real:";
+  static const LOG_JUGADOR_REAL_ACTIVAR = "Activar jugador real:";
+  static const LOG_JUGADOR_REAL_ELIMINAR = "Eliminar jugador real:";
+  static const LOG_JUGADOR_REAL_CONSULTAR_EQUIPO =
+      "Consultando nombre del equipo real";
+  static const LOG_JUGADOR_REAL_ERROR_CREAR = "Error al crear jugador real:";
+  static const LOG_JUGADOR_REAL_ERROR_OBTENER =
+      "Error al obtener jugadores reales:";
+  static const LOG_JUGADOR_REAL_ERROR_OBTENER_IDS =
+      "Error al obtener jugadores por IDs:";
+  static const LOG_JUGADOR_REAL_ERROR_EDITAR =
+      "Error al editar jugador real:";
+  static const LOG_JUGADOR_REAL_ERROR_ARCHIVAR =
+      "Error al archivar jugador real:";
+  static const LOG_JUGADOR_REAL_ERROR_ACTIVAR =
+      "Error al activar jugador real:";
+  static const LOG_JUGADOR_REAL_ERROR_ELIMINAR =
+      "Error al eliminar jugador real:";
+  static const LOG_JUGADOR_REAL_ERROR_CONSULTAR_EQUIPO =
+      "Error al obtener nombre del equipo";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Servicios: Participaciones
+  // ---------------------------------------------------------------------------
+  static const LOG_PARTICIPACION_CREAR = "Crear participación:";
+  static const LOG_PARTICIPACION_CREAR_LIGA =
+      "Crear participación en liga: usuario={USUARIO} liga={LIGA}";
+  static const LOG_PARTICIPACION_ERROR_OPERACION =
+      "Error en operación de participaciones:";
+  static const LOG_PARTICIPACION_ERROR_CREAR_LIGA =
+      "Error creando participación en liga:";
+  static const LOG_PARTICIPACION_EXISTENTE =
+      "Usuario ya participa en la liga:";
+  static const LOG_PARTICIPACION_NO_ENCONTRADA =
+      "Participación no encontrada:";
+  static const LOG_PARTICIPACION_MULTIPLES =
+      "Múltiples participaciones encontradas para usuario={USUARIO} y liga={LIGA}. Usando la primera.";
+  static const LOG_PARTICIPACION_LISTAR_LIGA =
+      "Listar participaciones de liga:";
+  static const LOG_PARTICIPACION_LISTAR_USUARIO =
+      "Listar participaciones del usuario:";
+  static const LOG_PARTICIPACION_EDITANDO =
+      "Editando participación {ID} con campos: {CAMBIOS}";
+  static const LOG_PARTICIPACION_ARCHIVAR = "Archivar participación:";
+  static const LOG_PARTICIPACION_ACTIVAR = "Activar participación:";
+  static const LOG_PARTICIPACION_ELIMINAR = "Eliminar participación:";
+  static const LOG_PARTICIPACION_LISTAR_ACTIVAS =
+      "Listando participaciones activas de la liga";
+  static const LOG_PARTICIPACION_INCREMENTAR_PUNTOS =
+      "Incrementando {DELTA} puntos en participación {ID}";
+
+  // ---------------------------------------------------------------------------
   // Logs – Alineaciones
   // ---------------------------------------------------------------------------
   static const LOG_ALINEACION_CREAR = "Crear alineación:";
@@ -448,6 +567,22 @@ class TextosApp {
   static const LOG_ALINEACION_ELIMINAR = "Eliminar alineación:";
   static const LOG_ALINEACION_LISTAR_ACTIVAS =
       "Listando alineaciones activas de la liga";
+  static const LOG_ALINEACION_ERROR_OPERACION =
+      "Error en operación de alineaciones:";
+  static const LOG_ALINEACION_ERROR_GUARDAR_PLANTEL =
+      "Error guardando plantel inicial:";
+  static const LOG_ALINEACION_ERROR_GUARDAR_INICIAL =
+      "Error guardando alineación inicial:";
+  static const LOG_ALINEACION_ADVERTENCIA_MULTIPLES =
+      "Múltiples alineaciones encontradas para usuario={USUARIO} y liga={LIGA}";
+  static const LOG_ALINEACION_ERROR_OBTENER_ACTIVAS =
+      "Error al obtener alineaciones activas:";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Alineaciones
+  // ---------------------------------------------------------------------------
+  static const ERR_ALINEACION_LISTA_INVALIDA =
+      "Lista '{CAMPO}' contiene elementos vacíos o inválidos.";
 
   // ---------------------------------------------------------------------------
   // Logs – Puntajes reales
@@ -459,6 +594,57 @@ class TextosApp {
   static const LOG_PUNTAJE_NO_ENCONTRADO = "Puntaje no encontrado:";
   static const LOG_PUNTAJES_REALES_OBTENER_LIGA_FECHA =
       "Obteniendo puntajes reales por liga y fecha:";
+  static const LOG_PUNTAJES_REALES_ERROR_GUARDAR =
+      "Error guardando puntajes reales:";
+  static const LOG_PUNTAJES_REALES_ERROR_OBTENER =
+      "Error obteniendo puntajes reales de fecha:";
+  static const LOG_PUNTAJES_REALES_ERROR_INDIVIDUAL =
+      "Error obteniendo puntaje individual:";
+  static const LOG_PUNTAJES_REALES_ERROR_MAPA =
+      "Error al obtener puntajes reales:";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Servicios: Puntajes fantasy
+  // ---------------------------------------------------------------------------
+  static const LOG_PUNTAJE_FANTASY_GUARDAR = "Guardando puntaje fantasy:";
+  static const LOG_PUNTAJE_FANTASY_ERROR_GUARDAR =
+      "Error al guardar puntaje fantasy:";
+  static const LOG_PUNTAJE_FANTASY_OBTENER =
+      "Obteniendo puntaje fantasy: participacion={PARTICIPACION}, fecha={FECHA}";
+  static const LOG_PUNTAJE_FANTASY_ERROR_OBTENER =
+      "Error al obtener puntaje fantasy:";
+  static const LOG_PUNTAJE_FANTASY_LISTAR =
+      "Listando puntajes fantasy para participación";
+  static const LOG_PUNTAJE_FANTASY_ERROR_LISTAR =
+      "Error al listar puntajes fantasy:";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Servicios: Fechas
+  // ---------------------------------------------------------------------------
+  static const LOG_FECHAS_CREANDO = "Creando fecha para liga";
+  static const LOG_FECHAS_CREADA =
+      "Fecha creada: liga={LIGA} fecha={NUMERO} id={ID}";
+  static const LOG_FECHAS_ERROR_CREAR = "Error creando fecha:";
+  static const LOG_FECHAS_OBTENIENDO_LIGA =
+      "Obteniendo fechas de la liga {LIGA}";
+  static const LOG_FECHAS_SIN_REGISTROS =
+      "No hay fechas registradas para la liga {LIGA}";
+  static const LOG_FECHAS_ERROR_FIREBASE =
+      "Error Firebase al obtener fechas de liga {LIGA}:";
+  static const LOG_FECHAS_COLECCION_INEXISTENTE =
+      "Colección de fechas inexistente o vacía para liga {LIGA} — devolviendo lista vacía.";
+  static const LOG_FECHAS_CERRANDO = "Cerrando fecha";
+  static const LOG_FECHAS_CERRADA = "Fecha cerrada correctamente:";
+  static const LOG_FECHAS_ERROR_CERRAR = "Error cerrando fecha:";
+  static const LOG_FECHAS_BUSCANDO_ID = "Buscando fecha por ID:";
+  static const LOG_FECHAS_NO_ENCONTRADA = "Fecha no encontrada:";
+  static const LOG_FECHAS_ERROR_OBTENER_ID = "Error al obtener fecha:";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Fechas
+  // ---------------------------------------------------------------------------
+  static const ERR_FECHAS_ID_VACIO =
+      "El ID de la fecha no puede estar vacío.";
 
   // ---------------------------------------------------------------------------
   // Errores – Roles
