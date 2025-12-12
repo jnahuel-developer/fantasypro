@@ -8,6 +8,7 @@
 import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/servicios/firebase/servicio_equipos_reales.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ControladorEquiposReales {
   /// Servicio para operaciones con equipos reales.
@@ -29,10 +30,10 @@ class ControladorEquiposReales {
     String escudoUrl = "",
   }) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
     if (nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_NOMBRE_VACIO);
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -47,7 +48,7 @@ class ControladorEquiposReales {
       activo: true,
     );
 
-    _log.informacion("Creando equipo real en liga $idLiga ($nombre)");
+    _log.informacion("${TextosApp.LOG_CTRL_EQUIPO_REAL_CREAR} $idLiga ($nombre)");
 
     return await _servicio.crearEquipoReal(equipo);
   }
@@ -60,10 +61,10 @@ class ControladorEquiposReales {
   */
   Future<List<EquipoReal>> obtenerPorLiga(String idLiga) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
 
-    _log.informacion("Listando equipos reales de liga $idLiga");
+    _log.informacion("${TextosApp.LOG_CTRL_EQUIPO_REAL_LISTAR} $idLiga");
 
     return await _servicio.obtenerEquiposDeLiga(idLiga);
   }
@@ -76,10 +77,10 @@ class ControladorEquiposReales {
   */
   Future<void> editarEquipoReal(EquipoReal equipo) async {
     if (equipo.nombre.trim().isEmpty) {
-      throw ArgumentError("El nombre no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_NOMBRE_VACIO);
     }
 
-    _log.informacion("Editando equipo real ${equipo.id}");
+    _log.informacion("${TextosApp.LOG_CTRL_EQUIPO_REAL_EDITAR} ${equipo.id}");
 
     await _servicio.editarEquipoReal(equipo);
   }
@@ -91,7 +92,7 @@ class ControladorEquiposReales {
     Salidas: Future<void>
   */
   Future<void> activarEquipoReal(String idEquipo) async {
-    _log.informacion("Activando equipo real $idEquipo");
+    _log.informacion("${TextosApp.LOG_CTRL_EQUIPO_REAL_ACTIVAR} $idEquipo");
 
     await _servicio.activarEquipoReal(idEquipo);
   }
@@ -103,7 +104,7 @@ class ControladorEquiposReales {
     Salidas: Future<void>
   */
   Future<void> archivarEquipoReal(String idEquipo) async {
-    _log.advertencia("Archivando equipo real $idEquipo");
+    _log.advertencia("${TextosApp.LOG_CTRL_EQUIPO_REAL_ARCHIVAR} $idEquipo");
 
     await _servicio.archivarEquipoReal(idEquipo);
   }
@@ -115,7 +116,7 @@ class ControladorEquiposReales {
     Salidas: Future<void>
   */
   Future<void> eliminarEquipoReal(String idEquipo) async {
-    _log.error("Eliminando equipo real $idEquipo");
+    _log.error("${TextosApp.LOG_CTRL_EQUIPO_REAL_ELIMINAR} $idEquipo");
 
     await _servicio.eliminarEquipoReal(idEquipo);
   }
