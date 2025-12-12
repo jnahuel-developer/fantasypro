@@ -302,9 +302,6 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
     );
 
     try {
-      // ---------------------------------------------------------------------
-      // 1) GUARDAR PLANTEL INICIAL EN EL EQUIPO FANTASY
-      // ---------------------------------------------------------------------
       await _ctrlEquiposFantasy.guardarPlantelInicial(
         equipo.id,
         _seleccionados,
@@ -315,9 +312,6 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
         "Plantel inicial guardado correctamente en EquipoFantasy ${equipo.id}",
       );
 
-      // ---------------------------------------------------------------------
-      // 2) CREAR ALINEACIÓN INICIAL (como ya hacía antes)
-      // ---------------------------------------------------------------------
       final alineacion = await _ctrlAlineaciones.guardarPlantelInicial(
         widget.liga.id,
         usuario.uid,
@@ -330,9 +324,6 @@ class _UiUsuarioEquipoFantasyPlantelDesktopEstado
         "Alineación inicial generada: idAlineacion=${alineacion.id}",
       );
 
-      // ---------------------------------------------------------------------
-      // 3) Cargar la lista de modelos JugadorReal antes de navegar
-      // ---------------------------------------------------------------------
       final plantel = await _ctrlJugadoresReales.obtenerPorIds(_seleccionados);
 
       if (!mounted) return;

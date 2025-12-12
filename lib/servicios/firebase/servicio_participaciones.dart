@@ -16,6 +16,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioParticipaciones {
@@ -34,7 +35,7 @@ class ServicioParticipaciones {
 
   void _validarIdsObligatorios(String idUsuario, String idLiga) {
     if (idUsuario.isEmpty || idLiga.isEmpty) {
-      throw ArgumentError("ID sanitizado inválido.");
+      throw ArgumentError(TextosApp.ERR_SERVICIO_ID_SANITIZADO_INVALIDO);
     }
   }
 
@@ -54,10 +55,10 @@ class ServicioParticipaciones {
 
       final nueva = datos.copiarCon(id: doc.id);
 
-      _log.informacion("Crear participación: ${nueva.id}");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_CREAR} ${nueva.id}");
       return nueva;
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -93,12 +94,14 @@ class ServicioParticipaciones {
       final nueva = participacion.copiarCon(id: doc.id);
 
       _log.informacion(
-        "Crear participación en liga: usuario=$idUsuario liga=$idLiga → ${nueva.id}",
+        TextosApp.LOG_PARTICIPACION_CREAR_LIGA
+            .replaceFirst('{USUARIO}', idUsuario)
+            .replaceFirst('{LIGA}', idLiga),
       );
 
       return nueva;
     } catch (e) {
-      _log.error("Error creando participación en liga: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_CREAR_LIGA} $e");
       rethrow;
     }
   }
@@ -121,12 +124,12 @@ class ServicioParticipaciones {
       final existe = query.docs.isNotEmpty;
 
       _log.informacion(
-        "Verificar participación: usuario=$idUsuario liga=$idLiga → $existe",
+        "${TextosApp.LOG_PARTICIPACION_EXISTENTE} usuario=$idUsuario liga=$idLiga → $existe",
       );
 
       return existe;
     } catch (e) {
-      _log.error("Error validando participación: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -150,21 +153,23 @@ class ServicioParticipaciones {
 
       if (consulta.docs.isEmpty) {
         _log.informacion(
-          "Participación no encontrada: usuario=$idUsuario liga=$idLiga",
+          "${TextosApp.LOG_PARTICIPACION_NO_ENCONTRADA} usuario=$idUsuario liga=$idLiga",
         );
         return null;
       }
 
       if (consulta.docs.length > 1) {
         _log.advertencia(
-          "Múltiples participaciones encontradas para usuario=$idUsuario y liga=$idLiga. Usando la primera.",
+          TextosApp.LOG_PARTICIPACION_MULTIPLES
+              .replaceFirst('{USUARIO}', idUsuario)
+              .replaceFirst('{LIGA}', idLiga),
         );
       }
 
       final d = consulta.docs.first;
       return ParticipacionLiga.desdeMapa(d.id, d.data());
     } catch (e) {
-      _log.error("Error obteniendo participación única: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -172,20 +177,22 @@ class ServicioParticipaciones {
   Future<List<ParticipacionLiga>> obtenerPorLiga(String idLiga) async {
     try {
       idLiga = _sanitizarId(idLiga);
-      if (idLiga.isEmpty) throw ArgumentError("ID de liga inválido.");
+      if (idLiga.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
+      }
 
       final consulta = await _db
           .collection(ColFirebase.participaciones)
           .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
-      _log.informacion("Listar participaciones de liga: $idLiga");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_LISTAR_LIGA} $idLiga");
 
       return consulta.docs
           .map((d) => ParticipacionLiga.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -193,20 +200,22 @@ class ServicioParticipaciones {
   Future<List<ParticipacionLiga>> obtenerPorUsuario(String idUsuario) async {
     try {
       idUsuario = _sanitizarId(idUsuario);
-      if (idUsuario.isEmpty) throw ArgumentError("ID de usuario inválido.");
+      if (idUsuario.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_USUARIO_INVALIDO);
+      }
 
       final consulta = await _db
           .collection(ColFirebase.participaciones)
           .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
           .get();
 
-      _log.informacion("Listar participaciones del usuario: $idUsuario");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_LISTAR_USUARIO} $idUsuario");
 
       return consulta.docs
           .map((d) => ParticipacionLiga.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -226,7 +235,7 @@ class ServicioParticipaciones {
       // Sanitizar ID del documento
       final String idSan = _sanitizarId(participacion.id);
       if (idSan.isEmpty) {
-        throw ArgumentError("ID de participación inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_PARTICIPACION_INVALIDO);
       }
 
       // Construcción explícita de campos editables permitidos
@@ -239,7 +248,9 @@ class ServicioParticipaciones {
       };
 
       _log.informacion(
-        "Editando participación $idSan con campos: $actualizacion",
+        TextosApp.LOG_PARTICIPACION_EDITANDO
+            .replaceFirst('{ID}', idSan)
+            .replaceFirst('{CAMBIOS}', '$actualizacion'),
       );
 
       await _db
@@ -247,7 +258,7 @@ class ServicioParticipaciones {
           .doc(idSan)
           .update(actualizacion);
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -255,15 +266,17 @@ class ServicioParticipaciones {
   Future<void> archivarParticipacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.participaciones).doc(id).update({
         CamposFirebase.activo: false,
       });
 
-      _log.informacion("Archivar participación: $id");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_ARCHIVAR} $id");
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -271,15 +284,17 @@ class ServicioParticipaciones {
   Future<void> activarParticipacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.participaciones).doc(id).update({
         CamposFirebase.activo: true,
       });
 
-      _log.informacion("Activar participación: $id");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_ACTIVAR} $id");
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -287,13 +302,15 @@ class ServicioParticipaciones {
   Future<void> eliminarParticipacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.participaciones).doc(id).delete();
 
-      _log.informacion("Eliminar participación: $id");
+      _log.informacion("${TextosApp.LOG_PARTICIPACION_ELIMINAR} $id");
     } catch (e) {
-      _log.error("Error en operación de participaciones: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -310,10 +327,12 @@ class ServicioParticipaciones {
     try {
       idLiga = _sanitizarId(idLiga);
       if (idLiga.isEmpty) {
-        throw ArgumentError("ID de liga inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
       }
 
-      _log.informacion("Listando participaciones activas de la liga $idLiga");
+      _log.informacion(
+        "${TextosApp.LOG_PARTICIPACION_LISTAR_ACTIVAS} $idLiga",
+      );
 
       final query = await _db
           .collection(ColFirebase.participaciones)
@@ -325,7 +344,7 @@ class ServicioParticipaciones {
           .map((d) => ParticipacionLiga.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error al obtener participaciones activas: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -345,16 +364,20 @@ class ServicioParticipaciones {
     try {
       final idSan = _sanitizarId(idParticipacion);
       if (idSan.isEmpty) {
-        throw ArgumentError("ID de participación inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_PARTICIPACION_INVALIDO);
       }
 
-      _log.informacion("Incrementando $delta puntos en participación $idSan");
+      _log.informacion(
+        TextosApp.LOG_PARTICIPACION_INCREMENTAR_PUNTOS
+            .replaceFirst('{DELTA}', '$delta')
+            .replaceFirst('{ID}', idSan),
+      );
 
       await _db.collection(ColFirebase.participaciones).doc(idSan).update({
         CamposFirebase.puntos: FieldValue.increment(delta),
       });
     } catch (e) {
-      _log.error("Error al incrementar puntos en participación: $e");
+      _log.error("${TextosApp.LOG_PARTICIPACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }

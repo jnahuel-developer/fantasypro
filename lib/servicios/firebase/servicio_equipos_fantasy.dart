@@ -41,7 +41,7 @@ class ServicioEquiposFantasy {
   /// Validación de IDs obligatorios
   void _validarIdsObligatorios(String idUsuario, String idLiga) {
     if (idUsuario.isEmpty || idLiga.isEmpty) {
-      throw ArgumentError("ID sanitizado inválido.");
+      throw ArgumentError(TextosApp.ERR_SERVICIO_ID_SANITIZADO_INVALIDO);
     }
   }
 
@@ -112,7 +112,7 @@ class ServicioEquiposFantasy {
 
       return creado;
     } catch (e) {
-      _log.error("Error creando EquipoFantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_CREAR} $e");
       rethrow;
     }
   }
@@ -146,21 +146,23 @@ class ServicioEquiposFantasy {
 
       if (query.docs.isEmpty) {
         _log.informacion(
-          "EquipoFantasy no encontrado: usuario=$idUsuario liga=$idLiga",
+          "${TextosApp.LOG_EQUIPO_FANTASY_NO_ENCONTRADO} usuario=$idUsuario liga=$idLiga",
         );
         return null;
       }
 
       if (query.docs.length > 1) {
         _log.advertencia(
-          "Múltiples equipos fantasy encontrados para usuario=$idUsuario y liga=$idLiga. Usando el primero.",
+          TextosApp.LOG_EQUIPO_FANTASY_ADVERTENCIA_MULTIPLES
+              .replaceFirst('{USUARIO}', idUsuario)
+              .replaceFirst('{LIGA}', idLiga),
         );
       }
 
       final d = query.docs.first;
       return EquipoFantasy.desdeMapa(d.id, d.data());
     } catch (e) {
-      _log.error("Error obteniendo EquipoFantasy de usuario: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_OBTENER} $e");
       rethrow;
     }
   }
@@ -191,14 +193,16 @@ class ServicioEquiposFantasy {
           .get();
 
       _log.informacion(
-        "Listar equipos fantasy: usuario=$idUsuario liga=$idLiga",
+        TextosApp.LOG_EQUIPO_FANTASY_LISTAR_USUARIO_LIGA
+            .replaceFirst('{USUARIO}', idUsuario)
+            .replaceFirst('{LIGA}', idLiga),
       );
 
       return query.docs
           .map((d) => EquipoFantasy.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error listando equipos fantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_LISTAR} $e");
       rethrow;
     }
   }
@@ -228,7 +232,7 @@ class ServicioEquiposFantasy {
 
       _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_EDITADO} ${datos.id}");
     } catch (e) {
-      _log.error("Error editando EquipoFantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_EDITAR} $e");
       rethrow;
     }
   }
@@ -245,7 +249,9 @@ class ServicioEquiposFantasy {
   Future<void> archivarEquipoFantasy(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db
           .collection(ColFirebase.equiposFantasy)
@@ -254,7 +260,7 @@ class ServicioEquiposFantasy {
 
       _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ARCHIVADO} $id");
     } catch (e) {
-      _log.error("Error archivando EquipoFantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_ARCHIVAR} $e");
       rethrow;
     }
   }
@@ -271,7 +277,9 @@ class ServicioEquiposFantasy {
   Future<void> activarEquipoFantasy(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db
           .collection(ColFirebase.equiposFantasy)
@@ -280,7 +288,7 @@ class ServicioEquiposFantasy {
 
       _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ACTIVADO} $id");
     } catch (e) {
-      _log.error("Error activando EquipoFantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_ACTIVAR} $e");
       rethrow;
     }
   }
@@ -297,13 +305,15 @@ class ServicioEquiposFantasy {
   Future<void> eliminarEquipoFantasy(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.equiposFantasy).doc(id).delete();
 
       _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ELIMINADO} $id");
     } catch (e) {
-      _log.error("Error eliminando EquipoFantasy: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_ELIMINAR} $e");
       rethrow;
     }
   }
@@ -320,7 +330,7 @@ class ServicioEquiposFantasy {
     try {
       idLiga = _sanitizarId(idLiga);
       if (idLiga.isEmpty) {
-        throw ArgumentError("ID de liga inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
       }
 
       _log.informacion(
@@ -337,7 +347,7 @@ class ServicioEquiposFantasy {
           .map((d) => EquipoFantasy.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error al obtener equipos fantasy activos: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_ACTIVOS} $e");
       rethrow;
     }
   }
@@ -349,7 +359,9 @@ class ServicioEquiposFantasy {
   ) async {
     try {
       final idSan = _sanitizarId(idEquipoFantasy);
-      if (idSan.isEmpty) throw ArgumentError("ID de equipo inválido.");
+      if (idSan.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_EQUIPO_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.equiposFantasy).doc(idSan).update({
         CamposFirebase.idsJugadoresPlantel: idsJugadores,
@@ -360,7 +372,7 @@ class ServicioEquiposFantasy {
         "${TextosApp.LOG_EQUIPO_FANTASY_PLANTEL_ACTUALIZADO} $idEquipoFantasy",
       );
     } catch (e) {
-      _log.error("Error actualizando plantel inicial: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_FANTASY_ERROR_PLANTEL} $e");
       rethrow;
     }
   }

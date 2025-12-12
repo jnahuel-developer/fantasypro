@@ -21,17 +21,11 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
     await FirebaseAuth.instance.signOut();
   }
 
-  // ================================================================
-  // MÉTODO GENERAL DE CARGA MASIVA
-  // ================================================================
   Future<void> _cargarLigaDesdeJson(
     BuildContext context,
     String rutaJson,
     String nombreLigaVisible,
   ) async {
-    // ---------------------------------------------------------
-    // Mostrar loader modal
-    // ---------------------------------------------------------
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -51,15 +45,11 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
     );
 
     try {
-      // Leer JSON
       final jsonStr = await DefaultAssetBundle.of(context).loadString(rutaJson);
       final data = json.decode(jsonStr);
 
       final FirebaseFirestore db = FirebaseFirestore.instance;
 
-      // ---------------------------------------------------------
-      // 1) Cargar la liga
-      // ---------------------------------------------------------
       final l = data["liga"];
 
       final ligaRef = await db.collection("ligas").add({
@@ -74,9 +64,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
 
       final idLiga = ligaRef.id;
 
-      // ---------------------------------------------------------
-      // 2) Cargar equipos
-      // ---------------------------------------------------------
       for (final equipo in data["equipos"]) {
         final equipoRef = await db.collection("equipos_reales").add({
           "idLiga": idLiga,
@@ -89,9 +76,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
 
         final idEquipo = equipoRef.id;
 
-        // ---------------------------------------------------------
-        // 3) Cargar jugadores del equipo
-        // ---------------------------------------------------------
         for (final j in equipo["jugadores"]) {
           await db.collection("jugadores_reales").add({
             "idEquipoReal": idEquipo,
@@ -106,46 +90,54 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
         }
       }
 
-      // Cerrar loader
       if (context.mounted) Navigator.pop(context);
 
-      // Mostrar mensaje OK
       if (context.mounted) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
             title: Text(
-              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_TITULO
-                  .replaceFirst("{LIGA}", nombreLigaVisible),
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_TITULO.replaceFirst(
+                "{LIGA}",
+                nombreLigaVisible,
+              ),
             ),
-            content:
-                const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_MENSAJE),
+            content: const Text(
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_CARGA_MENSAJE,
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_OK),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_OK,
+                ),
               ),
             ],
           ),
         );
       }
     } catch (e) {
-      if (context.mounted) Navigator.pop(context); // cerrar loader
+      if (context.mounted) Navigator.pop(context);
 
       if (context.mounted) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_TITULO),
+            title: const Text(
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_TITULO,
+            ),
             content: Text(
-              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_MENSAJE
-                  .replaceFirst("{DETALLE}", "$e"),
+              TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_ERROR_MENSAJE.replaceFirst(
+                "{DETALLE}",
+                "$e",
+              ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child:
-                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_CERRAR),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DESKTOP_DIALOGO_BOTON_CERRAR,
+                ),
               ),
             ],
           ),
@@ -153,8 +145,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
       }
     }
   }
-
-  // ================================================================
 
   @override
   Widget build(BuildContext context) {
@@ -171,9 +161,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              //----------------------------------------------
-              // ADMINISTRAR LIGAS
-              //----------------------------------------------
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -188,9 +175,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              //----------------------------------------------
-              // CARGA MASIVA – LIGA ESPAÑA
-              //----------------------------------------------
               ElevatedButton(
                 onPressed: () {
                   _cargarLigaDesdeJson(
@@ -199,15 +183,13 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                     TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ESPANA,
                   );
                 },
-                child:
-                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ESPANA),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ESPANA,
+                ),
               ),
 
               const SizedBox(height: 30),
 
-              //----------------------------------------------
-              // CARGA MASIVA – LIGA ITALIA
-              //----------------------------------------------
               ElevatedButton(
                 onPressed: () {
                   _cargarLigaDesdeJson(
@@ -216,15 +198,13 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                     TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ITALIA,
                   );
                 },
-                child:
-                    const Text(TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ITALIA),
+                child: const Text(
+                  TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ITALIA,
+                ),
               ),
 
               const SizedBox(height: 30),
 
-              //----------------------------------------------
-              // CARGA MASIVA – LIGA INGLATERRA
-              //----------------------------------------------
               ElevatedButton(
                 onPressed: () {
                   _cargarLigaDesdeJson(

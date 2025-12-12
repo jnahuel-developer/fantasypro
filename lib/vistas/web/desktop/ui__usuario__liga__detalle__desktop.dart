@@ -34,8 +34,6 @@ import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
 import 'package:flutter/material.dart';
 import 'package:fantasypro/modelos/liga.dart';
 import 'package:fantasypro/modelos/participacion_liga.dart';
-import 'package:fantasypro/modelos/alineacion.dart';
-import 'package:fantasypro/modelos/jugador_real.dart';
 
 import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/servicios/firebase/servicio_participaciones.dart';
@@ -112,9 +110,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
     Descripción:
       Recupera el usuario autenticado, verifica si participa en la liga,
       y consulta si hay fechas activas para bloquear el flujo.
-
     Entradas: ninguna
-    Salidas: void: sin valor devuelto
+    Salidas: void
   */
   Future<void> _cargar() async {
     setState(() {
@@ -135,7 +132,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
 
       if (usuario == null) {
         setState(() {
-          _mensajeError = TextosApp.USUARIO_LIGA_DETALLE_DESKTOP_ERROR_SIN_USUARIO;
+          _mensajeError =
+              TextosApp.USUARIO_LIGA_DETALLE_DESKTOP_ERROR_SIN_USUARIO;
           _cargando = false;
         });
         return;
@@ -170,9 +168,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
     Descripción:
       Registra una nueva participación del usuario en la liga con el nombre
       provisto, y navega a la pantalla de armado del plantel inicial.
-
     Entradas: ninguna
-    Salidas: void: sin valor devuelto
+    Salidas: void
   */
   Future<void> _crearParticipacionYContinuar() async {
     final nombreEquipo = _campoNombreEquipo.text.trim();
@@ -246,9 +243,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
     Nombre: _continuarArmado
     Descripción:
       Permite reanudar el armado del equipo si la participación está incompleta.
-
     Entradas: ninguna
-    Salidas: void: sin valor devuelto
+    Salidas: void
   */
   void _continuarArmado() {
     if (_participacion == null) return;
@@ -269,9 +265,8 @@ class _UiUsuarioLigaDetalleDesktopEstado
     Descripción:
       Recupera la alineación y plantel actual del usuario y navega a la pantalla
       de resumen fantasy.
-
     Entradas: ninguna
-    Salidas: void: sin valor devuelto
+    Salidas: void
   */
   Future<void> _verResumen() async {
     if (_participacion == null) return;
@@ -397,23 +392,26 @@ class _UiUsuarioLigaDetalleDesktopEstado
                   else ...[
                     if (_participacion == null) ...[
                       const Text(
-                        TextosApp.USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_ELEGIR_NOMBRE,
+                        TextosApp
+                            .USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_ELEGIR_NOMBRE,
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _campoNombreEquipo,
                         decoration: const InputDecoration(
-                          labelText:
-                              TextosApp.USUARIO_LIGA_DETALLE_DESKTOP_LABEL_NOMBRE_EQUIPO,
+                          labelText: TextosApp
+                              .USUARIO_LIGA_DETALLE_DESKTOP_LABEL_NOMBRE_EQUIPO,
                           border: OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _crearParticipacionYContinuar,
-                        child: const Text(TextosApp
-                            .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CREAR_EQUIPO),
+                        child: const Text(
+                          TextosApp
+                              .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CREAR_EQUIPO,
+                        ),
                       ),
                     ] else if (_participacion!.plantelCompleto == false) ...[
                       const Text(
@@ -424,8 +422,10 @@ class _UiUsuarioLigaDetalleDesktopEstado
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _continuarArmado,
-                        child: const Text(TextosApp
-                            .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CONTINUAR_ARMADO),
+                        child: const Text(
+                          TextosApp
+                              .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CONTINUAR_ARMADO,
+                        ),
                       ),
                     ] else if (_participacion!.plantelCompleto == true) ...[
                       const Text(
@@ -436,8 +436,10 @@ class _UiUsuarioLigaDetalleDesktopEstado
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _verResumen,
-                        child: const Text(TextosApp
-                            .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_VER_EQUIPO),
+                        child: const Text(
+                          TextosApp
+                              .USUARIO_LIGA_DETALLE_DESKTOP_BOTON_VER_EQUIPO,
+                        ),
                       ),
                     ],
                   ],

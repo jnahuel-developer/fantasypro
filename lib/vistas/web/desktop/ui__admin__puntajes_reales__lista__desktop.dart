@@ -101,12 +101,11 @@ class _UiAdminPuntajesRealesListaDesktopEstado
       mapa,
     );
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content:
-            Text(TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_SNACKBAR_GUARDADO),
+        content: Text(
+          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_SNACKBAR_GUARDADO,
+        ),
       ),
     );
   }
@@ -128,10 +127,8 @@ class _UiAdminPuntajesRealesListaDesktopEstado
               .replaceFirst("{POSICION}", j.posicion)
               .replaceFirst(
                 "{DORSAL}",
-                j.dorsal != null
-                    ? TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_DORSAL
-                        .replaceFirst("{DORSAL}", j.dorsal.toString())
-                    : "",
+                TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_DORSAL
+                    .replaceFirst("{DORSAL}", j.dorsal.toString()),
               ),
         ),
         subtitle: const Text(
@@ -175,7 +172,6 @@ class _UiAdminPuntajesRealesListaDesktopEstado
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                // ---- CONTENIDO SCROLLEABLE ----
                 SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 120),
                   child: Column(
@@ -183,11 +179,11 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                     children: [
                       const SizedBox(height: 16),
 
-                      // Encabezado (ya no muestra ID)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_LIGA
+                          TextosApp
+                              .ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_LIGA
                               .replaceFirst("{LIGA}", widget.liga.nombre),
                           style: const TextStyle(fontSize: 16),
                         ),
@@ -195,7 +191,8 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_FECHA
+                          TextosApp
+                              .ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_TEXTO_FECHA
                               .replaceFirst("{NOMBRE}", fecha.nombre)
                               .replaceFirst(
                                 "{NUMERO}",
@@ -221,13 +218,13 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                           ),
                         ),
 
-                      // Selector de equipo real
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: DropdownButton<String>(
                           value: equipoSeleccionado,
                           hint: const Text(
-                            TextosApp.ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_EQUIPO,
+                            TextosApp
+                                .ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_HINT_EQUIPO,
                           ),
                           items: equiposOrdenados
                               .map(
@@ -253,7 +250,6 @@ class _UiAdminPuntajesRealesListaDesktopEstado
                   ),
                 ),
 
-                // ---- BOTÓN FIJO ----
                 if (!fecha.cerrada)
                   Positioned(
                     bottom: 16,

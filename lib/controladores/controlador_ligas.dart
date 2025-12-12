@@ -28,8 +28,11 @@ class ControladorLigas {
     Nombre: crearLiga
     Descripción:
       Crea una liga con nombre, descripción y temporada calculada
-      automáticamente. Se validan los nuevos campos introducidos para
-      totalFechasTemporada y se inicializa fechasCreadas en cero.
+      automáticamente.
+      Aplica reglas de negocio:
+        - Validar nombre no vacío.
+        - Exigir totalFechasTemporada entre 34 y 50.
+        - Inicializar fechasCreadas en cero para nuevas ligas.
     Entradas:
       - nombre: String — Nombre de la liga.
       - descripcion: String — Descripción opcional.
@@ -46,9 +49,8 @@ class ControladorLigas {
       throw ArgumentError(TextosApp.ERR_LIGA_NOMBRE_VACIO);
     }
 
-    // Validación obligatoria del nuevo campo
     if (totalFechasTemporada < 34 || totalFechasTemporada > 50) {
-      throw ArgumentError("El total de fechas debe estar entre 34 y 50.");
+      throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }
 
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -66,10 +68,10 @@ class ControladorLigas {
       fechaCreacion: timestamp,
       activa: true,
       totalFechasTemporada: totalFechasTemporada,
-      fechasCreadas: 0, // obligatorio según mod0015
+      fechasCreadas: 0,
     );
 
-    _log.informacion("Creando liga: $nombre");
+    _log.informacion("${TextosApp.LOG_LIGA_CREANDO} $nombre");
 
     return await _servicio.crearLiga(liga);
   }
@@ -78,13 +80,15 @@ class ControladorLigas {
     Nombre: obtenerActivas
     Descripción:
       Recupera todas las ligas con estado activo.
+      Aplica reglas de negocio:
+        - Sin reglas adicionales, delega al servicio.
     Entradas:
       - ninguna
     Salidas:
       - Future<List<Liga>>
   */
   Future<List<Liga>> obtenerActivas() async {
-    _log.informacion("Obteniendo ligas activas");
+    _log.informacion(TextosApp.LOG_LIGA_LISTAR_ACTIVAS);
     return await _servicio.obtenerLigasActivas();
   }
 
@@ -93,6 +97,8 @@ class ControladorLigas {
     Descripción:
       Recupera una liga a partir de su identificador. Devuelve null si
       no existe coincidencia en el repositorio.
+      Aplica reglas de negocio:
+        - Validar el id de liga no vacío.
     Entradas:
       - idLiga (String): identificador de la liga.
     Salidas:
@@ -100,10 +106,10 @@ class ControladorLigas {
   */
   Future<Liga?> obtenerPorId(String idLiga) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
 
-    _log.informacion("Recuperando liga por id: $idLiga");
+    _log.informacion("${TextosApp.LOG_LIGA_OBTENER} $idLiga");
     return await _servicio.obtenerLiga(idLiga);
   }
 
@@ -111,6 +117,8 @@ class ControladorLigas {
     Nombre: buscar
     Descripción:
       Busca ligas cuyo nombre coincida con el texto indicado.
+      Aplica reglas de negocio:
+        - Retorna lista vacía si el texto está vacío en lugar de consultar.
     Entradas:
       - texto: String
     Salidas:
@@ -118,11 +126,11 @@ class ControladorLigas {
   */
   Future<List<Liga>> buscar(String texto) async {
     if (texto.trim().isEmpty) {
-      _log.advertencia("Intento de búsqueda con texto vacío");
+      _log.advertencia(TextosApp.ERR_CTRL_BUSQUEDA_TEXTO_VACIO);
       return [];
     }
 
-    _log.informacion("Buscando ligas con texto: '$texto'");
+    _log.informacion("${TextosApp.LOG_LIGA_BUSCAR_NOMBRE} '$texto'");
     return await _servicio.buscarLigasPorNombre(texto.trim());
   }
 
@@ -130,6 +138,8 @@ class ControladorLigas {
     Nombre: obtenerTodas
     Descripción:
       Obtiene todas las ligas sin filtrar estado.
+      Aplica reglas de negocio:
+        - Sin reglas adicionales, entrega todo el catálogo.
     Entradas: ninguna
     Salidas: Future<List<Liga>>
   */
@@ -142,22 +152,24 @@ class ControladorLigas {
     Descripción:
       Actualiza los datos de una liga, permitiendo modificar campos como
       totalFechasTemporada y fechasCreadas. Usado por otros controladores.
+      Aplica reglas de negocio:
+        - Validar que totalFechasTemporada se mantenga en rango permitido.
+        - Verificar que fechasCreadas no sea negativa.
     Entradas:
       - liga: Liga — Instancia modificada.
     Salidas:
       - Future<void>
   */
   Future<void> editarLiga(Liga liga) async {
-    // Validación de consistencia con el nuevo modelo
     if (liga.totalFechasTemporada < 34 || liga.totalFechasTemporada > 50) {
-      throw ArgumentError("El total de fechas debe estar entre 34 y 50.");
+      throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }
 
     if (liga.fechasCreadas < 0) {
-      throw ArgumentError("Las fechas creadas no pueden ser negativas.");
+      throw ArgumentError(TextosApp.ERR_CTRL_FECHAS_CREADAS_NEGATIVAS);
     }
 
-    _log.informacion("Editando liga: ${liga.id}");
+    _log.informacion("${TextosApp.LOG_LIGA_EDITADA} ${liga.id}");
     await _servicio.editarLiga(liga);
   }
 
@@ -165,13 +177,15 @@ class ControladorLigas {
     Nombre: archivar
     Descripción:
       Marca una liga como inactiva sin eliminarla.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá del registro de log.
     Entradas:
       - id: String — Identificador de liga.
     Salidas:
       - Future<void>
   */
   Future<void> archivar(String id) async {
-    _log.advertencia("Archivando liga: $id");
+    _log.advertencia("${TextosApp.LOG_LIGA_ARCHIVADA} $id");
     await _servicio.archivarLiga(id);
   }
 
@@ -179,13 +193,15 @@ class ControladorLigas {
     Nombre: activar
     Descripción:
       Activa una liga específica.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá del registro de log.
     Entradas:
       - id: String
     Salidas:
       - Future<void>
   */
   Future<void> activar(String id) async {
-    _log.informacion("Activando liga: $id");
+    _log.informacion("${TextosApp.LOG_LIGA_ACTIVADA} $id");
     await _servicio.activarLiga(id);
   }
 
@@ -193,13 +209,15 @@ class ControladorLigas {
     Nombre: eliminar
     Descripción:
       Elimina una liga del sistema.
+      Aplica reglas de negocio:
+        - No aplica reglas adicionales más allá de registrar el evento crítico.
     Entradas:
       - id: String
     Salidas:
       - Future<void>
   */
   Future<void> eliminar(String id) async {
-    _log.error("Eliminando liga: $id");
+    _log.error("${TextosApp.LOG_LIGA_ELIMINADA} $id");
     await _servicio.eliminarLiga(id);
   }
 }

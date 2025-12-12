@@ -60,7 +60,6 @@ class _UiUsuarioInicioListaDesktopEstado
       Carga todas las ligas activas y las ordena por nombre.
       Si ocurre un error real en el controlador, muestra mensaje de error.
       Si la lista está vacía pero sin excepción, no se considera error.
-
     Entradas: ninguna
     Salidas: Future<void>
   */
@@ -88,10 +87,8 @@ class _UiUsuarioInicioListaDesktopEstado
     Descripción:
       Realiza búsqueda de ligas por nombre ingresado.
       Si el texto está vacío, recarga todas las activas.
-
     Entradas:
       - texto (String): texto a buscar
-
     Salidas: Future<void>
   */
   Future<void> _buscar(String texto) async {
@@ -122,10 +119,8 @@ class _UiUsuarioInicioListaDesktopEstado
     Descripción:
       Construye el widget visual para una liga individual,
       con botón que navega a detalle y recarga al volver.
-
     Entradas:
       - liga (Liga): liga a renderizar
-
     Salidas:
       - Widget: tarjeta de la liga
   */
@@ -136,8 +131,10 @@ class _UiUsuarioInicioListaDesktopEstado
       child: ListTile(
         title: Text(liga.nombre, style: const TextStyle(fontSize: 18)),
         subtitle: Text(
-          TextosApp.USUARIO_INICIO_DESKTOP_SUBTITULO_TEMPORADA
-              .replaceFirst("{TEMPORADA}", liga.temporada),
+          TextosApp.USUARIO_INICIO_DESKTOP_SUBTITULO_TEMPORADA.replaceFirst(
+            "{TEMPORADA}",
+            liga.temporada,
+          ),
         ),
         trailing: ElevatedButton(
           onPressed: () {
@@ -180,21 +177,17 @@ class _UiUsuarioInicioListaDesktopEstado
               child: _cargando
                   ? const Center(child: CircularProgressIndicator())
                   : _mensajeError != null
-                      ? Center(
-                          child: Text(
-                            _mensajeError!,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        )
-                      : _ligas.isEmpty
-                          ? const Center(
-                              child: Text(
-                                TextosApp.USUARIO_INICIO_DESKTOP_SIN_LIGAS,
-                              ),
-                            )
-                          : ListView(
-                              children: _ligas.map(_itemLiga).toList(),
-                            ),
+                  ? Center(
+                      child: Text(
+                        _mensajeError!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    )
+                  : _ligas.isEmpty
+                  ? const Center(
+                      child: Text(TextosApp.USUARIO_INICIO_DESKTOP_SIN_LIGAS),
+                    )
+                  : ListView(children: _ligas.map(_itemLiga).toList()),
             ),
           ],
         ),

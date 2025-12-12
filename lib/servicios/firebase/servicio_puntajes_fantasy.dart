@@ -18,6 +18,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioPuntajesFantasy {
@@ -54,12 +55,11 @@ class ServicioPuntajesFantasy {
       final idFecha = _sanitizarId(modelo.idFecha);
 
       if (idParticipacion.isEmpty || idFecha.isEmpty) {
-        throw ArgumentError("ID de participación o fecha inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_PARTICIPACION_O_FECHA_INVALIDO);
       }
 
       _log.informacion(
-        "Guardando puntaje fantasy: "
-        "participacion=$idParticipacion, fecha=$idFecha, puntos=${modelo.puntajeTotal}",
+        "${TextosApp.LOG_PUNTAJE_FANTASY_GUARDAR} participacion=$idParticipacion, fecha=$idFecha, puntos=${modelo.puntajeTotal}",
       );
 
       await _db
@@ -69,7 +69,7 @@ class ServicioPuntajesFantasy {
           .doc(idFecha)
           .set(modelo.aMapa());
     } catch (e) {
-      _log.error("Error al guardar puntaje fantasy: $e");
+      _log.error("${TextosApp.LOG_PUNTAJE_FANTASY_ERROR_GUARDAR} $e");
       rethrow;
     }
   }
@@ -93,11 +93,13 @@ class ServicioPuntajesFantasy {
       idFecha = _sanitizarId(idFecha);
 
       if (idParticipacion.isEmpty || idFecha.isEmpty) {
-        throw ArgumentError("ID de participación o fecha inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_PARTICIPACION_O_FECHA_INVALIDO);
       }
 
       _log.informacion(
-        "Obteniendo puntaje fantasy: participacion=$idParticipacion, fecha=$idFecha",
+        TextosApp.LOG_PUNTAJE_FANTASY_OBTENER
+            .replaceFirst('{PARTICIPACION}', idParticipacion)
+            .replaceFirst('{FECHA}', idFecha),
       );
 
       final doc = await _db
@@ -111,7 +113,7 @@ class ServicioPuntajesFantasy {
 
       return PuntajeEquipoFantasy.desdeMapa(doc.id, doc.data() ?? {});
     } catch (e) {
-      _log.error("Error al obtener puntaje fantasy: $e");
+      _log.error("${TextosApp.LOG_PUNTAJE_FANTASY_ERROR_OBTENER} $e");
       rethrow;
     }
   }
@@ -132,11 +134,11 @@ class ServicioPuntajesFantasy {
     try {
       idParticipacion = _sanitizarId(idParticipacion);
       if (idParticipacion.isEmpty) {
-        throw ArgumentError("ID de participación inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_PARTICIPACION_INVALIDO);
       }
 
       _log.informacion(
-        "Listando puntajes fantasy para participación $idParticipacion",
+        "${TextosApp.LOG_PUNTAJE_FANTASY_LISTAR} $idParticipacion",
       );
 
       final query = await _db
@@ -150,7 +152,7 @@ class ServicioPuntajesFantasy {
           .map((d) => PuntajeEquipoFantasy.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error al listar puntajes fantasy: $e");
+      _log.error("${TextosApp.LOG_PUNTAJE_FANTASY_ERROR_LISTAR} $e");
       rethrow;
     }
   }
