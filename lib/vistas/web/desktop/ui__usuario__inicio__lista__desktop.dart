@@ -7,7 +7,6 @@
   Dependencias:
     - modelos/liga.dart
     - controladores/controlador_ligas.dart
-    - servicios/servicio_autenticacion.dart
 
   Pantallas que navegan hacia esta:
     - ui__comun__autenticacion__login__desktop.dart
@@ -17,12 +16,12 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:fantasypro/servicios/firebase/servicio_autenticacion.dart';
 import 'package:fantasypro/controladores/controlador_ligas.dart';
 import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
 import 'ui__usuario__liga__detalle__desktop.dart';
-import 'ui__comun__autenticacion__login__desktop.dart';
 
 class UiUsuarioInicioListaDesktop extends StatefulWidget {
   const UiUsuarioInicioListaDesktop({super.key});
@@ -78,7 +77,7 @@ class _UiUsuarioInicioListaDesktopEstado
           (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
         );
     } catch (e) {
-      _mensajeError = "Error al cargar las ligas activas.";
+      _mensajeError = TextosApp.USUARIO_INICIO_DESKTOP_ERROR_CARGA_LIGAS;
     }
 
     setState(() => _cargando = false);
@@ -112,7 +111,7 @@ class _UiUsuarioInicioListaDesktopEstado
         (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()),
       );
     } catch (e) {
-      _mensajeError = "Error al realizar la búsqueda.";
+      _mensajeError = TextosApp.USUARIO_INICIO_DESKTOP_ERROR_BUSQUEDA;
     }
 
     setState(() => _cargando = false);
@@ -136,7 +135,10 @@ class _UiUsuarioInicioListaDesktopEstado
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: ListTile(
         title: Text(liga.nombre, style: const TextStyle(fontSize: 18)),
-        subtitle: Text("Temporada: ${liga.temporada}"),
+        subtitle: Text(
+          TextosApp.USUARIO_INICIO_DESKTOP_SUBTITULO_TEMPORADA
+              .replaceFirst("{TEMPORADA}", liga.temporada),
+        ),
         trailing: ElevatedButton(
           onPressed: () {
             Navigator.push(
@@ -146,7 +148,7 @@ class _UiUsuarioInicioListaDesktopEstado
               ),
             ).then((_) => _cargar());
           },
-          child: const Text("Unirse"),
+          child: const Text(TextosApp.USUARIO_INICIO_DESKTOP_BOTON_UNIRSE),
         ),
       ),
     );
@@ -155,28 +157,8 @@ class _UiUsuarioInicioListaDesktopEstado
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("FantasyPro — Ligas activas"),
-        actions: [
-          IconButton(
-            tooltip: "Cerrar sesión",
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final servicio = ServicioAutenticacion();
-              await servicio.cerrarSesion();
-
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const UiComunAutenticacionLoginDesktop(),
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(width: 12),
-        ],
+      appBar: const UiUsuarioAppBarDesktop(
+        titulo: TextosApp.USUARIO_INICIO_DESKTOP_TITULO_APPBAR,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -185,7 +167,7 @@ class _UiUsuarioInicioListaDesktopEstado
             TextField(
               controller: _ctrlBuscar,
               decoration: InputDecoration(
-                labelText: "Buscar ligas",
+                labelText: TextosApp.USUARIO_INICIO_DESKTOP_LABEL_BUSCAR,
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () => _buscar(_ctrlBuscar.text),
@@ -198,15 +180,21 @@ class _UiUsuarioInicioListaDesktopEstado
               child: _cargando
                   ? const Center(child: CircularProgressIndicator())
                   : _mensajeError != null
-                  ? Center(
-                      child: Text(
-                        _mensajeError!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    )
-                  : _ligas.isEmpty
-                  ? const Center(child: Text("No hay ligas disponibles."))
-                  : ListView(children: _ligas.map(_itemLiga).toList()),
+                      ? Center(
+                          child: Text(
+                            _mensajeError!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        )
+                      : _ligas.isEmpty
+                          ? const Center(
+                              child: Text(
+                                TextosApp.USUARIO_INICIO_DESKTOP_SIN_LIGAS,
+                              ),
+                            )
+                          : ListView(
+                              children: _ligas.map(_itemLiga).toList(),
+                            ),
             ),
           ],
         ),

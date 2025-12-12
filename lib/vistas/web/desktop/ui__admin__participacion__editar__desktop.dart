@@ -15,9 +15,10 @@
     - ninguna
 */
 
-import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/controladores/controlador_participaciones.dart';
+import 'package:fantasypro/modelos/participacion_liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 
 class UiAdminParticipacionEditarDesktop extends StatefulWidget {
   final ParticipacionLiga participacion;
@@ -68,14 +69,22 @@ class _UiAdminParticipacionEditarDesktopEstado
 
     if (nombre.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("El nombre no puede estar vacío.")),
+        const SnackBar(
+          content: Text(
+            TextosApp.ADMIN_PARTICIPACION_EDITAR_DESKTOP_ERROR_NOMBRE,
+          ),
+        ),
       );
       return;
     }
 
     if (puntos < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Los puntos no pueden ser negativos.")),
+        const SnackBar(
+          content: Text(
+            TextosApp.ADMIN_PARTICIPACION_EDITAR_DESKTOP_ERROR_PUNTOS,
+          ),
+        ),
       );
       return;
     }
@@ -97,7 +106,9 @@ class _UiAdminParticipacionEditarDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Editar participación"),
+        title: const Text(
+          TextosApp.ADMIN_PARTICIPACION_EDITAR_DESKTOP_TITULO,
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context, false),
@@ -119,20 +130,25 @@ class _UiAdminParticipacionEditarDesktopEstado
                           text: widget.participacion.idUsuario,
                         ),
                         decoration: const InputDecoration(
-                          labelText: "ID Usuario",
+                          labelText: TextosApp
+                              .ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_ID_USUARIO,
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextField(
                         controller: ctrlNombre,
                         decoration: const InputDecoration(
-                          labelText: "Nombre del equipo fantasy",
+                          labelText: TextosApp
+                              .ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_NOMBRE_EQUIPO_FANTASY,
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextField(
                         controller: ctrlPuntos,
-                        decoration: const InputDecoration(labelText: "Puntos"),
+                        decoration: const InputDecoration(
+                          labelText: TextosApp
+                              .ADMIN_PARTICIPACION_EDITAR_DESKTOP_LABEL_PUNTOS,
+                        ),
                         keyboardType: TextInputType.number,
                       ),
                       const SizedBox(height: 24),
@@ -140,13 +156,13 @@ class _UiAdminParticipacionEditarDesktopEstado
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            child: const Text("Cancelar"),
+                            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
                             onPressed: () => Navigator.pop(context, false),
                           ),
                           const SizedBox(width: 12),
                           ElevatedButton(
                             onPressed: _guardar,
-                            child: const Text("Guardar"),
+                            child: const Text(TextosApp.COMUN_BOTON_GUARDAR),
                           ),
                         ],
                       ),

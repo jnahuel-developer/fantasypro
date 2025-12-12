@@ -23,6 +23,9 @@ import 'package:fantasypro/modelos/participacion_liga.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 
+import 'widgets/ui__usuario__appbar__desktop.dart';
+import 'ui__usuario__dashboard__desktop.dart';
+
 class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
   /// Liga actual en la que participa el usuario.
   final Liga liga;
@@ -130,7 +133,9 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
     final int presupuestoRestante = presupuestoInicial - costoPlantel;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Resumen del equipo — ${liga.nombre}")),
+      appBar: UiUsuarioAppBarDesktop(
+        titulo: "Resumen del equipo — ${liga.nombre}",
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -170,6 +175,20 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const UiUsuarioDashboardDesktop(),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: const Text("Volver al inicio"),
+            ),
+          ),
         ],
       ),
     );

@@ -16,10 +16,11 @@
     - ui__admin__equipo_real__editar__desktop.dart
 */
 
-import 'package:flutter/material.dart';
-import 'package:fantasypro/modelos/liga.dart';
-import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/controladores/controlador_equipos_reales.dart';
+import 'package:fantasypro/modelos/equipo_real.dart';
+import 'package:fantasypro/modelos/liga.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'package:flutter/material.dart';
 
 import 'ui__admin__equipo_real__editar__desktop.dart';
 import 'ui__admin__jugador__lista__desktop.dart';
@@ -82,27 +83,34 @@ class _UiAdminEquipoRealListaDesktopEstado
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Crear equipo real"),
+        title:
+            const Text(TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_DIALOGO_CREAR_TITULO),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: ctrlNombre,
-              decoration: const InputDecoration(labelText: "Nombre"),
+              decoration: const InputDecoration(
+                labelText:
+                    TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_LABEL_NOMBRE,
+              ),
             ),
             TextField(
               controller: ctrlDescripcion,
-              decoration: const InputDecoration(labelText: "Descripción"),
+              decoration: const InputDecoration(
+                labelText:
+                    TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_LABEL_DESCRIPCION,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
-            child: const Text("Cancelar"),
+            child: const Text(TextosApp.COMUN_BOTON_CANCELAR),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
-            child: const Text("Crear"),
+            child: const Text(TextosApp.COMUN_BOTON_CREAR),
             onPressed: () async {
               final nombre = ctrlNombre.text.trim();
               final desc = ctrlDescripcion.text.trim();
@@ -134,7 +142,8 @@ class _UiAdminEquipoRealListaDesktopEstado
           children: [
             IconButton(
               icon: const Icon(Icons.people),
-              tooltip: "Gestionar jugadores",
+              tooltip:
+                  TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TOOLTIP_GESTION_JUGADORES,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -196,7 +205,10 @@ class _UiAdminEquipoRealListaDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Equipos reales — ${widget.liga.nombre}"),
+        title: Text(
+          TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_APPBAR
+              .replaceFirst("{LIGA}", widget.liga.nombre),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -216,7 +228,11 @@ class _UiAdminEquipoRealListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Activos (${activos.length})",
+                        TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_ACTIVOS
+                            .replaceFirst(
+                          "{CANT}",
+                          activos.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -232,7 +248,11 @@ class _UiAdminEquipoRealListaDesktopEstado
                   child: Column(
                     children: [
                       Text(
-                        "Archivados (${archivados.length})",
+                        TextosApp.ADMIN_EQUIPO_REAL_LISTA_DESKTOP_TITULO_ARCHIVADOS
+                            .replaceFirst(
+                          "{CANT}",
+                          archivados.length.toString(),
+                        ),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

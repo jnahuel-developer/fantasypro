@@ -146,7 +146,9 @@ class _UiAdminJugadorEditarDesktopEstado
         valor < 1 ||
         valor > 1000) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Verifique los campos obligatorios.")),
+        const SnackBar(
+          content: Text(TextosApp.JUGADOR_EDITAR_VALIDACION_CAMPOS),
+        ),
       );
       return;
     }
@@ -207,10 +209,26 @@ class _UiAdminJugadorEditarDesktopEstado
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: "POR", child: Text("POR")),
-                      DropdownMenuItem(value: "DEF", child: Text("DEF")),
-                      DropdownMenuItem(value: "MED", child: Text("MED")),
-                      DropdownMenuItem(value: "DEL", child: Text("DEL")),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_POR,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_POR),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEF,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEF),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_MED,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_MED),
+                      ),
+                      DropdownMenuItem(
+                        value: TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEL,
+                        child:
+                            Text(TextosApp.JUGADOR_EDITAR_OPCION_POSICION_DEL),
+                      ),
                     ],
                     onChanged: (v) {
                       if (v == null) return;
@@ -248,7 +266,7 @@ class _UiAdminJugadorEditarDesktopEstado
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
-                      labelText: "Valor de mercado (1 a 1000)",
+                      labelText: TextosApp.JUGADOR_EDITAR_LABEL_VALOR_MERCADO,
                       border: OutlineInputBorder(),
                     ),
                   ),

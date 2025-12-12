@@ -18,6 +18,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/puntaje_equipo_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioPuntajesFantasy {
   /// Instancia de Firestore.
@@ -62,9 +63,9 @@ class ServicioPuntajesFantasy {
       );
 
       await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idParticipacion)
-          .collection("puntajes_fantasy")
+          .collection(ColFirebase.puntajesFantasy)
           .doc(idFecha)
           .set(modelo.aMapa());
     } catch (e) {
@@ -100,9 +101,9 @@ class ServicioPuntajesFantasy {
       );
 
       final doc = await _db
-          .collection("participaciones_liga")
+          .collection(ColFirebase.participaciones)
           .doc(idParticipacion)
-          .collection("puntajes_fantasy")
+          .collection(ColFirebase.puntajesFantasy)
           .doc(idFecha)
           .get();
 
@@ -111,6 +112,45 @@ class ServicioPuntajesFantasy {
       return PuntajeEquipoFantasy.desdeMapa(doc.id, doc.data() ?? {});
     } catch (e) {
       _log.error("Error al obtener puntaje fantasy: $e");
+      rethrow;
+    }
+  }
+
+  /*
+    Nombre: obtenerPuntajesPorParticipacion
+    Descripción:
+      Devuelve todos los puntajes fantasy registrados para una participación
+      de liga determinada, ordenados por timestamp de aplicación.
+    Entradas:
+      - idParticipacion (String): identificador de la participación en la liga.
+    Salidas:
+      - Future<List<PuntajeEquipoFantasy>>: lista de puntajes fantasy.
+  */
+  Future<List<PuntajeEquipoFantasy>> obtenerPuntajesPorParticipacion(
+    String idParticipacion,
+  ) async {
+    try {
+      idParticipacion = _sanitizarId(idParticipacion);
+      if (idParticipacion.isEmpty) {
+        throw ArgumentError("ID de participación inválido.");
+      }
+
+      _log.informacion(
+        "Listando puntajes fantasy para participación $idParticipacion",
+      );
+
+      final query = await _db
+          .collection(ColFirebase.participaciones)
+          .doc(idParticipacion)
+          .collection(ColFirebase.puntajesFantasy)
+          .orderBy(CamposFirebase.timestampAplicacion)
+          .get();
+
+      return query.docs
+          .map((d) => PuntajeEquipoFantasy.desdeMapa(d.id, d.data()))
+          .toList();
+    } catch (e) {
+      _log.error("Error al listar puntajes fantasy: $e");
       rethrow;
     }
   }

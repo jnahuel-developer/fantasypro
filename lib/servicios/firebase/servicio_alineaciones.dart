@@ -18,6 +18,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/alineacion.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
+import 'servicio_base_de_datos.dart';
 
 class ServicioAlineaciones {
   /// Instancia de Firestore para acceder a la colección de alineaciones.
@@ -77,24 +79,26 @@ class ServicioAlineaciones {
         idEquipoFantasy: _sanitizarId(alineacion.idEquipoFantasy),
         idsTitulares: _validarYOrdenarLista(
           alineacion.idsTitulares,
-          "idsTitulares",
+          CamposFirebase.idsTitulares,
         ),
         idsSuplentes: _validarYOrdenarLista(
           alineacion.idsSuplentes,
-          "idsSuplentes",
+          CamposFirebase.idsSuplentes,
         ),
         jugadoresSeleccionados: _validarYOrdenarLista(
           alineacion.jugadoresSeleccionados,
-          "jugadoresSeleccionados",
+          CamposFirebase.jugadoresSeleccionados,
         ),
       );
 
       _validarIds(datos.idUsuario, datos.idLiga);
 
-      final doc = await _db.collection("alineaciones").add(datos.aMapa());
+      final doc = await _db
+          .collection(ColFirebase.alineaciones)
+          .add(datos.aMapa());
       final nueva = datos.copiarCon(id: doc.id);
 
-      _log.informacion("Crear alineación: ${nueva.id}");
+      _log.informacion("${TextosApp.LOG_ALINEACION_CREAR} ${nueva.id}");
       return nueva;
     } catch (e) {
       _log.error("Error en operación de alineaciones: $e");
@@ -129,7 +133,7 @@ class ServicioAlineaciones {
 
       final jugadores = _validarYOrdenarLista(
         idsJugadoresPlantel,
-        "jugadoresSeleccionados",
+        CamposFirebase.jugadoresSeleccionados,
       );
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -148,11 +152,12 @@ class ServicioAlineaciones {
         activo: true,
       );
 
-      final doc = await _db.collection("alineaciones").add(alineacion.aMapa());
+      final doc =
+          await _db.collection(ColFirebase.alineaciones).add(alineacion.aMapa());
       final creada = alineacion.copiarCon(id: doc.id);
 
       _log.informacion(
-        "Guardar plantel inicial: equipoFantasy=$idEquipoFantasy alineacion=${creada.id}",
+        "${TextosApp.LOG_ALINEACION_GUARDAR_INICIAL} equipoFantasy=$idEquipoFantasy alineacion=${creada.id}",
       );
 
       return creada;
@@ -184,18 +189,22 @@ class ServicioAlineaciones {
       idAlineacion = _sanitizarId(idAlineacion);
       if (idAlineacion.isEmpty) throw ArgumentError("ID inválido.");
 
-      final titulares = _validarYOrdenarLista(idsTitulares, "idsTitulares");
-      final suplentes = _validarYOrdenarLista(idsSuplentes, "idsSuplentes");
+      final titulares =
+          _validarYOrdenarLista(idsTitulares, CamposFirebase.idsTitulares);
+      final suplentes =
+          _validarYOrdenarLista(idsSuplentes, CamposFirebase.idsSuplentes);
       final combinados = [...titulares, ...suplentes]..sort();
 
-      await _db.collection("alineaciones").doc(idAlineacion).update({
-        "formacion": formacion,
-        "idsTitulares": titulares,
-        "idsSuplentes": suplentes,
-        "jugadoresSeleccionados": combinados,
+      await _db.collection(ColFirebase.alineaciones).doc(idAlineacion).update({
+        CamposFirebase.formacion: formacion,
+        CamposFirebase.idsTitulares: titulares,
+        CamposFirebase.idsSuplentes: suplentes,
+        CamposFirebase.jugadoresSeleccionados: combinados,
       });
 
-      _log.informacion("Guardar alineación inicial: $idAlineacion");
+      _log.informacion(
+        "${TextosApp.LOG_ALINEACION_GUARDAR_INICIAL} $idAlineacion",
+      );
     } catch (e) {
       _log.error("Error guardando alineación inicial: $e");
       rethrow;
@@ -222,9 +231,9 @@ class ServicioAlineaciones {
       _validarIds(idUsuario, idLiga);
 
       final consulta = await _db
-          .collection("alineaciones")
-          .where("idLiga", isEqualTo: idLiga)
-          .where("idUsuario", isEqualTo: idUsuario)
+          .collection(ColFirebase.alineaciones)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.idUsuario, isEqualTo: idUsuario)
           .get();
 
       if (consulta.docs.length > 1) {
@@ -234,7 +243,7 @@ class ServicioAlineaciones {
       }
 
       _log.informacion(
-        "Listar alineaciones de usuario $idUsuario en liga $idLiga",
+        "${TextosApp.LOG_ALINEACION_LISTAR_ACTIVAS} usuario=$idUsuario liga=$idLiga",
       );
 
       return consulta.docs
@@ -264,23 +273,26 @@ class ServicioAlineaciones {
         idEquipoFantasy: _sanitizarId(alineacion.idEquipoFantasy),
         idsTitulares: _validarYOrdenarLista(
           alineacion.idsTitulares,
-          "idsTitulares",
+          CamposFirebase.idsTitulares,
         ),
         idsSuplentes: _validarYOrdenarLista(
           alineacion.idsSuplentes,
-          "idsSuplentes",
+          CamposFirebase.idsSuplentes,
         ),
         jugadoresSeleccionados: _validarYOrdenarLista(
           alineacion.jugadoresSeleccionados,
-          "jugadoresSeleccionados",
+          CamposFirebase.jugadoresSeleccionados,
         ),
       );
 
       _validarIds(datos.idUsuario, datos.idLiga);
 
-      await _db.collection("alineaciones").doc(datos.id).update(datos.aMapa());
+      await _db
+          .collection(ColFirebase.alineaciones)
+          .doc(datos.id)
+          .update(datos.aMapa());
 
-      _log.informacion("Editar alineación: ${datos.id}");
+      _log.informacion("${TextosApp.LOG_ALINEACION_EDITAR} ${datos.id}");
     } catch (e) {
       _log.error("Error en operación de alineaciones: $e");
       rethrow;
@@ -301,9 +313,12 @@ class ServicioAlineaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("alineaciones").doc(id).update({"activo": false});
+      await _db
+          .collection(ColFirebase.alineaciones)
+          .doc(id)
+          .update({CamposFirebase.activo: false});
 
-      _log.informacion("Archivar alineación: $id");
+      _log.informacion("${TextosApp.LOG_ALINEACION_ARCHIVAR} $id");
     } catch (e) {
       _log.error("Error en operación de alineaciones: $e");
       rethrow;
@@ -324,9 +339,12 @@ class ServicioAlineaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("alineaciones").doc(id).update({"activo": true});
+      await _db
+          .collection(ColFirebase.alineaciones)
+          .doc(id)
+          .update({CamposFirebase.activo: true});
 
-      _log.informacion("Activar alineación: $id");
+      _log.informacion("${TextosApp.LOG_ALINEACION_ACTIVAR} $id");
     } catch (e) {
       _log.error("Error en operación de alineaciones: $e");
       rethrow;
@@ -347,9 +365,9 @@ class ServicioAlineaciones {
       id = _sanitizarId(id);
       if (id.isEmpty) throw ArgumentError("ID inválido.");
 
-      await _db.collection("alineaciones").doc(id).delete();
+      await _db.collection(ColFirebase.alineaciones).doc(id).delete();
 
-      _log.informacion("Eliminar alineación: $id");
+      _log.informacion("${TextosApp.LOG_ALINEACION_ELIMINAR} $id");
     } catch (e) {
       _log.error("Error en operación de alineaciones: $e");
       rethrow;
@@ -373,12 +391,14 @@ class ServicioAlineaciones {
         throw ArgumentError("ID de liga inválido.");
       }
 
-      _log.informacion("Listando alineaciones activas de la liga $idLiga");
+      _log.informacion(
+        "${TextosApp.LOG_ALINEACION_LISTAR_ACTIVAS} $idLiga",
+      );
 
       final query = await _db
-          .collection("alineaciones")
-          .where("idLiga", isEqualTo: idLiga)
-          .where("activo", isEqualTo: true)
+          .collection(ColFirebase.alineaciones)
+          .where(CamposFirebase.idLiga, isEqualTo: idLiga)
+          .where(CamposFirebase.activo, isEqualTo: true)
           .get();
 
       return query.docs

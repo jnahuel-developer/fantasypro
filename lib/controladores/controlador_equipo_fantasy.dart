@@ -17,6 +17,7 @@ import 'package:fantasypro/modelos/equipo_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_equipos_fantasy.dart';
 import 'package:fantasypro/servicios/firebase/servicio_fechas.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 
 class ControladorEquipoFantasy {
   /// Servicio para operaciones de equipo fantasy.
@@ -47,37 +48,31 @@ class ControladorEquipoFantasy {
     String nombreEquipo,
   ) async {
     if (idUsuario.isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_USUARIO_VACIO);
     }
     if (idLiga.isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
     if (nombreEquipo.isEmpty) {
-      throw ArgumentError("El nombre del equipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_NOMBRE_EQUIPO_VACIO);
     }
 
     _log.informacion(
-      "Creando equipo fantasy para usuario $idUsuario en liga $idLiga",
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_CREAR} ($idUsuario, $idLiga)",
     );
 
     final equipos = await _servicio.obtenerPorUsuarioYLiga(idUsuario, idLiga);
     if (equipos.isNotEmpty) {
-      _log.advertencia("El usuario ya tiene un equipo en esta liga.");
-      throw Exception(
-        "Ya existe un equipo fantasy para este usuario en esta liga.",
-      );
+      _log.advertencia(TextosApp.LOG_CTRL_EQUIPO_FANTASY_DUPLICADO);
+      throw Exception(TextosApp.ERR_CTRL_EQUIPO_DUPLICADO_LIGA);
     }
 
     final fechas = await _servicioFechas.obtenerPorLiga(idLiga);
     final existeActiva = fechas.any((f) => f.activa && !f.cerrada);
 
     if (existeActiva) {
-      _log.advertencia(
-        "No se puede crear equipo: ya existe una fecha activa en la liga.",
-      );
-      throw Exception(
-        "No se puede crear un equipo con fechas activas en la liga.",
-      );
+      _log.advertencia(TextosApp.LOG_CTRL_EQUIPO_FANTASY_FECHA_ACTIVA);
+      throw Exception(TextosApp.ERR_CTRL_FECHAS_ACTIVAS_EN_LIGA);
     }
 
     final equipo = await _servicio.crearEquipoFantasy(
@@ -92,7 +87,9 @@ class ControladorEquipoFantasy {
       nombreEquipo,
     );
 
-    _log.informacion("Equipo fantasy creado exitosamente: ${equipo.id}");
+    _log.informacion(
+      "${TextosApp.LOG_EQUIPO_FANTASY_CREADO} ${equipo.id}",
+    );
 
     return equipo;
   }
@@ -107,10 +104,12 @@ class ControladorEquipoFantasy {
   */
   Future<List<EquipoFantasy>> obtenerEquiposDeUsuario(String idUsuario) async {
     if (idUsuario.isEmpty) {
-      throw ArgumentError("El ID del usuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_USUARIO_VACIO);
     }
 
-    _log.informacion("Listando equipos fantasy del usuario $idUsuario");
+    _log.informacion(
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_LISTAR_USUARIO} $idUsuario",
+    );
 
     return await _servicio.obtenerPorUsuarioYLiga(idUsuario, "");
   }
@@ -128,14 +127,15 @@ class ControladorEquipoFantasy {
     String idUsuario,
     String idLiga,
   ) async {
-    if (idUsuario.isEmpty || idLiga.isEmpty) {
-      throw ArgumentError(
-        "El ID del usuario y el de la liga no pueden estar vacíos.",
-      );
+    if (idUsuario.isEmpty) {
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_USUARIO_VACIO);
+    }
+    if (idLiga.isEmpty) {
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
 
     _log.informacion(
-      "Listando equipos fantasy del usuario $idUsuario en liga $idLiga",
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_LISTAR_LIGA} ($idUsuario, $idLiga)",
     );
 
     return await _servicio.obtenerPorUsuarioYLiga(idUsuario, idLiga);
@@ -151,10 +151,12 @@ class ControladorEquipoFantasy {
   */
   Future<void> editar(EquipoFantasy equipo) async {
     if (equipo.id.isEmpty) {
-      throw ArgumentError("El ID del equipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_EQUIPO_FANTASY_VACIO);
     }
 
-    _log.informacion("Editando equipo fantasy ${equipo.id}");
+    _log.informacion(
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_EDITAR} ${equipo.id}",
+    );
 
     await _servicio.editarEquipoFantasy(equipo);
   }
@@ -169,10 +171,10 @@ class ControladorEquipoFantasy {
   */
   Future<void> archivar(String idEquipo) async {
     if (idEquipo.isEmpty) {
-      throw ArgumentError("El ID del equipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_EQUIPO_FANTASY_VACIO);
     }
 
-    _log.advertencia("Archivando equipo fantasy $idEquipo");
+    _log.advertencia("${TextosApp.LOG_CTRL_EQUIPO_FANTASY_ARCHIVAR} $idEquipo");
 
     await _servicio.archivarEquipoFantasy(idEquipo);
   }
@@ -187,10 +189,10 @@ class ControladorEquipoFantasy {
   */
   Future<void> activar(String idEquipo) async {
     if (idEquipo.isEmpty) {
-      throw ArgumentError("El ID del equipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_EQUIPO_FANTASY_VACIO);
     }
 
-    _log.informacion("Activando equipo fantasy $idEquipo");
+    _log.informacion("${TextosApp.LOG_CTRL_EQUIPO_FANTASY_ACTIVAR} $idEquipo");
 
     await _servicio.activarEquipoFantasy(idEquipo);
   }
@@ -205,10 +207,10 @@ class ControladorEquipoFantasy {
   */
   Future<void> eliminar(String idEquipo) async {
     if (idEquipo.isEmpty) {
-      throw ArgumentError("El ID del equipo no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_EQUIPO_FANTASY_VACIO);
     }
 
-    _log.error("Eliminando equipo fantasy $idEquipo");
+    _log.error("${TextosApp.LOG_CTRL_EQUIPO_FANTASY_ELIMINAR} $idEquipo");
 
     await _servicio.eliminarEquipoFantasy(idEquipo);
   }
@@ -228,34 +230,47 @@ class ControladorEquipoFantasy {
     String idLiga,
   ) async {
     if (idUsuario.trim().isEmpty) {
-      throw ArgumentError("El idUsuario no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_USUARIO_VACIO);
     }
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
 
     _log.informacion(
-      "Obteniendo equipo fantasy para usuario $idUsuario en liga $idLiga",
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_OBTENER} ($idUsuario, $idLiga)",
     );
     final lista = await _servicio.obtenerPorUsuarioYLiga(idUsuario, idLiga);
     if (lista.isEmpty) return null;
     return lista.first;
   }
 
+  /*
+    Nombre: guardarPlantelInicial
+    Descripción:
+      Guarda el plantel inicial de un equipo fantasy asegurando tamaño y presupuesto.
+      Aplica reglas de negocio:
+        - Se requiere exactamente 15 jugadores en la lista.
+    Entradas:
+      - idEquipoFantasy: String → Identificador del equipo fantasy
+      - ids: List<String> → Identificadores de los jugadores seleccionados
+      - presupuestoRestante: int → Presupuesto restante tras armar el plantel
+    Salidas:
+      - Future<void>
+  */
   Future<void> guardarPlantelInicial(
     String idEquipoFantasy,
     List<String> ids,
     int presupuestoRestante,
   ) async {
     if (idEquipoFantasy.isEmpty) {
-      throw ArgumentError("ID de equipo vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_EQUIPO_FANTASY_VACIO);
     }
     if (ids.length != 15) {
-      throw ArgumentError("El plantel inicial debe tener 15 jugadores.");
+      throw ArgumentError(TextosApp.ERR_CTRL_PLANTEL_TAMANIO);
     }
 
     _log.informacion(
-      "Guardando plantel inicial para equipo $idEquipoFantasy "
+      "${TextosApp.LOG_CTRL_EQUIPO_FANTASY_GUARDAR_PLANTEL} $idEquipoFantasy "
       "(jugadores=${ids.length}, presupuesto=$presupuestoRestante)",
     );
 
@@ -265,6 +280,6 @@ class ControladorEquipoFantasy {
       presupuestoRestante,
     );
 
-    _log.informacion("Plantel inicial guardado correctamente.");
+    _log.informacion(TextosApp.LOG_CTRL_EQUIPO_FANTASY_PLANTEL_OK);
   }
 }

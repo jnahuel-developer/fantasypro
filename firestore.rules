@@ -100,7 +100,8 @@ service cloud.firestore {
         allow read, write:
           if request.auth != null
           && (
-              request.auth.uid == resource.data.idUsuario ||
+              request.auth.uid ==
+                  get(/databases/$(database)/documents/participaciones_liga/$(idPart)).data.idUsuario ||
               get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin'
             );
       }

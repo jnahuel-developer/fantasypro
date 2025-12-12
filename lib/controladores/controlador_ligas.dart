@@ -89,6 +89,25 @@ class ControladorLigas {
   }
 
   /*
+    Nombre: obtenerPorId
+    Descripción:
+      Recupera una liga a partir de su identificador. Devuelve null si
+      no existe coincidencia en el repositorio.
+    Entradas:
+      - idLiga (String): identificador de la liga.
+    Salidas:
+      - Future<Liga?>
+  */
+  Future<Liga?> obtenerPorId(String idLiga) async {
+    if (idLiga.trim().isEmpty) {
+      throw ArgumentError("El idLiga no puede estar vacío.");
+    }
+
+    _log.informacion("Recuperando liga por id: $idLiga");
+    return await _servicio.obtenerLiga(idLiga);
+  }
+
+  /*
     Nombre: buscar
     Descripción:
       Busca ligas cuyo nombre coincida con el texto indicado.
