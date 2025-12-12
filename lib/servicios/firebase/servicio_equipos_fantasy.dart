@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/equipo_fantasy.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioEquiposFantasy {
@@ -106,7 +107,7 @@ class ServicioEquiposFantasy {
       final creado = equipo.copiarCon(id: doc.id);
 
       _log.informacion(
-        "EquipoFantasy creado: usuario=$idUsuario liga=$idLiga → ${creado.id}",
+        "${TextosApp.LOG_EQUIPO_FANTASY_CREADO} usuario=$idUsuario liga=$idLiga → ${creado.id}",
       );
 
       return creado;
@@ -225,7 +226,7 @@ class ServicioEquiposFantasy {
           .doc(datos.id)
           .update(datos.aMapa());
 
-      _log.informacion("EquipoFantasy editado: ${datos.id}");
+      _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_EDITADO} ${datos.id}");
     } catch (e) {
       _log.error("Error editando EquipoFantasy: $e");
       rethrow;
@@ -251,7 +252,7 @@ class ServicioEquiposFantasy {
           .doc(id)
           .update({CamposFirebase.activo: false});
 
-      _log.informacion("EquipoFantasy archivado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ARCHIVADO} $id");
     } catch (e) {
       _log.error("Error archivando EquipoFantasy: $e");
       rethrow;
@@ -277,7 +278,7 @@ class ServicioEquiposFantasy {
           .doc(id)
           .update({CamposFirebase.activo: true});
 
-      _log.informacion("EquipoFantasy activado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ACTIVADO} $id");
     } catch (e) {
       _log.error("Error activando EquipoFantasy: $e");
       rethrow;
@@ -300,7 +301,7 @@ class ServicioEquiposFantasy {
 
       await _db.collection(ColFirebase.equiposFantasy).doc(id).delete();
 
-      _log.informacion("EquipoFantasy eliminado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_FANTASY_ELIMINADO} $id");
     } catch (e) {
       _log.error("Error eliminando EquipoFantasy: $e");
       rethrow;
@@ -322,7 +323,9 @@ class ServicioEquiposFantasy {
         throw ArgumentError("ID de liga inválido.");
       }
 
-      _log.informacion("Listando equipos fantasy activos de la liga $idLiga");
+      _log.informacion(
+        "${TextosApp.LOG_EQUIPO_FANTASY_LISTANDO_ACTIVOS} $idLiga",
+      );
 
       final query = await _db
           .collection(ColFirebase.equiposFantasy)
@@ -354,7 +357,7 @@ class ServicioEquiposFantasy {
       });
 
       _log.informacion(
-        "EquipoFantasy actualizado (plantel inicial): $idEquipoFantasy",
+        "${TextosApp.LOG_EQUIPO_FANTASY_PLANTEL_ACTUALIZADO} $idEquipoFantasy",
       );
     } catch (e) {
       _log.error("Error actualizando plantel inicial: $e");

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 // Servicios
 import 'servicios/utilidades/servicio_log.dart';
 import 'servicios/utilidades/servicio_detector_plataforma.dart';
+import 'textos/textos_app.dart';
 
 // Temas
 import 'temas/tema_web_desktop.dart';
@@ -28,13 +29,13 @@ void main() async {
   final ServicioLog log = ServicioLog();
   final ServicioInicializacion init = ServicioInicializacion();
 
-  log.informacion("Iniciando carga de Firebase...");
+  log.informacion(TextosApp.LOG_APP_INICIANDO_FIREBASE);
 
   await init.inicializarDesdeArchivo(
     'assets/configuracion/entorno/firebase_produccion.json',
   );
 
-  log.informacion("Firebase inicializado correctamente.");
+  log.informacion(TextosApp.LOG_INICIO_FIREBASE_OK);
 
   runApp(const AplicacionFantasyPro());
 }
@@ -57,7 +58,7 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
 
     esDesktop = detector.esEscritorio(ancho);
     servicioLog.informacion(
-      "Plataforma detectada: ${esDesktop ? "Desktop" : "Mobile"}",
+      "${TextosApp.LOG_APP_PLATAFORMA_DETECTADA} ${esDesktop ? "Desktop" : "Mobile"}",
     );
   }
 
