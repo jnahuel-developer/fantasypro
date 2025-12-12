@@ -123,6 +123,188 @@ class TextosApp {
   static const LOG_JUGADORES_ERROR = "Error en operación de jugadores:";
 
   // ---------------------------------------------------------------------------
+  // Logs – Controladores: Alineaciones
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_ALINEACIONES_CREANDO =
+      "Creando alineación para usuario";
+  static const LOG_CTRL_ALINEACIONES_LISTANDO =
+      "Listando alineaciones de usuario";
+  static const LOG_CTRL_ALINEACIONES_ARCHIVANDO =
+      "Archivando alineación";
+  static const LOG_CTRL_ALINEACIONES_ACTIVANDO =
+      "Activando alineación";
+  static const LOG_CTRL_ALINEACIONES_ELIMINANDO =
+      "Eliminando alineación";
+  static const LOG_CTRL_ALINEACIONES_EDITANDO = "Editando alineación";
+  static const LOG_CTRL_ALINEACIONES_GUARDAR_PLANTEL =
+      "Guardando plantel inicial para usuario";
+  static const LOG_CTRL_ALINEACIONES_BUSCAR_PARTICIPACION =
+      "Buscando participación del usuario";
+  static const LOG_CTRL_ALINEACIONES_PARTICIPACION_ENCONTRADA =
+      "Participación encontrada:";
+  static const LOG_CTRL_ALINEACIONES_PARTICIPACION_ACTUALIZADA =
+      "Participación actualizada correctamente.";
+  static const LOG_CTRL_ALINEACIONES_PARTICIPACION_MARCAR =
+      "Marcando participación como plantelCompleto=true para";
+  static const LOG_CTRL_ALINEACIONES_BUSCAR_ACTIVA =
+      "Buscando alineación activa o más reciente para usuario";
+  static const LOG_CTRL_ALINEACIONES_SIN_ACTIVA =
+      "No hay alineación activa — devolviendo la más reciente:";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Equipos fantasy
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_EQUIPO_FANTASY_CREAR =
+      "Creando equipo fantasy para usuario";
+  static const LOG_CTRL_EQUIPO_FANTASY_DUPLICADO =
+      "El usuario ya tiene un equipo en esta liga.";
+  static const LOG_CTRL_EQUIPO_FANTASY_FECHA_ACTIVA =
+      "No se puede crear equipo: ya existe una fecha activa en la liga.";
+  static const LOG_CTRL_EQUIPO_FANTASY_LISTAR_USUARIO =
+      "Listando equipos fantasy del usuario";
+  static const LOG_CTRL_EQUIPO_FANTASY_LISTAR_LIGA =
+      "Listando equipos fantasy del usuario";
+  static const LOG_CTRL_EQUIPO_FANTASY_EDITAR = "Editando equipo fantasy";
+  static const LOG_CTRL_EQUIPO_FANTASY_ARCHIVAR =
+      "Archivando equipo fantasy";
+  static const LOG_CTRL_EQUIPO_FANTASY_ACTIVAR = "Activando equipo fantasy";
+  static const LOG_CTRL_EQUIPO_FANTASY_ELIMINAR = "Eliminando equipo fantasy";
+  static const LOG_CTRL_EQUIPO_FANTASY_OBTENER =
+      "Obteniendo equipo fantasy para usuario";
+  static const LOG_CTRL_EQUIPO_FANTASY_GUARDAR_PLANTEL =
+      "Guardando plantel inicial para equipo";
+  static const LOG_CTRL_EQUIPO_FANTASY_PLANTEL_OK =
+      "Plantel inicial guardado correctamente.";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Equipos reales
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_EQUIPO_REAL_CREAR =
+      "Creando equipo real en liga";
+  static const LOG_CTRL_EQUIPO_REAL_LISTAR =
+      "Listando equipos reales de liga";
+  static const LOG_CTRL_EQUIPO_REAL_EDITAR = "Editando equipo real";
+  static const LOG_CTRL_EQUIPO_REAL_ACTIVAR = "Activando equipo real";
+  static const LOG_CTRL_EQUIPO_REAL_ARCHIVAR = "Archivando equipo real";
+  static const LOG_CTRL_EQUIPO_REAL_ELIMINAR = "Eliminando equipo real";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Fechas
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_FECHAS_CREAR = "Creando nueva fecha para liga";
+  static const LOG_CTRL_FECHAS_ACTUALIZAR_CONTADOR =
+      "Actualizando contador de fechas de la liga:";
+  static const LOG_CTRL_FECHAS_OBTENER = "Obteniendo fechas de liga";
+  static const LOG_CTRL_FECHAS_CERRAR = "Intentando cerrar fecha";
+  static const LOG_CTRL_FECHAS_APLICAR_PUNTAJES =
+      "Aplicando puntajes fantasy a participaciones de la liga";
+  static const LOG_CTRL_FECHAS_ARCHIVAR_LIGA =
+      "La última fecha fue cerrada; archivando liga";
+  static const LOG_CTRL_FECHAS_CERRADA_OK = "Fecha cerrada correctamente.";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Jugadores reales
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_JUGADORES_REALES_CREAR =
+      "Creando jugador real para equipo";
+  static const LOG_CTRL_JUGADORES_REALES_LISTAR =
+      "Listando jugadores reales de equipo";
+  static const LOG_CTRL_JUGADORES_REALES_EDITAR = "Editando jugador real";
+  static const LOG_CTRL_JUGADORES_REALES_ACTIVAR = "Activando jugador real";
+  static const LOG_CTRL_JUGADORES_REALES_ARCHIVAR = "Archivando jugador real";
+  static const LOG_CTRL_JUGADORES_REALES_ELIMINAR = "Eliminando jugador real";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Participaciones
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_PARTICIPACIONES_REGISTRAR =
+      "Registrando participación de usuario";
+  static const LOG_CTRL_PARTICIPACIONES_OBTENER =
+      "Recuperando participación de usuario";
+  static const LOG_CTRL_PARTICIPACIONES_EDITAR =
+      "Actualizando participación";
+  static const LOG_CTRL_PARTICIPACIONES_LISTAR =
+      "Listando participaciones para liga";
+  static const LOG_CTRL_PARTICIPACIONES_APLICAR_PUNTAJES =
+      "Aplicando puntajes fantasy a participación";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Puntajes reales
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_PUNTAJES_REALES_CREAR =
+      "Creando puntaje real para jugador";
+  static const LOG_CTRL_PUNTAJES_REALES_LISTAR =
+      "Listando puntajes reales";
+  static const LOG_CTRL_PUNTAJES_REALES_EDITAR =
+      "Editando puntaje real";
+  static const LOG_CTRL_PUNTAJES_REALES_ELIMINAR =
+      "Eliminando puntaje real";
+
+  // ---------------------------------------------------------------------------
+  // Logs – Controladores: Router
+  // ---------------------------------------------------------------------------
+  static const LOG_CTRL_ROUTER_RUTA_NO_ENCONTRADA =
+      "Ruta no encontrada en router";
+
+  // ---------------------------------------------------------------------------
+  // Errores – Controladores (genéricos)
+  // ---------------------------------------------------------------------------
+  static const ERR_CTRL_ID_LIGA_VACIO = "El ID de la liga no puede estar vacío.";
+  static const ERR_CTRL_ID_USUARIO_VACIO =
+      "El ID del usuario no puede estar vacío.";
+  static const ERR_CTRL_ID_EQUIPO_FANTASY_VACIO =
+      "El ID del equipo fantasy no puede estar vacío.";
+  static const ERR_CTRL_ID_ALINEACION_VACIO =
+      "El ID de la alineación no puede estar vacío.";
+  static const ERR_CTRL_ID_EQUIPO_VACIO = "El ID del equipo no puede estar vacío.";
+  static const ERR_CTRL_ID_JUGADOR_VACIO =
+      "El ID del jugador no puede estar vacío.";
+  static const ERR_CTRL_JUGADOR_SELECCION_REQUERIDA =
+      "Debe seleccionar al menos un jugador.";
+  static const ERR_CTRL_PUNTOS_NEGATIVOS = "Los puntos no pueden ser negativos.";
+  static const ERR_CTRL_FORMACION_INVALIDA = "Formación no válida:";
+  static const ERR_CTRL_PARTICIPACION_NO_ENCONTRADA =
+      "Participación no encontrada.";
+  static const ERR_CTRL_TITULARES_INSUFICIENTES =
+      "Debe seleccionar exactamente 11 titulares.";
+  static const ERR_CTRL_SUPLENTES_INSUFICIENTES =
+      "Debe seleccionar exactamente 4 suplentes.";
+  static const ERR_CTRL_JUGADORES_NO_COINCIDEN =
+      "Jugadores seleccionados no coinciden con el plantel.";
+  static const ERR_CTRL_PLANTEL_TAMANIO =
+      "Debe seleccionar exactamente 15 jugadores.";
+  static const ERR_CTRL_LIGA_CON_FECHA_ACTIVA =
+      "No se puede armar el plantel: la liga tiene una fecha activa.";
+  static const ERR_CTRL_LIGA_SIN_TOTAL_FECHAS =
+      "La liga ya alcanzó el número máximo de fechas.";
+  static const ERR_CTRL_LIGA_CON_FECHA_ACTIVA_PARA_CREAR =
+      "No se puede crear una nueva fecha mientras exista otra activa.";
+  static const ERR_CTRL_LIGA_NO_ENCONTRADA = "No se encontró la liga solicitada.";
+  static const ERR_CTRL_LIGA_ASOCIADA_NO_ENCONTRADA =
+      "No se encontró la liga asociada.";
+  static const ERR_CTRL_FECHA_NO_ACTIVA = "Solo se pueden cerrar fechas activas.";
+  static const ERR_CTRL_FALTAN_PUNTAJES = "Faltan puntajes para cerrar la fecha.";
+  static const ERR_CTRL_JUGADOR_INACTIVO =
+      "El jugador no está disponible para actualizar puntajes.";
+  static const ERR_CTRL_NOMBRE_VACIO = "El nombre no puede estar vacío.";
+  static const ERR_CTRL_NOMBRE_EQUIPO_VACIO =
+      "El nombre del equipo no puede estar vacío.";
+  static const ERR_CTRL_BUSQUEDA_TEXTO_VACIO =
+      "Intento de búsqueda con texto vacío";
+  static const ERR_CTRL_TOTAL_FECHAS_RANGO =
+      "El total de fechas debe estar entre 34 y 50.";
+  static const ERR_CTRL_FECHAS_CREADAS_NEGATIVAS =
+      "Las fechas creadas no pueden ser negativas.";
+  static const ERR_CTRL_EQUIPO_DUPLICADO_LIGA =
+      "Ya existe un equipo fantasy para este usuario en esta liga.";
+  static const ERR_CTRL_FECHAS_ACTIVAS_EN_LIGA =
+      "No se puede crear un equipo con fechas activas en la liga.";
+  static const ERR_CTRL_PARTICIPACION_AUSENTE =
+      "No existe participación registrada para el usuario en la liga.";
+  static const ERR_CTRL_PUNTAJE_EXISTENTE =
+      "Ya existe un puntaje para este jugador en la fecha indicada.";
+
+  // ---------------------------------------------------------------------------
   // Errores – Equipos
   // ---------------------------------------------------------------------------
   static const ERR_EQUIPO_ID_LIGA_VACIO =
