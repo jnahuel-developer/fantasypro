@@ -48,7 +48,7 @@ class ControladorLigas {
 
     // Validación obligatoria del nuevo campo
     if (totalFechasTemporada < 34 || totalFechasTemporada > 50) {
-      throw ArgumentError("El total de fechas debe estar entre 34 y 50.");
+      throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }
 
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -69,7 +69,7 @@ class ControladorLigas {
       fechasCreadas: 0, // obligatorio según mod0015
     );
 
-    _log.informacion("Creando liga: $nombre");
+    _log.informacion("${TextosApp.LOG_LIGA_CREANDO} $nombre");
 
     return await _servicio.crearLiga(liga);
   }
@@ -84,7 +84,7 @@ class ControladorLigas {
       - Future<List<Liga>>
   */
   Future<List<Liga>> obtenerActivas() async {
-    _log.informacion("Obteniendo ligas activas");
+    _log.informacion(TextosApp.LOG_LIGA_LISTAR_ACTIVAS);
     return await _servicio.obtenerLigasActivas();
   }
 
@@ -100,10 +100,10 @@ class ControladorLigas {
   */
   Future<Liga?> obtenerPorId(String idLiga) async {
     if (idLiga.trim().isEmpty) {
-      throw ArgumentError("El idLiga no puede estar vacío.");
+      throw ArgumentError(TextosApp.ERR_CTRL_ID_LIGA_VACIO);
     }
 
-    _log.informacion("Recuperando liga por id: $idLiga");
+    _log.informacion("${TextosApp.LOG_LIGA_OBTENER} $idLiga");
     return await _servicio.obtenerLiga(idLiga);
   }
 
@@ -118,11 +118,11 @@ class ControladorLigas {
   */
   Future<List<Liga>> buscar(String texto) async {
     if (texto.trim().isEmpty) {
-      _log.advertencia("Intento de búsqueda con texto vacío");
+      _log.advertencia(TextosApp.ERR_CTRL_BUSQUEDA_TEXTO_VACIO);
       return [];
     }
 
-    _log.informacion("Buscando ligas con texto: '$texto'");
+    _log.informacion("${TextosApp.LOG_LIGA_BUSCAR_NOMBRE} '$texto'");
     return await _servicio.buscarLigasPorNombre(texto.trim());
   }
 
@@ -150,14 +150,14 @@ class ControladorLigas {
   Future<void> editarLiga(Liga liga) async {
     // Validación de consistencia con el nuevo modelo
     if (liga.totalFechasTemporada < 34 || liga.totalFechasTemporada > 50) {
-      throw ArgumentError("El total de fechas debe estar entre 34 y 50.");
+      throw ArgumentError(TextosApp.ERR_CTRL_TOTAL_FECHAS_RANGO);
     }
 
     if (liga.fechasCreadas < 0) {
-      throw ArgumentError("Las fechas creadas no pueden ser negativas.");
+      throw ArgumentError(TextosApp.ERR_CTRL_FECHAS_CREADAS_NEGATIVAS);
     }
 
-    _log.informacion("Editando liga: ${liga.id}");
+    _log.informacion("${TextosApp.LOG_LIGA_EDITADA} ${liga.id}");
     await _servicio.editarLiga(liga);
   }
 
@@ -171,7 +171,7 @@ class ControladorLigas {
       - Future<void>
   */
   Future<void> archivar(String id) async {
-    _log.advertencia("Archivando liga: $id");
+    _log.advertencia("${TextosApp.LOG_LIGA_ARCHIVADA} $id");
     await _servicio.archivarLiga(id);
   }
 
@@ -185,7 +185,7 @@ class ControladorLigas {
       - Future<void>
   */
   Future<void> activar(String id) async {
-    _log.informacion("Activando liga: $id");
+    _log.informacion("${TextosApp.LOG_LIGA_ACTIVADA} $id");
     await _servicio.activarLiga(id);
   }
 
@@ -199,7 +199,7 @@ class ControladorLigas {
       - Future<void>
   */
   Future<void> eliminar(String id) async {
-    _log.error("Eliminando liga: $id");
+    _log.error("${TextosApp.LOG_LIGA_ELIMINADA} $id");
     await _servicio.eliminarLiga(id);
   }
 }
