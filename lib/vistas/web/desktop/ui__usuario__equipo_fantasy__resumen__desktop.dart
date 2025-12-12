@@ -51,10 +51,8 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
     Nombre: _buscarJugador
     Descripción:
       Busca un jugador dentro del plantel usando su ID.
-
     Entradas:
       - idJugador (String): ID del jugador a buscar
-
     Salidas:
       - JugadorReal: instancia del jugador encontrado
   */
@@ -66,9 +64,7 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
     Nombre: _calcularCosto
     Descripción:
       Calcula el costo total del plantel sumando el valorMercado de cada jugador.
-
     Entradas: ninguna
-
     Salidas:
       - int: total acumulado del valor del plantel
   */
@@ -81,11 +77,9 @@ class UiUsuarioEquipoFantasyResumenDesktop extends StatelessWidget {
     Descripción:
       Construye un widget visual que muestra una lista de jugadores
       basada en una lista de IDs, con su información básica.
-
     Entradas:
       - titulo (String): encabezado de la sección
       - ids (List<String>): lista de IDs de jugadores
-
     Salidas:
       - Widget: sección visual renderizada
   */

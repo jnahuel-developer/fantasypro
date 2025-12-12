@@ -18,8 +18,6 @@ import 'textos/textos_app.dart';
 import 'temas/tema_web_desktop.dart';
 import 'temas/tema_web_mobile.dart';
 
-// Vistas
-
 // Firebase init
 import 'servicios/firebase/servicio_inicializacion.dart';
 
@@ -83,7 +81,6 @@ class _AplicacionFantasyProEstado extends State<AplicacionFantasyPro> {
                   ? obtenerTemaWebDesktop()
                   : obtenerTemaWebMobile(),
 
-              // FLUJO DE AUTENTICACIÓN
               home: ControladorRouter(),
             );
           },

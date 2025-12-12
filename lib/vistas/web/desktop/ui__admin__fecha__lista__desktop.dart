@@ -50,7 +50,6 @@ class UiAdminFechaListaDesktop extends StatefulWidget {
 
 class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
   final ControladorFechas _controlador = ControladorFechas();
-  final ServicioLog _log = ServicioLog();
 
   bool cargando = true;
 
@@ -103,10 +102,7 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
         ),
         content: Text(
           TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_CERRAR_CONTENIDO
-              .replaceFirst(
-            "{NUMERO}",
-            fechaActiva!.numeroFecha.toString(),
-          ),
+              .replaceFirst("{NUMERO}", fechaActiva!.numeroFecha.toString()),
         ),
         actions: [
           TextButton(
@@ -301,7 +297,8 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
           context: context,
           builder: (_) => AlertDialog(
             title: const Text(
-              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_TITULO,
+              TextosApp
+                  .ADMIN_FECHA_LISTA_DESKTOP_DIALOGO_SIMULACION_ERROR_TITULO,
             ),
             content: Text(
               TextosApp
@@ -354,8 +351,10 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_APPBAR
-              .replaceFirst("{LIGA}", widget.liga.nombre),
+          TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_APPBAR.replaceFirst(
+            "{LIGA}",
+            widget.liga.nombre,
+          ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -383,8 +382,8 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                       horizontal: 12,
                       vertical: 6,
                     ),
-                  child: ListTile(
-                    title: Text(
+                    child: ListTile(
+                      title: Text(
                         TextosApp.ADMIN_FECHA_LISTA_DESKTOP_TITULO_FECHA_ACTIVA
                             .replaceFirst("{NOMBRE}", fechaActiva!.nombre),
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -393,9 +392,9 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                         TextosApp
                             .ADMIN_FECHA_LISTA_DESKTOP_SUBTITULO_FECHA_ACTIVA
                             .replaceFirst(
-                          "{NUMERO}",
-                          fechaActiva!.numeroFecha.toString(),
-                        ),
+                              "{NUMERO}",
+                              fechaActiva!.numeroFecha.toString(),
+                            ),
                       ),
                       trailing: Wrap(
                         spacing: 8,
@@ -414,13 +413,15 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                               );
                             },
                             child: const Text(
-                              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_BOTON_CARGAR_PUNTAJES,
+                              TextosApp
+                                  .ADMIN_FECHA_LISTA_DESKTOP_BOTON_CARGAR_PUNTAJES,
                             ),
                           ),
                           ElevatedButton(
                             onPressed: _cerrarFecha,
                             child: const Text(
-                              TextosApp.ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR_FECHA,
+                              TextosApp
+                                  .ADMIN_FECHA_LISTA_DESKTOP_BOTON_CERRAR_FECHA,
                             ),
                           ),
                           // Botón solo para pruebas (MVP)
@@ -439,7 +440,8 @@ class _UiAdminFechaListaDesktopEstado extends State<UiAdminFechaListaDesktop> {
                   const Padding(
                     padding: EdgeInsets.all(12),
                     child: Text(
-                      TextosApp.ADMIN_FECHA_LISTA_DESKTOP_MENSAJE_SIN_FECHA_ACTIVA,
+                      TextosApp
+                          .ADMIN_FECHA_LISTA_DESKTOP_MENSAJE_SIN_FECHA_ACTIVA,
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
