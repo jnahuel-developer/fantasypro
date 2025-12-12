@@ -835,4 +835,53 @@ class TextosApp {
   static const String
       ADMIN_PUNTAJES_REALES_LISTA_DESKTOP_LABEL_GUARDAR_PUNTAJES =
       "Guardar puntajes";
+
+  // -----------------------------------------------------------------------------
+  // Pantalla: Detalle de liga (usuario, desktop)
+  // Archivo: ui__usuario__liga__detalle__desktop.dart
+  // Prefijo: USUARIO_LIGA_DETALLE_DESKTOP_
+  // -----------------------------------------------------------------------------
+
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ERROR_SIN_USUARIO =
+      "No hay usuario autenticado.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ERROR_CARGA =
+      "Error al cargar los datos de la liga.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ERROR_NOMBRE_VACIO =
+      "Debés ingresar un nombre para tu equipo fantasy.";
+  static const String
+      USUARIO_LIGA_DETALLE_DESKTOP_ERROR_PARTICIPACION_NO_RECUPERADA =
+      "No se pudo recuperar la participación creada.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ERROR_CREAR_PARTICIPACION =
+      "Error al crear la participación en la liga.";
+  static const String
+      USUARIO_LIGA_DETALLE_DESKTOP_ERROR_ALINEACION_NO_ENCONTRADA =
+      "No se encontró la alineación inicial.";
+  static const String
+      USUARIO_LIGA_DETALLE_DESKTOP_ERROR_EQUIPO_FANTASY_NO_ENCONTRADO =
+      "No se encontró el equipo fantasy.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ERROR_RESUMEN =
+      "Error al cargar el resumen del equipo.";
+
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_APPBAR_TITULO =
+      "Liga: {LIGA}";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_TEMPORADA =
+      "Temporada: {TEMPORADA}";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_ADVERTENCIA_FECHA_ACTIVA =
+      "No podés crear ni modificar tu equipo mientras haya una fecha activa en curso.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_ELEGIR_NOMBRE =
+      "Elegí un nombre para tu equipo fantasy:";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_LABEL_NOMBRE_EQUIPO =
+      "Nombre del equipo";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CREAR_EQUIPO =
+      "Crear equipo fantasy";
+  static const String
+      USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_EQUIPO_PENDIENTE_COMPLETAR =
+      "Tenés un equipo fantasy pendiente de completar.";
+  static const String
+      USUARIO_LIGA_DETALLE_DESKTOP_BOTON_CONTINUAR_ARMADO =
+      "Continuar armado del equipo";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_TEXTO_EQUIPO_COMPLETO =
+      "Tu equipo fantasy ya está completo.";
+  static const String USUARIO_LIGA_DETALLE_DESKTOP_BOTON_VER_EQUIPO =
+      "Ver mi equipo fantasy";
 }
