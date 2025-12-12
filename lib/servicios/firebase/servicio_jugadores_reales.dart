@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/jugador_real.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioJugadoresReales {
@@ -45,10 +46,10 @@ class ServicioJugadoresReales {
           .add(jugador.aMapa());
       final nuevo = jugador.copiarCon(id: doc.id);
 
-      _log.informacion("Crear jugador real: ${nuevo.id}");
+      _log.informacion("${TextosApp.LOG_JUGADOR_REAL_CREAR} ${nuevo.id}");
       return nuevo;
     } catch (e) {
-      _log.error("Error al crear jugador real: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_CREAR} $e");
       rethrow;
     }
   }
@@ -64,7 +65,9 @@ class ServicioJugadoresReales {
   */
   Future<List<JugadorReal>> obtenerPorEquipoReal(String idEquipoReal) async {
     try {
-      _log.informacion("Obteniendo jugadores reales del equipo $idEquipoReal");
+      _log.informacion(
+        "${TextosApp.LOG_JUGADOR_REAL_OBTENER_EQUIPO} $idEquipoReal",
+      );
 
       final query = await _db
           .collection(ColFirebase.jugadoresReales)
@@ -78,7 +81,7 @@ class ServicioJugadoresReales {
         return jugador.copiarCon(nombreEquipoReal: nombreEquipo);
       }).toList();
     } catch (e) {
-      _log.error("Error al obtener jugadores reales: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_OBTENER} $e");
       rethrow;
     }
   }
@@ -101,7 +104,8 @@ class ServicioJugadoresReales {
       final List<JugadorReal> jugadores = [];
 
       _log.informacion(
-        "Obteniendo jugadores reales por IDs (total=${idsFiltrados.length})",
+        TextosApp.LOG_JUGADOR_REAL_OBTENER_IDS
+            .replaceFirst('{TOTAL}', '${idsFiltrados.length}'),
       );
 
       for (var i = 0; i < idsFiltrados.length; i += 10) {
@@ -127,7 +131,7 @@ class ServicioJugadoresReales {
       jugadores.sort((a, b) => a.id.compareTo(b.id)); // Orden alfabético por ID
       return jugadores;
     } catch (e) {
-      _log.error("Error al obtener jugadores por IDs: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_OBTENER_IDS} $e");
       rethrow;
     }
   }
@@ -148,9 +152,9 @@ class ServicioJugadoresReales {
           .doc(jugador.id)
           .update(jugador.aMapa());
 
-      _log.informacion("Editar jugador real: ${jugador.id}");
+      _log.informacion("${TextosApp.LOG_JUGADOR_REAL_EDITAR} ${jugador.id}");
     } catch (e) {
-      _log.error("Error al editar jugador real: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_EDITAR} $e");
       rethrow;
     }
   }
@@ -170,9 +174,9 @@ class ServicioJugadoresReales {
         CamposFirebase.activo: false,
       });
 
-      _log.informacion("Archivar jugador real: $idJugador");
+      _log.informacion("${TextosApp.LOG_JUGADOR_REAL_ARCHIVAR} $idJugador");
     } catch (e) {
-      _log.error("Error al archivar jugador real: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_ARCHIVAR} $e");
       rethrow;
     }
   }
@@ -192,9 +196,9 @@ class ServicioJugadoresReales {
         CamposFirebase.activo: true,
       });
 
-      _log.informacion("Activar jugador real: $idJugador");
+      _log.informacion("${TextosApp.LOG_JUGADOR_REAL_ACTIVAR} $idJugador");
     } catch (e) {
-      _log.error("Error al activar jugador real: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_ACTIVAR} $e");
       rethrow;
     }
   }
@@ -212,9 +216,9 @@ class ServicioJugadoresReales {
     try {
       await _db.collection(ColFirebase.jugadoresReales).doc(idJugador).delete();
 
-      _log.informacion("Eliminar jugador real: $idJugador");
+      _log.informacion("${TextosApp.LOG_JUGADOR_REAL_ELIMINAR} $idJugador");
     } catch (e) {
-      _log.error("Error al eliminar jugador real: $e");
+      _log.error("${TextosApp.LOG_JUGADOR_REAL_ERROR_ELIMINAR} $e");
       rethrow;
     }
   }
@@ -234,7 +238,9 @@ class ServicioJugadoresReales {
     }
 
     try {
-      _log.informacion("Consultando nombre del equipo real $idEquipo");
+      _log.informacion(
+        "${TextosApp.LOG_JUGADOR_REAL_CONSULTAR_EQUIPO} $idEquipo",
+      );
 
       final doc =
           await _db.collection(ColFirebase.equiposReales).doc(idEquipo).get();
@@ -245,7 +251,9 @@ class ServicioJugadoresReales {
       _cacheEquipos[idEquipo] = nombre;
       return nombre;
     } catch (e) {
-      _log.error("Error al obtener nombre del equipo $idEquipo: $e");
+      _log.error(
+        "${TextosApp.LOG_JUGADOR_REAL_ERROR_CONSULTAR_EQUIPO} $idEquipo: $e",
+      );
       _cacheEquipos[idEquipo] = "";
       return "";
     }

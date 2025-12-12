@@ -8,9 +8,6 @@
     - modelos/participacion_liga.dart
     - controladores/controlador_participaciones.dart
 
-  Pantallas que navegan hacia esta:
-    - ui__admin__participacion__lista__desktop.dart
-
   Pantallas destino:
     - ninguna
 */
@@ -106,9 +103,7 @@ class _UiAdminParticipacionEditarDesktopEstado
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          TextosApp.ADMIN_PARTICIPACION_EDITAR_DESKTOP_TITULO,
-        ),
+        title: const Text(TextosApp.ADMIN_PARTICIPACION_EDITAR_DESKTOP_TITULO),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context, false),

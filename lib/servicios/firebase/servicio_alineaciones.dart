@@ -42,7 +42,7 @@ class ServicioAlineaciones {
   /// Validación de IDs obligatorios
   void _validarIds(String idUsuario, String idLiga) {
     if (idUsuario.isEmpty || idLiga.isEmpty) {
-      throw ArgumentError("ID sanitizado inválido.");
+      throw ArgumentError(TextosApp.ERR_SERVICIO_ID_SANITIZADO_INVALIDO);
     }
   }
 
@@ -55,7 +55,8 @@ class ServicioAlineaciones {
         .toList();
     if (limpia.length != lista.length) {
       throw ArgumentError(
-        "Lista '$nombreCampo' contiene elementos vacíos o inválidos.",
+        TextosApp.ERR_ALINEACION_LISTA_INVALIDA
+            .replaceFirst('{CAMPO}', nombreCampo),
       );
     }
     limpia.sort();
@@ -101,7 +102,7 @@ class ServicioAlineaciones {
       _log.informacion("${TextosApp.LOG_ALINEACION_CREAR} ${nueva.id}");
       return nueva;
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -162,7 +163,7 @@ class ServicioAlineaciones {
 
       return creada;
     } catch (e) {
-      _log.error("Error guardando plantel inicial: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_GUARDAR_PLANTEL} $e");
       rethrow;
     }
   }
@@ -187,7 +188,9 @@ class ServicioAlineaciones {
   ) async {
     try {
       idAlineacion = _sanitizarId(idAlineacion);
-      if (idAlineacion.isEmpty) throw ArgumentError("ID inválido.");
+      if (idAlineacion.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       final titulares =
           _validarYOrdenarLista(idsTitulares, CamposFirebase.idsTitulares);
@@ -206,7 +209,7 @@ class ServicioAlineaciones {
         "${TextosApp.LOG_ALINEACION_GUARDAR_INICIAL} $idAlineacion",
       );
     } catch (e) {
-      _log.error("Error guardando alineación inicial: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_GUARDAR_INICIAL} $e");
       rethrow;
     }
   }
@@ -238,7 +241,9 @@ class ServicioAlineaciones {
 
       if (consulta.docs.length > 1) {
         _log.advertencia(
-          "Múltiples alineaciones encontradas para usuario=$idUsuario y liga=$idLiga",
+          TextosApp.LOG_ALINEACION_ADVERTENCIA_MULTIPLES
+              .replaceFirst('{USUARIO}', idUsuario)
+              .replaceFirst('{LIGA}', idLiga),
         );
       }
 
@@ -250,7 +255,7 @@ class ServicioAlineaciones {
           .map((d) => Alineacion.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -294,7 +299,7 @@ class ServicioAlineaciones {
 
       _log.informacion("${TextosApp.LOG_ALINEACION_EDITAR} ${datos.id}");
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -311,7 +316,9 @@ class ServicioAlineaciones {
   Future<void> archivarAlineacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db
           .collection(ColFirebase.alineaciones)
@@ -320,7 +327,7 @@ class ServicioAlineaciones {
 
       _log.informacion("${TextosApp.LOG_ALINEACION_ARCHIVAR} $id");
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -337,7 +344,9 @@ class ServicioAlineaciones {
   Future<void> activarAlineacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db
           .collection(ColFirebase.alineaciones)
@@ -346,7 +355,7 @@ class ServicioAlineaciones {
 
       _log.informacion("${TextosApp.LOG_ALINEACION_ACTIVAR} $id");
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -363,13 +372,15 @@ class ServicioAlineaciones {
   Future<void> eliminarAlineacion(String id) async {
     try {
       id = _sanitizarId(id);
-      if (id.isEmpty) throw ArgumentError("ID inválido.");
+      if (id.isEmpty) {
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_INVALIDO);
+      }
 
       await _db.collection(ColFirebase.alineaciones).doc(id).delete();
 
       _log.informacion("${TextosApp.LOG_ALINEACION_ELIMINAR} $id");
     } catch (e) {
-      _log.error("Error en operación de alineaciones: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OPERACION} $e");
       rethrow;
     }
   }
@@ -388,7 +399,7 @@ class ServicioAlineaciones {
     try {
       idLiga = _sanitizarId(idLiga);
       if (idLiga.isEmpty) {
-        throw ArgumentError("ID de liga inválido.");
+        throw ArgumentError(TextosApp.ERR_SERVICIO_ID_LIGA_INVALIDO);
       }
 
       _log.informacion(
@@ -405,7 +416,7 @@ class ServicioAlineaciones {
           .map((d) => Alineacion.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error al obtener alineaciones activas: $e");
+      _log.error("${TextosApp.LOG_ALINEACION_ERROR_OBTENER_ACTIVAS} $e");
       rethrow;
     }
   }

@@ -17,6 +17,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantasypro/modelos/equipo_real.dart';
 import 'package:fantasypro/servicios/utilidades/servicio_log.dart';
+import 'package:fantasypro/textos/textos_app.dart';
 import 'servicio_base_de_datos.dart';
 
 class ServicioEquiposReales {
@@ -41,10 +42,10 @@ class ServicioEquiposReales {
           await _db.collection(ColFirebase.equiposReales).add(equipo.aMapa());
       final creado = equipo.copiarCon(id: doc.id);
 
-      _log.informacion("EquipoReal creado: ${creado.id}");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_CREADO} ${creado.id}");
       return creado;
     } catch (e) {
-      _log.error("Error creando EquipoReal: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_CREAR} $e");
       rethrow;
     }
   }
@@ -65,13 +66,13 @@ class ServicioEquiposReales {
           .where(CamposFirebase.idLiga, isEqualTo: idLiga)
           .get();
 
-      _log.informacion("Listar equipos reales de liga: $idLiga");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_LISTAR_LIGA} $idLiga");
 
       return query.docs
           .map((d) => EquipoReal.desdeMapa(d.id, d.data()))
           .toList();
     } catch (e) {
-      _log.error("Error listando equipos reales: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_LISTAR} $e");
       rethrow;
     }
   }
@@ -92,9 +93,9 @@ class ServicioEquiposReales {
           .doc(equipo.id)
           .update(equipo.aMapa());
 
-      _log.informacion("EquipoReal editado: ${equipo.id}");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_EDITADO} ${equipo.id}");
     } catch (e) {
-      _log.error("Error editando EquipoReal: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_EDITAR} $e");
       rethrow;
     }
   }
@@ -115,9 +116,9 @@ class ServicioEquiposReales {
           .doc(id)
           .update({CamposFirebase.activo: false});
 
-      _log.informacion("EquipoReal archivado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_ARCHIVADO} $id");
     } catch (e) {
-      _log.error("Error archivando EquipoReal: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_ARCHIVAR} $e");
       rethrow;
     }
   }
@@ -138,9 +139,9 @@ class ServicioEquiposReales {
           .doc(id)
           .update({CamposFirebase.activo: true});
 
-      _log.informacion("EquipoReal activado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_ACTIVADO} $id");
     } catch (e) {
-      _log.error("Error activando EquipoReal: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_ACTIVAR} $e");
       rethrow;
     }
   }
@@ -158,9 +159,9 @@ class ServicioEquiposReales {
     try {
       await _db.collection(ColFirebase.equiposReales).doc(id).delete();
 
-      _log.informacion("EquipoReal eliminado: $id");
+      _log.informacion("${TextosApp.LOG_EQUIPO_REAL_ELIMINADO} $id");
     } catch (e) {
-      _log.error("Error eliminando EquipoReal: $e");
+      _log.error("${TextosApp.LOG_EQUIPO_REAL_ERROR_ELIMINAR} $e");
       rethrow;
     }
   }
