@@ -194,21 +194,6 @@ class UiAdminPanelDashboardDesktop extends StatelessWidget {
                 onPressed: () {
                   _cargarLigaDesdeJson(
                     context,
-                    "assets/data/carga_inicial/carga_italia.json",
-                    TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_ITALIA,
-                  );
-                },
-                child: const Text(
-                  TextosApp.ADMIN_PANEL_DESKTOP_BOTON_CARGA_ITALIA,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              ElevatedButton(
-                onPressed: () {
-                  _cargarLigaDesdeJson(
-                    context,
                     "assets/data/carga_inicial/carga_inglaterra.json",
                     TextosApp.ADMIN_PANEL_DESKTOP_NOMBRE_LIGA_INGLATERRA,
                   );
